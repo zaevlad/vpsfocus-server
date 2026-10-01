@@ -69,8 +69,8 @@ PostgreSQL: их официальные образы, закреплённые �
 
 ```sh
 git clone https://github.com/zaevlad/vpsfocus-server && cd vpsfocus-server
-git checkout bundle-0.27.0
-go run ./tools/verify -version 0.27.0
+git checkout bundle-0.28.0
+go run ./tools/verify -version 0.28.0
 ```
 
 Проверка убедится, что `bundle.sig` — годная подпись `bundle.json` ключом
@@ -82,16 +82,16 @@ go run ./tools/verify -version 0.27.0
 minisign, ещё раз закодированная в base64:
 
 ```sh
-base64 -d bundle/0.27.0/bundle.sig > /tmp/bundle.minisig
-minisign -V -p keys/release.pub -m bundle/0.27.0/bundle.json -x /tmp/bundle.minisig
+base64 -d bundle/0.28.0/bundle.sig > /tmp/bundle.minisig
+minisign -V -p keys/release.pub -m bundle/0.28.0/bundle.json -x /tmp/bundle.minisig
 ```
 
 **2. Сравнить с тем, что получил ваш сервер.** Скачайте архив, который
 скачивает приложение, и сравните файл за файлом:
 
 ```sh
-curl -fsSLo bundle-0.27.0.tar.gz https://vpsfocus.xyz/installer/bundle/0.27.0
-go run ./tools/verify -version 0.27.0 -archive bundle-0.27.0.tar.gz
+curl -fsSLo bundle-0.28.0.tar.gz https://vpsfocus.xyz/installer/bundle/0.28.0
+go run ./tools/verify -version 0.28.0 -archive bundle-0.28.0.tar.gz
 ```
 
 **3. Сравнить образы.** `bundle/<версия>/docker-compose.yml.tpl` закрепляет

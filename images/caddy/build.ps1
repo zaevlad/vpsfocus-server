@@ -23,7 +23,7 @@
 [CmdletBinding()]
 param(
     [string] $Image = 'ghcr.io/zaevlad/vpsfocus-caddy',
-    [string] $Tag = '2.11.4-rl2',
+    [string] $Tag = '2.11.4-rl3',
     [switch] $Load,
     [switch] $Push
 )

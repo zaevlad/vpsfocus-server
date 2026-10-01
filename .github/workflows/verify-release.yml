@@ -9,7 +9,8 @@
 #   4. SERVER-SIDE.md names every script in scripts/;
 #   5. our images (ghcr.io/zaevlad/vpsfocus-*) have a provenance attestation
 #      from this repository — and the commit they were built from has the
-#      same agent/ or images/caddy/ tree as this tag;
+#      same agent/ or images/caddy/ sources as this tag (build.ps1 and
+#      published.txt aside: they record the build, they are not built);
 #   6. no secrets in the tree (gitleaks).
 #
 # A failed run is a red cross on the tag for everyone to see. The tag is
@@ -110,9 +111,11 @@ jobs:
               failed=1
               continue
             fi
-            built=$(git rev-parse "$commit:$dir")
-            here=$(git rev-parse "HEAD:$dir")
-            if [ "$built" != "$here" ]; then
+            # build.ps1 and published.txt are the maintainer's notes about the
+            # build (image tag and resulting digest); they are written after the
+            # image is built and never reach the image, so they do not count.
+            if ! git diff --quiet "$commit" HEAD -- "$dir" ":(exclude)$dir/build.ps1" ":(exclude)$dir/published.txt"; then
+              git diff --stat "$commit" HEAD -- "$dir" ":(exclude)$dir/build.ps1" ":(exclude)$dir/published.txt"
               echo "::error::$name@$digest was built from $dir/ of $commit, which differs from $dir/ in this tag"
               failed=1
               continue
