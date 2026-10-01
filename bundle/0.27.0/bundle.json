@@ -1,0 +1,70 @@
+{
+  "version": "0.27.0",
+  "files": [
+    {
+      "path": "Caddyfile.tpl",
+      "mode": "0644",
+      "sha256": "aea06396c16a852179c7b69a68f22eba3add7ff1ad25316291c66dc98a29c538"
+    },
+    {
+      "path": "agent-logs.json.tpl",
+      "mode": "0644",
+      "sha256": "4709c3e376714a6d16c3c58205c75f76e11c5f93a418619a171f1e8dbe60de21"
+    },
+    {
+      "path": "agent-probes.json.tpl",
+      "mode": "0644",
+      "sha256": "274378cf078ff2d20796fde5cfd928950455d675f442e479577cf4c435db6b3f"
+    },
+    {
+      "path": "agent-projects.json.tpl",
+      "mode": "0644",
+      "sha256": "5b6f125c2af9beae829bfecf5c83050dab62443a18d5e66cbc3836820e21c522"
+    },
+    {
+      "path": "agent-sites.json.tpl",
+      "mode": "0644",
+      "sha256": "5afc92e808d74d85a76d6925cc998dcfaebb62a71133373ff8fa24a673982358"
+    },
+    {
+      "path": "agent-vitals.json.tpl",
+      "mode": "0644",
+      "sha256": "09af78c73b0d9989fba798c42a6c2e2f8ca058e7e919e0b512028d748a2a81e8"
+    },
+    {
+      "path": "agent.env.tpl",
+      "mode": "0600",
+      "sha256": "f080c1c6966547a501213a16a895ec30a433d92ddd8f84628718a50604914866"
+    },
+    {
+      "path": "docker-compose.yml.tpl",
+      "mode": "0644",
+      "sha256": "ad46aaaaa2d7c8b9184967c110291f92f09770e0a3a0a494f4c4391e5734178b"
+    },
+    {
+      "path": "install.sh",
+      "mode": "0755",
+      "sha256": "7b666402cdb43289a670ba150cf38e4b5744ba96c6fda692f0e37f28b5b62e4e"
+    },
+    {
+      "path": "rollback.sh",
+      "mode": "0755",
+      "sha256": "2edcf3b2103f74ba2f31d0fa99efa3abb5bbaf05e97463a8320c097ac244c7b5"
+    },
+    {
+      "path": "scripts/dry-run.sh",
+      "mode": "0755",
+      "sha256": "7f53721a34d48ceb259790a8b2632639c5aae38bc8f6e31152d746f99392c43f"
+    },
+    {
+      "path": "stack.env.tpl",
+      "mode": "0600",
+      "sha256": "7d5cd73945e2998c0e32f0220b2c181404a48a4d8a9782084bee24b0415ae4de"
+    },
+    {
+      "path": "update.sh",
+      "mode": "0755",
+      "sha256": "3d49c1d1b349dede4224e35663b962fc58ed636503a0e1e830b849d8a72d193c"
+    }
+  ]
+}

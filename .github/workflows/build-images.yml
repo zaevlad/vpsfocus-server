@@ -1,0 +1,127 @@
+# Builds the agent and Caddy images from this repository and attests their
+# provenance: which commit and which workflow produced each digest.
+#
+# Runs on a tag only — agent-<version> or caddy-<version> — so an image tag is
+# tied to exactly one commit. An image tag that already exists is never
+# rebuilt: a published tag is immutable.
+#
+# Go is cross-compiled (both Dockerfiles build on $BUILDPLATFORM); QEMU only
+# runs the short `apk add` steps of the arm64 stages.
+#
+# Every third-party action is pinned to a full commit SHA: a tag can be moved
+# by its author, a commit cannot.
+name: build-images
+
+on:
+  push:
+    tags:
+      - "agent-*"
+      - "caddy-*"
+
+permissions: {}
+
+concurrency:
+  group: build-images-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Which image
+        id: which
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          case "$TAG" in
+            agent-*) context=agent;        image=ghcr.io/zaevlad/vpsfocus-agent; version="${TAG#agent-}" ;;
+            caddy-*) context=images/caddy; image=ghcr.io/zaevlad/vpsfocus-caddy; version="${TAG#caddy-}" ;;
+            *) echo "::error::unexpected tag $TAG"; exit 1 ;;
+          esac
+          if ! printf '%s' "$version" | grep -Eq '^[0-9][0-9A-Za-z.-]*$'; then
+            echo "::error::bad version in tag $TAG"; exit 1
+          fi
+          {
+            echo "context=$context"
+            echo "image=$image"
+            echo "version=$version"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+        with:
+          platforms: arm64
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Refuse to overwrite a published image tag
+        env:
+          REF: ${{ steps.which.outputs.image }}:${{ steps.which.outputs.version }}
+        # Fail closed: build only when the registry clearly says "not found".
+        # Any other error (network, auth) could hide an existing tag.
+        run: |
+          if out=$(docker buildx imagetools inspect "$REF" 2>&1); then
+            echo "::error::$REF already exists. Published tags are never rebuilt — release a new version."
+            exit 1
+          fi
+          if ! printf '%s' "$out" | grep -qiE 'not found|manifest unknown'; then
+            printf '%s\n' "$out"
+            echo "::error::could not tell whether $REF exists"
+            exit 1
+          fi
+
+      - name: Build and push (linux/amd64, linux/arm64)
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ steps.which.outputs.context }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.which.outputs.image }}:${{ steps.which.outputs.version }}
+          # The GitHub attestation below is the provenance; buildx's own
+          # would add "unknown/unknown" entries to the image index.
+          provenance: false
+          sbom: false
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ steps.which.outputs.image }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+
+      - name: Record the pinned reference
+        env:
+          IMAGE: ${{ steps.which.outputs.image }}
+          VERSION: ${{ steps.which.outputs.version }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          printf '%s:%s@%s\n' "$IMAGE" "$VERSION" "$DIGEST" > published.txt
+          {
+            echo "### Published"
+            echo
+            echo '```'
+            cat published.txt
+            echo '```'
+            echo
+            echo "Check: \`gh attestation verify oci://$IMAGE@$DIGEST --repo $GITHUB_REPOSITORY\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: published-${{ github.ref_name }}
+          path: published.txt

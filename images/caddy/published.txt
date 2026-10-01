@@ -1,0 +1,1 @@
+ghcr.io/zaevlad/vpsfocus-caddy:2.11.4-rl2@sha256:714418238a60d4ea139a05992ced7e2d67b43f3135fed74b8496eb7f5172065d

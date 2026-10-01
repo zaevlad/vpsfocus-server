@@ -1,0 +1,2947 @@
+{
+ "lighthouseResult": {
+  "lighthouseVersion": "13.5.0",
+  "categories": {
+   "performance": {
+    "title": "Производительность",
+    "score": 0.62,
+    "auditRefs": [
+     {
+      "id": "first-contentful-paint",
+      "weight": 10,
+      "group": "metrics"
+     },
+     {
+      "id": "largest-contentful-paint",
+      "weight": 25,
+      "group": "metrics"
+     },
+     {
+      "id": "total-blocking-time",
+      "weight": 30,
+      "group": "metrics"
+     },
+     {
+      "id": "cumulative-layout-shift",
+      "weight": 25,
+      "group": "metrics"
+     },
+     {
+      "id": "speed-index",
+      "weight": 10,
+      "group": "metrics"
+     },
+     {
+      "id": "cache-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "cls-culprits-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "document-latency-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "dom-size-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "duplicated-javascript-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "font-display-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "forced-reflow-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "image-delivery-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "inp-breakdown-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "lcp-breakdown-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "lcp-discovery-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "legacy-javascript-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "network-dependency-tree-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "render-blocking-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "third-parties-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "viewport-insight",
+      "weight": 0,
+      "group": "insights"
+     },
+     {
+      "id": "interactive",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "max-potential-fid",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "unminified-css",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "unminified-javascript",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "unused-css-rules",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "unused-javascript",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "total-byte-weight",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "user-timings",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "bootup-time",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "mainthread-work-breakdown",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "long-tasks",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "non-composited-animations",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "unsized-images",
+      "weight": 0,
+      "group": "diagnostics"
+     },
+     {
+      "id": "network-requests",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "network-rtt",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "network-server-latency",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "main-thread-tasks",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "diagnostics",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "metrics",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "screenshot-thumbnails",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "final-screenshot",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "script-treemap-data",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "resource-summary",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "redirects",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "server-response-time",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "layout-shifts",
+      "weight": 0,
+      "group": "hidden"
+     }
+    ]
+   },
+   "accessibility": {
+    "title": "Специальные возможности",
+    "score": 0.93,
+    "auditRefs": [
+     {
+      "id": "accesskeys",
+      "weight": 0,
+      "group": "a11y-navigation"
+     },
+     {
+      "id": "aria-allowed-attr",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-command-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-conditional-attr",
+      "weight": 7,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-deprecated-role",
+      "weight": 1,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-dialog-name",
+      "weight": 7,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-hidden-body",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-hidden-focus",
+      "weight": 7,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-input-field-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-meter-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-progressbar-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-prohibited-attr",
+      "weight": 7,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-required-attr",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-required-children",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-required-parent",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-roles",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-text",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-toggle-field-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-tooltip-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-treeitem-name",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-valid-attr-value",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "aria-valid-attr",
+      "weight": 10,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "button-name",
+      "weight": 10,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "bypass",
+      "weight": 0,
+      "group": "a11y-navigation"
+     },
+     {
+      "id": "color-contrast",
+      "weight": 7,
+      "group": "a11y-color-contrast"
+     },
+     {
+      "id": "definition-list",
+      "weight": 0,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "dlitem",
+      "weight": 0,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "document-title",
+      "weight": 7,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "duplicate-id-aria",
+      "weight": 0,
+      "group": "a11y-aria"
+     },
+     {
+      "id": "form-field-multiple-labels",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "frame-title",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "heading-order",
+      "weight": 3,
+      "group": "a11y-navigation"
+     },
+     {
+      "id": "html-has-lang",
+      "weight": 7,
+      "group": "a11y-language"
+     },
+     {
+      "id": "html-lang-valid",
+      "weight": 7,
+      "group": "a11y-language"
+     },
+     {
+      "id": "html-xml-lang-mismatch",
+      "weight": 0,
+      "group": "a11y-language"
+     },
+     {
+      "id": "image-alt",
+      "weight": 10,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "input-button-name",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "input-image-alt",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "label",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "link-in-text-block",
+      "weight": 7,
+      "group": "a11y-color-contrast"
+     },
+     {
+      "id": "link-name",
+      "weight": 7,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "list",
+      "weight": 7,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "listitem",
+      "weight": 7,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "meta-refresh",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "meta-viewport",
+      "weight": 10,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "object-alt",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "select-name",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "skip-link",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "tabindex",
+      "weight": 0,
+      "group": "a11y-navigation"
+     },
+     {
+      "id": "target-size",
+      "weight": 7,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "td-headers-attr",
+      "weight": 7,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "th-has-data-cells",
+      "weight": 0,
+      "group": "a11y-tables-lists"
+     },
+     {
+      "id": "valid-lang",
+      "weight": 0,
+      "group": "a11y-language"
+     },
+     {
+      "id": "video-caption",
+      "weight": 0,
+      "group": "a11y-audio-video"
+     },
+     {
+      "id": "landmark-one-main",
+      "weight": 3,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "autocomplete-valid",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "presentation-role-conflict",
+      "weight": 1,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "svg-img-alt",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "focusable-controls",
+      "weight": 0
+     },
+     {
+      "id": "interactive-element-affordance",
+      "weight": 0
+     },
+     {
+      "id": "logical-tab-order",
+      "weight": 0
+     },
+     {
+      "id": "visual-order-follows-dom",
+      "weight": 0
+     },
+     {
+      "id": "focus-traps",
+      "weight": 0
+     },
+     {
+      "id": "managed-focus",
+      "weight": 0
+     },
+     {
+      "id": "use-landmarks",
+      "weight": 0
+     },
+     {
+      "id": "offscreen-content-hidden",
+      "weight": 0
+     },
+     {
+      "id": "custom-controls-labels",
+      "weight": 0
+     },
+     {
+      "id": "custom-controls-roles",
+      "weight": 0
+     },
+     {
+      "id": "table-duplicate-name",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "empty-heading",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "aria-allowed-role",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "image-redundant-alt",
+      "weight": 0,
+      "group": "a11y-names-labels"
+     },
+     {
+      "id": "identical-links-same-purpose",
+      "weight": 0,
+      "group": "a11y-best-practices"
+     },
+     {
+      "id": "label-content-name-mismatch",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "table-fake-caption",
+      "weight": 0,
+      "group": "hidden"
+     },
+     {
+      "id": "td-has-header",
+      "weight": 0,
+      "group": "hidden"
+     }
+    ]
+   },
+   "best-practices": {
+    "title": "Рекомендации",
+    "score": 1,
+    "auditRefs": [
+     {
+      "id": "is-on-https",
+      "weight": 5,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "redirects-http",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "geolocation-on-start",
+      "weight": 1,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "notification-on-start",
+      "weight": 1,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "csp-xss",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "has-hsts",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "origin-isolation",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "clickjacking-mitigation",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "trusted-types-xss",
+      "weight": 0,
+      "group": "best-practices-trust-safety"
+     },
+     {
+      "id": "paste-preventing-inputs",
+      "weight": 3,
+      "group": "best-practices-ux"
+     },
+     {
+      "id": "image-aspect-ratio",
+      "weight": 1,
+      "group": "best-practices-ux"
+     },
+     {
+      "id": "image-size-responsive",
+      "weight": 1,
+      "group": "best-practices-ux"
+     },
+     {
+      "id": "doctype",
+      "weight": 1,
+      "group": "best-practices-browser-compat"
+     },
+     {
+      "id": "charset",
+      "weight": 1,
+      "group": "best-practices-browser-compat"
+     },
+     {
+      "id": "baseline",
+      "weight": 0,
+      "group": "best-practices-browser-compat"
+     },
+     {
+      "id": "js-libraries",
+      "weight": 0,
+      "group": "best-practices-general"
+     },
+     {
+      "id": "deprecations",
+      "weight": 5,
+      "group": "best-practices-general"
+     },
+     {
+      "id": "third-party-cookies",
+      "weight": 5,
+      "group": "best-practices-general"
+     },
+     {
+      "id": "errors-in-console",
+      "weight": 1,
+      "group": "best-practices-general"
+     },
+     {
+      "id": "valid-source-maps",
+      "weight": 0,
+      "group": "best-practices-general"
+     },
+     {
+      "id": "inspector-issues",
+      "weight": 1,
+      "group": "best-practices-general"
+     }
+    ]
+   },
+   "seo": {
+    "title": "Поисковая оптимизация",
+    "score": 1,
+    "auditRefs": [
+     {
+      "id": "is-crawlable",
+      "weight": 4.043478260869565,
+      "group": "seo-crawl"
+     },
+     {
+      "id": "document-title",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "meta-description",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "http-status-code",
+      "weight": 1,
+      "group": "seo-crawl"
+     },
+     {
+      "id": "link-text",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "crawlable-anchors",
+      "weight": 1,
+      "group": "seo-crawl"
+     },
+     {
+      "id": "robots-txt",
+      "weight": 1,
+      "group": "seo-crawl"
+     },
+     {
+      "id": "image-alt",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "hreflang",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "canonical",
+      "weight": 1,
+      "group": "seo-content"
+     },
+     {
+      "id": "structured-data",
+      "weight": 0
+     }
+    ]
+   }
+  },
+  "audits": {
+   "first-contentful-paint": {
+    "title": "First Contentful Paint",
+    "description": "Первая отрисовка контента – показатель, который отражает время между началом загрузки страницы и появлением первого изображения или блока текста. Подробнее [о первой отрисовке контента](https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/)…",
+    "score": 0.7,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "2,4 сек.",
+    "numericValue": 2408
+   },
+   "largest-contentful-paint": {
+    "title": "Largest Contentful Paint",
+    "description": "Отрисовка самого крупного контента – показатель, который отражает время, требуемое на полную отрисовку самого крупного изображения или текстового блока. Подробнее [об отрисовке самого крупного контента](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)…",
+    "score": 0.03,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "7,7 сек.",
+    "numericValue": 7658
+   },
+   "total-blocking-time": {
+    "title": "Total Blocking Time",
+    "description": "Сумма (в миллисекундах) всех периодов от первой отрисовки контента до загрузки для взаимодействия, когда скорость выполнения задач превышала 50 мс. Подробнее [об общем времени блокировки](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/)…",
+    "score": 0.82,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "270 мс",
+    "numericValue": 268
+   },
+   "cumulative-layout-shift": {
+    "title": "Cumulative Layout Shift",
+    "description": "Совокупное смещение макета – это величина, на которую смещаются видимые элементы области просмотра при загрузке. Подробнее о [совокупном смещении макета](https://web.dev/articles/cls)…",
+    "score": 1,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "0",
+    "numericValue": 0
+   },
+   "speed-index": {
+    "title": "Speed Index",
+    "description": "Speed Index отражает, как быстро на странице появляется контент. Подробнее [о Speed Index](https://developer.chrome.com/docs/lighthouse/performance/speed-index/)…",
+    "score": 0.51,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "5,7 сек.",
+    "numericValue": 5713.454690537175
+   },
+   "cache-insight": {
+    "title": "Выбирайте эффективный период хранения кеша",
+    "description": "Благодаря долгому времени хранения кеша страница может быстрее загружаться при повторных посещениях. Подробнее [о кешировании](https://developer.chrome.com/docs/performance/insights/cache)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "cls-culprits-insight": {
+    "title": "Причины смещения макета",
+    "description": "Смещение макета происходит, когда элементы передвигаются без взаимодействия с пользователем. Это может быть связано с добавлением и удалением элементов или изменением их шрифтов при загрузке страницы. [Выясните причины сдвигов.](https://developer.chrome.com/docs/performance/insights/cls-culprit)",
+    "score": 1,
+    "scoreDisplayMode": "numeric",
+    "metricSavings": {
+     "CLS": 0
+    },
+    "details": {
+     "type": "list",
+     "items": []
+    }
+   },
+   "document-latency-insight": {
+    "title": "Задержка при запросе документа",
+    "description": "Первый сетевой запрос – самый важный. [Уменьшите задержку при его отправке](https://developer.chrome.com/docs/performance/insights/document-latency): не используйте переадресацию, применяйте сжатие текста и следите за тем, чтобы ответ с сервера приходил быстро.",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "checklist",
+     "items": {
+      "serverResponseIsFast": {
+       "label": "Сервер отвечает быстро. Фактическая скорость – 7 ms.",
+       "value": true
+      },
+      "noRedirects": {
+       "value": true,
+       "label": "Не используются переадресации"
+      },
+      "usesCompression": {
+       "value": true,
+       "label": "Применяется сжатие текста"
+      }
+     }
+    }
+   },
+   "dom-size-insight": {
+    "title": "Оптимизация размера DOM-дерева",
+    "description": "Из-за большого размера дерева DOM может замедляться расчет стиля и компоновка макета. Это повлияет на скорость отклика страницы и увеличит объем используемой памяти. Узнайте, [как уменьшить размер дерева DOM](https://developer.chrome.com/docs/performance/insights/dom-size).",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "numericValue": 473,
+    "metricSavings": {
+     "INP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "value": {
+        "value": 473,
+        "type": "numeric",
+        "granularity": 1
+       },
+       "statistic": "Всего элементов"
+      },
+      {
+       "value": {
+        "type": "numeric",
+        "granularity": 1,
+        "value": 12
+       },
+       "statistic": "Глубина DOM",
+       "node": {
+        "nodeLabel": "В работе",
+        "snippet": "<span class=\"intro-tag blue\">",
+        "type": "node"
+       }
+      },
+      {
+       "node": {
+        "nodeLabel": "Задачи\nKanban-доска\nТаблицы\nКалендарь\nТаймлайн\nКод\nДиаграммы Mermaid\nФормулы\nКо…",
+        "snippet": "<div class=\"intro-marquee-track\">",
+        "type": "node"
+       },
+       "statistic": "Больше всего дочерних элементов",
+       "value": {
+        "granularity": 1,
+        "value": 24,
+        "type": "numeric"
+       }
+      }
+     ]
+    }
+   },
+   "duplicated-javascript-insight": {
+    "title": "Дублирующийся код JavaScript",
+    "description": "Чтобы сократить расход трафика, удалите из пакетов большие [повторяющиеся модули JavaScript](https://developer.chrome.com/docs/performance/insights/duplicated-javascript).",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "font-display-insight": {
+    "title": "Используемые шрифты",
+    "description": "Рекомендуем использовать свойство [font-display](https://developer.chrome.com/docs/performance/insights/font-display) со значением swap или optional, чтобы весь текст был одинаково виден. Значение swap можно дополнительно оптимизировать, чтобы с помощью [переопределения показателей шрифта](https://developer.chrome.com/blog/font-fallbacks) уменьшить смещения макета.",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "metricSavings": {
+     "INP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "forced-reflow-insight": {
+    "title": "Принудительная компоновка",
+    "description": "Принудительная компоновка происходит, когда JavaScript запрашивает геометрические свойства (например, offsetWidth) после того, как стили становятся недействительными из-за изменения состояния DOM. Это может привести к снижению производительности. Подробнее [о принудительной компоновке](https://developer.chrome.com/docs/performance/insights/forced-reflow) и возможных способах ее устранения…",
+    "score": 0,
+    "scoreDisplayMode": "numeric",
+    "details": {
+     "type": "list",
+     "items": [
+      {
+       "headings": [
+        {
+         "key": "source",
+         "label": "Самый времязатратный вызов функции",
+         "valueType": "source-location"
+        },
+        {
+         "valueType": "ms",
+         "granularity": 1,
+         "key": "reflowTime",
+         "label": "Общее время компоновки"
+        }
+       ],
+       "items": [
+        {
+         "reflowTime": 38.331,
+         "source": {
+          "urlProvider": "network",
+          "column": 61744,
+          "line": 1,
+          "type": "source-location",
+          "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js"
+         }
+        }
+       ],
+       "type": "table"
+      },
+      {
+       "headings": [
+        {
+         "key": "source",
+         "valueType": "source-location",
+         "label": "Источник"
+        },
+        {
+         "valueType": "ms",
+         "label": "Общее время компоновки",
+         "granularity": 1,
+         "key": "reflowTime"
+        }
+       ],
+       "type": "table",
+       "items": [
+        {
+         "source": {
+          "type": "source-location",
+          "url": "https://getgliph.com/_next/static/chunks/app/layout-278da7431a7fb143.js",
+          "line": 0,
+          "column": 495,
+          "urlProvider": "network"
+         },
+         "reflowTime": 38.331
+        },
+        {
+         "source": {
+          "type": "text",
+          "value": "[без атрибуции]"
+         },
+         "reflowTime": 25.987
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "image-delivery-insight": {
+    "title": "Улучшите загрузку изображений",
+    "description": "Если изображения будут быстрее скачиваться, то время загрузки страницы и значение LCP могут стать меньше. Узнайте, [как оптимизировать размер изображений](https://developer.chrome.com/docs/performance/insights/image-delivery).",
+    "score": 0.5,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Ожидаемая экономия – 474 КиБ",
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "url": "https://getgliph.com/logo.png",
+       "wastedBytes": 462926,
+       "node": {
+        "nodeLabel": "header.intro-nav > div.intro-nav-inner > a.intro-brand > img",
+        "snippet": "<img src=\"/logo.png\" alt=\"\">",
+        "type": "node"
+       },
+       "totalBytes": 463039
+      },
+      {
+       "totalBytes": 24622,
+       "wastedBytes": 22692,
+       "url": "https://getgliph.com/big-logo.png",
+       "node": {
+        "nodeLabel": "Gliph",
+        "snippet": "<img class=\"intro-hero-logo\" src=\"/big-logo.png\" alt=\"Gliph\" width=\"200\" height=\"200\">",
+        "type": "node"
+       }
+      }
+     ]
+    }
+   },
+   "inp-breakdown-insight": {
+    "title": "Обзор INP",
+    "description": "[Улучшите показатель INP](https://developer.chrome.com/docs/performance/insights/inp-breakdown), проанализировав самый длинный этап.",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "lcp-breakdown-insight": {
+    "title": "Разбивка LCP",
+    "description": "Для каждого этапа [есть стратегии улучшения](https://developer.chrome.com/docs/performance/insights/lcp-breakdown). В идеале большая часть времени, требуемого на полную отрисовку элементов LCP, должна тратиться на загрузку ресурсов, а не на задержки.",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "metricSavings": {
+     "LCP": 0
+    },
+    "details": {
+     "type": "list",
+     "items": [
+      {
+       "items": [
+        {
+         "duration": 7.205,
+         "subpart": "timeToFirstByte",
+         "label": "Time to First Byte"
+        },
+        {
+         "label": "Задержка при отрисовке элемента",
+         "subpart": "elementRenderDelay",
+         "duration": 2289.251
+        }
+       ],
+       "headings": [
+        {
+         "valueType": "text",
+         "key": "label",
+         "label": "Этап"
+        },
+        {
+         "label": "Длительность",
+         "key": "duration",
+         "valueType": "ms"
+        }
+       ],
+       "type": "table"
+      },
+      {
+       "snippet": "<p class=\"intro-sub\">",
+       "lhId": "page-0-P",
+       "type": "node",
+       "selector": "div.intro-root > section.intro-hero > div.intro-container > p.intro-sub",
+       "boundingRect": {
+        "height": 132,
+        "top": 471,
+        "left": 24,
+        "bottom": 603,
+        "right": 382,
+        "width": 358
+       },
+       "nodeLabel": "Gliph — блочный редактор заметок со встроенным AI-агентом, базой данных и видже…",
+       "path": "1,HTML,1,BODY,1,DIV,1,SECTION,0,DIV,3,P"
+      }
+     ]
+    }
+   },
+   "lcp-discovery-insight": {
+    "title": "Информация об LCP и связанных запросах",
+    "description": "[Оптимизируйте LCP](https://developer.chrome.com/docs/performance/insights/lcp-discovery): сделайте так, чтобы самое крупное изображение было доступно прямо в HTML-коде, и не используйте отложенную загрузку.",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "legacy-javascript-insight": {
+    "title": "Устаревший код JavaScript",
+    "description": "Полифилы и преобразования позволяют работать с новыми возможностями JavaScript в более старых браузерах. Однако для современных браузеров большинство из них не требуется. Если поддержка более старых браузеров не требуется, возможно стоит изменить процесс сборки JavaScript, чтобы не транспилировать функции [Baseline](https://web.dev/articles/baseline-and-polyfills). Узнайте, [почему большинство сайтов могут использовать код ES6+ без транспилирования](https://developer.chrome.com/docs/performance/insights/legacy-javascript).",
+    "score": 0.5,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Ожидаемая экономия – 12 КиБ",
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js",
+       "wastedBytes": 11807
+      }
+     ]
+    }
+   },
+   "network-dependency-tree-insight": {
+    "title": "Дерево зависимостей в сети",
+    "description": "[Старайтесь избегать цепочек критических запросов.](https://developer.chrome.com/docs/performance/insights/network-dependency-tree) Чтобы ускорить загрузку страницы, сократите количество запросов, уменьшите размер скачиваемых ресурсов или отложите скачивание ненужных ресурсов.",
+    "score": 1,
+    "scoreDisplayMode": "numeric",
+    "metricSavings": {
+     "LCP": 0
+    },
+    "details": {
+     "type": "list",
+     "items": [
+      {
+       "type": "list-section",
+       "value": {
+        "chains": {
+         "470064E42D3C0FE1BBFE60509163ACC9": {
+          "url": "https://getgliph.com/",
+          "navStartToEndTime": 148,
+          "isLongest": true,
+          "transferSize": 18195,
+          "children": {}
+         }
+        },
+        "type": "network-tree",
+        "longestChain": {
+         "duration": 148
+        }
+       }
+      },
+      {
+       "title": "Предварительно подключенные источники",
+       "type": "list-section",
+       "value": {
+        "value": "нет предварительно подключенных источников",
+        "type": "text"
+       },
+       "description": "Подсказки [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) помогают браузеру установить соединение на более ранних этапах загрузки страницы, что экономит время при первом запросе к источнику. Далее перечислены источники, к которым предварительно подключилась страница."
+      },
+      {
+       "description": "Добавьте к самым значимым источникам подсказки для [предварительного подключения](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/), но не более четырех.",
+       "type": "list-section",
+       "title": "Варианты предварительного подключения",
+       "value": {
+        "type": "table",
+        "items": [
+         {
+          "wastedMs": 302,
+          "origin": "https://getgliph.com:8443"
+         }
+        ],
+        "headings": [
+         {
+          "key": "origin",
+          "valueType": "text",
+          "label": "Источник"
+         },
+         {
+          "label": "Приблизительная экономия LCP",
+          "valueType": "ms",
+          "key": "wastedMs"
+         }
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "render-blocking-insight": {
+    "title": "Запросы, блокирующие отрисовку страницы",
+    "description": "Запросы блокируют обработку при первоначальной загрузке страницы. Это может привести к увеличению значения LCP. [Отсрочка или встраивание](https://developer.chrome.com/docs/performance/insights/render-blocking) могут избавить от негативного воздействия этих сетевых запросов.",
+    "score": 0,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Ожидаемая экономия – 540 мс",
+    "metricSavings": {
+     "LCP": 550,
+     "FCP": 550
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "wastedMs": 1658,
+       "url": "https://getgliph.com/_next/static/css/aa51d3654752c8f7.css",
+       "totalBytes": 57364
+      },
+      {
+       "url": "https://getgliph.com/_next/static/css/e126e16a9dd0985c.css",
+       "totalBytes": 5937,
+       "wastedMs": 458
+      },
+      {
+       "totalBytes": 4319,
+       "wastedMs": 158,
+       "url": "https://getgliph.com/_next/static/css/3e8e32504cc9d544.css"
+      }
+     ]
+    }
+   },
+   "third-parties-insight": {
+    "title": "Сторонний код",
+    "description": "Сторонний код может сильно замедлить загрузку страниц сайта. [Сократите и отсрочьте загрузку стороннего кода,](https://developer.chrome.com/docs/performance/insights/third-parties) чтобы ускорить показ своего контента.",
+    "score": 1,
+    "scoreDisplayMode": "numeric",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "viewport-insight": {
+    "title": "Оптимизация области просмотра для мобильных устройств",
+    "description": "Если область просмотра не оптимизирована для мобильных устройств, при касании экрана возможна [задержка до 300 мс](https://developer.chrome.com/docs/performance/insights/viewport).",
+    "score": 1,
+    "scoreDisplayMode": "numeric",
+    "metricSavings": {
+     "INP": 0
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "node": {
+        "nodeLabel": "head > meta",
+        "snippet": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+        "type": "node"
+       }
+      }
+     ]
+    }
+   },
+   "interactive": {
+    "title": "Time to Interactive",
+    "description": "Время загрузки для взаимодействия – показатель, который отражает время, за которое страница полностью подготавливается к взаимодействию с пользователем. Подробнее [о времени загрузки для взаимодействия](https://developer.chrome.com/docs/lighthouse/performance/interactive/)…",
+    "score": 0.45,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "7,8 сек.",
+    "numericValue": 7778
+   },
+   "max-potential-fid": {
+    "title": "Макс. потенц. задержка после первого ввода",
+    "description": "Максимальная потенциальная задержка после первого ввода показывает время выполнения самой длительной задачи. Подробнее [о максимальной потенциальной задержке после первого ввода](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-max-potential-fid/)…",
+    "score": 0.15,
+    "scoreDisplayMode": "numeric",
+    "displayValue": "420 мс",
+    "numericValue": 416
+   },
+   "unminified-css": {
+    "title": "Уменьшите размер кода CSS",
+    "description": "Уменьшив файлы CSS, вы можете сократить объем полезной сетевой нагрузки. Подробнее о том, [как уменьшить файл CSS](https://developer.chrome.com/docs/lighthouse/performance/unminified-css/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "numericValue": 0,
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "opportunity",
+     "items": []
+    }
+   },
+   "unminified-javascript": {
+    "title": "Уменьшите размер кода JavaScript",
+    "description": "Уменьшив файлы JavaScript, вы можете сократить объем полезной нагрузки и время обработки скриптов. Подробнее о том, [как уменьшить файл JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unminified-javascript/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "numericValue": 0,
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "opportunity",
+     "items": []
+    }
+   },
+   "unused-css-rules": {
+    "title": "Удалите неиспользуемый код CSS",
+    "description": "Чтобы сократить расход трафика, удалите ненужные правила из таблиц стилей и используйте отложенную загрузку кода CSS, который не используется в видимой части страницы. Подробнее о том, [как уменьшить объем неиспользуемого кода CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/)…",
+    "score": 0,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Ожидаемая экономия – 55 КиБ",
+    "numericValue": 150,
+    "metricSavings": {
+     "LCP": 150,
+     "FCP": 150
+    },
+    "details": {
+     "type": "opportunity",
+     "items": [
+      {
+       "wastedPercent": 98.85156552623395,
+       "totalBytes": 56786,
+       "wastedBytes": 56134,
+       "url": "https://getgliph.com/_next/static/css/aa51d3654752c8f7.css"
+      }
+     ]
+    }
+   },
+   "unused-javascript": {
+    "title": "Удалите неиспользуемый код JavaScript",
+    "description": "Чтобы сократить расход трафика, удалите неиспользуемый код JavaScript и отложите загрузку скриптов до тех пор, пока они не понадобятся. Подробнее о том, [как удалить неиспользуемый код JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/)…",
+    "score": 0,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Ожидаемая экономия – 348 КиБ",
+    "numericValue": 1800,
+    "metricSavings": {
+     "LCP": 1800,
+     "FCP": 0
+    },
+    "details": {
+     "type": "opportunity",
+     "items": [
+      {
+       "url": "https://getgliph.com/_next/static/chunks/3410-aac18d32b15ca7bd.js",
+       "wastedBytes": 272700,
+       "wastedPercent": 63.70253266035159,
+       "totalBytes": 428084
+      },
+      {
+       "wastedPercent": 48.37709329164999,
+       "url": "https://getgliph.com/_next/static/chunks/1628-22d8d2f9243c121e.js",
+       "wastedBytes": 62612,
+       "totalBytes": 129425
+      },
+      {
+       "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js",
+       "totalBytes": 46296,
+       "wastedPercent": 46.45862209773801,
+       "wastedBytes": 21508
+      }
+     ]
+    }
+   },
+   "total-byte-weight": {
+    "title": "Предотвращение чрезмерной нагрузки на сеть",
+    "description": "Чрезмерная полезная нагрузка на сеть приводит к финансовым затратам пользователей и может замедлять время загрузки контента. Подробнее о том, [как сократить объем полезной нагрузки](https://developer.chrome.com/docs/lighthouse/performance/total-byte-weight/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Общий размер достиг 1 427 КиБ",
+    "numericValue": 1461073,
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "totalBytes": 464179,
+       "url": "https://getgliph.com/logo.png"
+      },
+      {
+       "totalBytes": 442354,
+       "url": "https://getgliph.com/_next/static/chunks/3410-aac18d32b15ca7bd.js"
+      },
+      {
+       "url": "https://getgliph.com/_next/static/chunks/1628-22d8d2f9243c121e.js",
+       "totalBytes": 130023
+      },
+      {
+       "totalBytes": 57364,
+       "url": "https://getgliph.com/_next/static/css/aa51d3654752c8f7.css"
+      },
+      {
+       "totalBytes": 54878,
+       "url": "https://getgliph.com/_next/static/chunks/828fd748-51bb6707a5106c0e.js"
+      },
+      {
+       "totalBytes": 48720,
+       "url": "https://getgliph.com/_next/static/media/inter-latin-wght-normal.6c596dfc.woff2"
+      }
+     ]
+    }
+   },
+   "user-timings": {
+    "title": "Метки и промежутки пользовательского времени",
+    "description": "Используйте User Timing API, чтобы измерить реальную производительность своего приложения во время ключевых моментов взаимодействия с пользователями. Подробнее [о метках пользовательского времени](https://developer.chrome.com/docs/lighthouse/performance/user-timings/)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "bootup-time": {
+    "title": "Время выполнения кода JavaScript",
+    "description": "Рекомендуем сократить время на обработку, компиляцию и выполнение скриптов JS. Для этого вы можете разбить код JS на небольшие фрагменты. Подробнее о том, [как ускорить выполнение скриптов JavaScript](https://developer.chrome.com/docs/lighthouse/performance/bootup-time/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "0,8 сек.",
+    "numericValue": 777.1152,
+    "metricSavings": {
+     "TBT": 450
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "total": 415.2251999999999,
+       "url": "https://getgliph.com/_next/static/chunks/3410-aac18d32b15ca7bd.js",
+       "scripting": 254.1491999999999,
+       "scriptParseCompile": 160.866
+      },
+      {
+       "url": "https://getgliph.com/",
+       "scripting": 12.670800000000002,
+       "total": 283.6488,
+       "scriptParseCompile": 3.4404
+      },
+      {
+       "total": 276.066,
+       "scriptParseCompile": 30.058799999999998,
+       "scripting": 190.5972,
+       "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js"
+      },
+      {
+       "url": "https://getgliph.com/_next/static/chunks/828fd748-51bb6707a5106c0e.js",
+       "scripting": 101.8512000000001,
+       "total": 163.84320000000008,
+       "scriptParseCompile": 20.7156
+      },
+      {
+       "total": 144.11760000000046,
+       "scripting": 2.766,
+       "url": "Unattributable",
+       "scriptParseCompile": 0
+      }
+     ]
+    }
+   },
+   "mainthread-work-breakdown": {
+    "title": "Минимизация работы в основном потоке",
+    "description": "Рекомендуем сократить время на обработку, компиляцию и выполнение скриптов JS. Для этого вы можете разбить код JS на небольшие фрагменты. Подробнее о том, [как минимизировать работу в основном потоке](https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "1,4 сек.",
+    "numericValue": 1403.2679999999996,
+    "metricSavings": {
+     "TBT": 250
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "duration": 578.1167999999996,
+       "group": "scriptEvaluation",
+       "groupLabel": "Script Evaluation"
+      },
+      {
+       "group": "scriptParseCompile",
+       "duration": 303.88919999999996,
+       "groupLabel": "Script Parsing & Compilation"
+      },
+      {
+       "groupLabel": "Style & Layout",
+       "group": "styleLayout",
+       "duration": 278.4012
+      },
+      {
+       "groupLabel": "Other",
+       "group": "other",
+       "duration": 184.66199999999998
+      },
+      {
+       "groupLabel": "Rendering",
+       "duration": 23.564400000000003,
+       "group": "paintCompositeRender"
+      },
+      {
+       "duration": 18.3732,
+       "group": "garbageCollection",
+       "groupLabel": "Garbage Collection"
+      }
+     ]
+    }
+   },
+   "long-tasks": {
+    "title": "Избегайте длительных задач в основном потоке",
+    "description": "Для основного потока создается список самых длительных задач. Это позволяет выявлять главные факторы, которые приводят к задержкам после ввода. Подробнее о том, [как предотвратить появление длительных задач в основном потоке](https://web.dev/articles/optimize-long-tasks)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "displayValue": "Обнаружено 4 длительные задачи",
+    "metricSavings": {
+     "TBT": 250
+    },
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "url": "https://getgliph.com/_next/static/chunks/3410-aac18d32b15ca7bd.js",
+       "duration": 416,
+       "startTime": 8258
+      },
+      {
+       "startTime": 4358,
+       "duration": 112,
+       "url": "https://getgliph.com/_next/static/chunks/828fd748-51bb6707a5106c0e.js"
+      },
+      {
+       "duration": 64,
+       "startTime": 4745,
+       "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js"
+      },
+      {
+       "startTime": 4837,
+       "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js",
+       "duration": 59
+      }
+     ]
+    }
+   },
+   "non-composited-animations": {
+    "title": "Избегайте некомбинированных анимаций",
+    "description": "Некомбинированные анимации могут пропускать кадры и усиливать совокупное смещение макета. Подробнее о том, [как убрать некомбинированные анимации](https://developer.chrome.com/docs/lighthouse/performance/non-composited-animations/)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable",
+    "metricSavings": {
+     "CLS": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "unsized-images": {
+    "title": "Для изображений явным образом заданы атрибуты `width` и `height`.",
+    "description": "Чтобы уменьшить совокупное смещение макета и избежать проблем, связанных со смещением элементов, рекомендуем всегда явным образом задавать ширину и высоту для изображений. Подробнее о том, [как задавать размеры изображений](https://web.dev/articles/optimize-cls#images_without_dimensions)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "metricSavings": {
+     "CLS": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "network-requests": {
+    "title": "Network Requests",
+    "description": "Lists the network requests that were made during page load.",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "resourceSize": 62570,
+       "resourceType": "Document",
+       "finished": true,
+       "sessionTargetType": "page",
+       "mimeType": "text/html",
+       "experimentalFromMainFrame": true,
+       "priority": "VeryHigh",
+       "networkEndTime": 111.96099999547005,
+       "networkRequestTime": 1.4269999861717224,
+       "entity": "getgliph.com",
+       "statusCode": 200,
+       "transferSize": 18195,
+       "rendererStartTime": 0,
+       "url": "https://getgliph.com/",
+       "cache": "none",
+       "protocol": "h2"
+      },
+      {
+       "mimeType": "text/css",
+       "transferSize": 4319,
+       "finished": true,
+       "networkRequestTime": 129.70299997925758,
+       "rendererStartTime": 121.70999997854233,
+       "statusCode": 200,
+       "cache": "none",
+       "isLinkPreload": true,
+       "priority": "VeryHigh",
+       "networkEndTime": 207.30899998545647,
+       "experimentalFromMainFrame": true,
+       "resourceType": "Stylesheet",
+       "entity": "getgliph.com",
+       "sessionTargetType": "page",
+       "resourceSize": 18670,
+       "protocol": "h2",
+       "url": "https://getgliph.com/_next/static/css/3e8e32504cc9d544.css"
+      },
+      {
+       "finished": true,
+       "transferSize": 57364,
+       "statusCode": 200,
+       "mimeType": "text/css",
+       "experimentalFromMainFrame": true,
+       "sessionTargetType": "page",
+       "isLinkPreload": true,
+       "priority": "VeryHigh",
+       "entity": "getgliph.com",
+       "networkEndTime": 277.13199999928474,
+       "resourceType": "Stylesheet",
+       "resourceSize": 366587,
+       "networkRequestTime": 130.40299999713898,
+       "protocol": "h2",
+       "cache": "none",
+       "rendererStartTime": 122.31799998879433,
+       "url": "https://getgliph.com/_next/static/css/aa51d3654752c8f7.css"
+      },
+      {
+       "networkEndTime": 238.99899998307228,
+       "sessionTargetType": "page",
+       "priority": "VeryHigh",
+       "statusCode": 200,
+       "mimeType": "text/css",
+       "finished": true,
+       "url": "https://getgliph.com/_next/static/css/e126e16a9dd0985c.css",
+       "transferSize": 5937,
+       "entity": "getgliph.com",
+       "protocol": "h2",
+       "rendererStartTime": 122.5,
+       "cache": "none",
+       "resourceSize": 26001,
+       "experimentalFromMainFrame": true,
+       "isLinkPreload": true,
+       "networkRequestTime": 130.52300000190735,
+       "resourceType": "Stylesheet"
+      },
+      {
+       "experimentalFromMainFrame": true,
+       "priority": "Low",
+       "transferSize": 464179,
+       "rendererStartTime": 135.02099999785423,
+       "statusCode": 200,
+       "finished": true,
+       "entity": "getgliph.com",
+       "mimeType": "image/png",
+       "networkEndTime": 260.8240000009537,
+       "resourceSize": 463039,
+       "isLinkPreload": true,
+       "protocol": "h2",
+       "resourceType": "Image",
+       "url": "https://getgliph.com/logo.png",
+       "networkRequestTime": 148.88899996876717,
+       "cache": "none",
+       "sessionTargetType": "page"
+      },
+      {
+       "priority": "Low",
+       "resourceType": "Image",
+       "resourceSize": 24622,
+       "cache": "none",
+       "rendererStartTime": 135.33999997377396,
+       "mimeType": "image/png",
+       "statusCode": 200,
+       "finished": true,
+       "networkEndTime": 251.12999999523163,
+       "transferSize": 25760,
+       "experimentalFromMainFrame": true,
+       "protocol": "h2",
+       "isLinkPreload": true,
+       "entity": "getgliph.com",
+       "networkRequestTime": 150.5620000064373,
+       "url": "https://getgliph.com/big-logo.png",
+       "sessionTargetType": "page"
+      }
+     ]
+    }
+   },
+   "network-rtt": {
+    "title": "Время прохождения сигнала сети",
+    "description": "Время прохождения сигнала сети (RTT) напрямую влияет на производительность сайта. Высокое значение этого показателя может означать, что необходимо использовать серверы, которые находятся ближе к пользователю. Подробнее [о времени прохождения сигнала](https://hpbn.co/primer-on-latency-and-bandwidth/)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "displayValue": "0 мс",
+    "numericValue": 1.6334400000000002,
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "rtt": 1.6334400000000002,
+       "origin": "https://getgliph.com:8443"
+      },
+      {
+       "rtt": 0.007851138839734024,
+       "origin": "https://getgliph.com"
+      }
+     ]
+    }
+   },
+   "network-server-latency": {
+    "title": "Задержка со стороны сервера",
+    "description": "Задержки со стороны сервера могут влиять на скорость загрузки страниц. Высокое время реакции сервера говорит о его перегруженности или недостаточной производительности. Подробнее [о времени ответа сервера](https://hpbn.co/primer-on-web-performance/#analyzing-the-resource-waterfall)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "displayValue": "10 мс",
+    "numericValue": 8,
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "origin": "https://getgliph.com",
+       "serverResponseTime": 8
+      },
+      {
+       "origin": "https://getgliph.com:8443",
+       "serverResponseTime": 2
+      }
+     ]
+    }
+   },
+   "main-thread-tasks": {
+    "title": "Tasks",
+    "description": "Lists the toplevel main thread tasks that executed during page load.",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "duration": 22.008,
+       "startTime": 117.491
+      },
+      {
+       "duration": 6.797,
+       "startTime": 140.402
+      },
+      {
+       "startTime": 204.043,
+       "duration": 11.586
+      },
+      {
+       "startTime": 237.285,
+       "duration": 8.158
+      },
+      {
+       "startTime": 266.933,
+       "duration": 10.404
+      },
+      {
+       "duration": 6.885,
+       "startTime": 278.479
+      }
+     ]
+    }
+   },
+   "diagnostics": {
+    "title": "Diagnostics",
+    "description": "Collection of useful page vitals.",
+    "score": 1,
+    "scoreDisplayMode": "informative"
+   },
+   "metrics": {
+    "title": "Metrics",
+    "description": "Collects all available metrics.",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "numericValue": 7778
+   },
+   "screenshot-thumbnails": {
+    "title": "Screenshot Thumbnails",
+    "description": "This is what the load of your site looked like.",
+    "score": 1,
+    "scoreDisplayMode": "informative"
+   },
+   "final-screenshot": {
+    "title": "Final Screenshot",
+    "description": "The last screenshot captured of the pageload.",
+    "score": 1,
+    "scoreDisplayMode": "informative"
+   },
+   "script-treemap-data": {
+    "title": "Script Treemap Data",
+    "description": "Used for treemap app",
+    "score": 1,
+    "scoreDisplayMode": "informative"
+   },
+   "resource-summary": {
+    "title": "Resources Summary",
+    "description": "Aggregates all network requests and groups them by type",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "resourceType": "total",
+       "requestCount": 25,
+       "transferSize": 1461073,
+       "label": "Всего"
+      },
+      {
+       "transferSize": 815992,
+       "requestCount": 15,
+       "label": "Скрипт",
+       "resourceType": "script"
+      },
+      {
+       "transferSize": 489939,
+       "requestCount": 2,
+       "resourceType": "image",
+       "label": "Изображение"
+      },
+      {
+       "transferSize": 67932,
+       "requestCount": 2,
+       "resourceType": "font",
+       "label": "Шрифт"
+      },
+      {
+       "requestCount": 3,
+       "transferSize": 67620,
+       "label": "Таблица стилей",
+       "resourceType": "stylesheet"
+      },
+      {
+       "resourceType": "document",
+       "label": "Документ",
+       "transferSize": 18195,
+       "requestCount": 1
+      }
+     ]
+    }
+   },
+   "redirects": {
+    "title": "Избегайте большого количества переадресаций",
+    "description": "Переадресации могут стать причиной дополнительных задержек при загрузке страницы. Подробнее о том, [как избежать переадресаций страниц](https://developer.chrome.com/docs/lighthouse/performance/redirects/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "numericValue": 0,
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "opportunity",
+     "items": []
+    }
+   },
+   "server-response-time": {
+    "title": "Время до получения первого байта от сервера допустимое",
+    "description": "Время ответа сервера для основного документа должно быть небольшим, так как все прочие запросы зависят от этого показателя. Подробнее [о времени до получения первого байта](https://developer.chrome.com/docs/lighthouse/performance/time-to-first-byte/)…",
+    "score": 1,
+    "scoreDisplayMode": "metricSavings",
+    "displayValue": "Загрузка корневого документа заняла 10 мс",
+    "numericValue": 7,
+    "metricSavings": {
+     "LCP": 0,
+     "FCP": 0
+    },
+    "details": {
+     "type": "opportunity",
+     "items": [
+      {
+       "responseTime": 7,
+       "url": "https://getgliph.com/"
+      }
+     ]
+    }
+   },
+   "layout-shifts": {
+    "title": "Устраните большие смещения макета",
+    "description": "Это самые значительные смещения макета страницы. Каждый пункт таблицы относится к одному сдвигу и показывает, какой элемент затронут сильнее всего. Под пунктами таблицы приведены возможные причины смещения макета. Некоторые из приведенных случаев могли быть упущены при расчете показателя CLS, так как использовалась [обработка методом окна](https://web.dev/articles/cls#what_is_cls). Узнайте, [как уменьшить CLS](https://web.dev/articles/optimize-cls).",
+    "score": null,
+    "scoreDisplayMode": "notApplicable",
+    "metricSavings": {
+     "CLS": 0
+    },
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "accesskeys": {
+    "title": "`[accesskey]`: значения уникальны",
+    "description": "Клавиши доступа позволяют быстро перейти к нужной части страницы. Для удобства навигации на каждую клавишу должно быть назначено только одно действие. Подробнее [о клавишах доступа](https://dequeuniversity.com/rules/axe/4.13/accesskeys)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-allowed-attr": {
+    "title": "Атрибуты `[aria-*]` соответствуют своим ролям",
+    "description": "Каждая `role` ARIA поддерживает определенный набор атрибутов `aria-*`. Неверно присвоенные атрибуты `aria-*` будут недействительны. Подробнее о том, [как сопоставлять атрибуты ARIA с их ролями](https://dequeuniversity.com/rules/axe/4.13/aria-allowed-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-command-name": {
+    "title": "У элементов `button`, `link` и `menuitem` есть названия, доступные программам чтения с экрана",
+    "description": "Если у элемента нет названия, доступного программам чтения с экрана, пользователи услышат его общее название и не поймут, для чего он нужен. Подробнее о том, [как сделать элементы команд более доступными](https://dequeuniversity.com/rules/axe/4.13/aria-command-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-conditional-attr": {
+    "title": "Атрибуты ARIA используются так, как указано для роли элемента",
+    "description": "Использовать некоторые атрибуты ARIA в элементе можно только при определенных условиях. Подробнее [об условных атрибутах ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-conditional-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-deprecated-role": {
+    "title": "Устаревшие роли ARIA не использовались",
+    "description": "Функции специальных возможностей могут некорректно обрабатывать устаревшие роли ARIA. Подробнее [об устаревших ролях ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-deprecated-role)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-dialog-name": {
+    "title": "У элементов с атрибутом `role=\"dialog\"` или `role=\"alertdialog\"` есть доступные названия",
+    "description": "Если у элементов диалогового окна ARIA нет доступных имен, пользователи программ чтения с экрана могут не понимать назначение этих элементов. Подробнее о том, [как сделать элементы диалогового окна ARIA более доступными](https://dequeuniversity.com/rules/axe/4.13/aria-dialog-name)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-hidden-body": {
+    "title": "Элемент `<body>` в документе не содержит атрибут `[aria-hidden=\"true\"]`",
+    "description": "Программы чтения с экрана и другие технологии специальных возможностей могут работать некорректно, если для `<body>` задан атрибут `aria-hidden=\"true\"`. Подробнее о том, [как `aria-hidden` влияет на элемент body](https://dequeuniversity.com/rules/axe/4.13/aria-hidden-body)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-hidden-focus": {
+    "title": "Элементы, к которым применен атрибут `[aria-hidden=\"true\"]`, не содержат активных дочерних элементов",
+    "description": "Если для родительского элемента задан атрибут `[aria-hidden=\"true\"]`, то все его фокусируемые потомки становятся недоступны для программ чтения с экрана и других технологий специальных возможностей. Подробнее о том, [какое влияние `aria-hidden` оказывает на фокусируемые элементы](https://dequeuniversity.com/rules/axe/4.13/aria-hidden-focus)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-input-field-name": {
+    "title": "У полей ввода ARIA есть доступные названия",
+    "description": "Если у поля ввода нет названия, доступного программам чтения с экрана, пользователи услышат его общее название и не поймут, для чего оно нужно. Подробнее [о ярлыках для полей ввода](https://dequeuniversity.com/rules/axe/4.13/aria-input-field-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-meter-name": {
+    "title": "У элементов `meter` ARIA есть названия, доступные программам чтения с экрана",
+    "description": "Если у элемента счетчика нет названия, доступного программам чтения с экрана, пользователи услышат только общее название и не поймут, для чего он нужен. Подробнее о том, [как присваивать названия элементам \"`meter`\"](https://dequeuniversity.com/rules/axe/4.13/aria-meter-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-progressbar-name": {
+    "title": "У элементов `progressbar` ARIA есть названия, доступные программам чтения с экрана",
+    "description": "Если у элемента `progressbar` нет названия, доступного программам чтения с экрана, пользователи услышат только его общее название и не поймут, для чего он нужен. Подробнее о том, [как присваивать ярлыки элементам `progressbar`](https://dequeuniversity.com/rules/axe/4.13/aria-progressbar-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-prohibited-attr": {
+    "title": "В элементах используются только разрешенные атрибуты ARIA",
+    "description": "Если атрибуты ARIA используются в ролях, для которых они запрещены, пользователи специальных возможностей могут не получать важную информацию. Подробнее [о запрещенных ролях ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-prohibited-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-required-attr": {
+    "title": "У элементов `[role]` есть все необходимые атрибуты `[aria-*]`",
+    "description": "К некоторым ролям ARIA необходимо добавлять атрибуты, описывающие состояние элемента для программ чтения с экрана. Подробнее [о ролях и необходимых атрибутах](https://dequeuniversity.com/rules/axe/4.13/aria-required-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-required-children": {
+    "title": "В элементах с ролью ARIA `[role]` присутствуют все обязательные дочерние элементы, которые должны содержать определенный элемент `[role]`.",
+    "description": "Указав роль ARIA для родительского элемента, в некоторых случаях вы должны также задать определенные роли его дочерним элементам. Если этого не сделать, связанные с ARIA функции специальных возможностей будут работать неправильно. Подробнее [о ролях и необходимых дочерних элементах](https://dequeuniversity.com/rules/axe/4.13/aria-required-children)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-required-parent": {
+    "title": "Элементы с атрибутом `[role]` содержатся в своих родительских элементах",
+    "description": "Некоторые дочерние элементы с ролями ARIA должны содержаться внутри определенных родительских элементов, иначе связанные с ними функции специальных возможностей будут работать неправильно. Подробнее [о ролях ARIA и необходимых родительских элементах](https://dequeuniversity.com/rules/axe/4.13/aria-required-parent)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-roles": {
+    "title": "Недействительные значения атрибутов `[role]` отсутствуют",
+    "description": "Значения ролей ARIA должны быть допустимыми, иначе связанные с ними функции специальных возможностей будут работать неправильно. Подробнее о том, [какие роли ARIA можно указывать](https://dequeuniversity.com/rules/axe/4.13/aria-roles)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-text": {
+    "title": "У элементов атрибута `role=text` нет фокусируемых потомков",
+    "description": "Если добавить отделенный разметкой атрибут `role=text` перед текстовым узлом и после него, VoiceOver будет определять текст как одну фразу, но фокусируемые потомки не будут озвучиваться. Подробнее [об атрибуте `role=text`](https://dequeuniversity.com/rules/axe/4.13/aria-text)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-toggle-field-name": {
+    "title": "У переключателей ARIA есть доступные названия",
+    "description": "Если у переключателя нет названия, доступного программам чтения с экрана, пользователи услышат его общее название и не поймут, для чего он нужен. Подробнее [о переключателях](https://dequeuniversity.com/rules/axe/4.13/aria-toggle-field-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-tooltip-name": {
+    "title": "У элементов `tooltip` ARIA есть названия, доступные программам чтения с экрана",
+    "description": "Если у элемента подсказки нет названия, доступного программам чтения с экрана, пользователи услышат только его общее название и не поймут, для чего он нужен. Подробнее о том, [как присваивать названия элементам \"`tooltip`\"](https://dequeuniversity.com/rules/axe/4.13/aria-tooltip-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-treeitem-name": {
+    "title": "У элементов `treeitem` ARIA есть названия, доступные программам чтения с экрана",
+    "description": "Если у элемента `treeitem` нет названия, доступного программам чтения с экрана, пользователи услышат только его общее название и не поймут, для чего он нужен. Подробнее [о присваивании ярлыков элементам `treeitem`](https://dequeuniversity.com/rules/axe/4.13/aria-treeitem-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-valid-attr-value": {
+    "title": "Недействительные значения атрибутов `[aria-*]` отсутствуют",
+    "description": "Технологии специальных возможностей, например программы чтения с экрана, не могут распознавать атрибуты ARIA с недопустимыми значениями. Подробнее [о существующих значениях для атрибутов ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-valid-attr-value)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "aria-valid-attr": {
+    "title": "Атрибуты `[aria-*]` действительны и написаны без ошибок",
+    "description": "Технологии специальных возможностей, например программы чтения с экрана, не могут распознавать атрибуты ARIA с недопустимыми названиями. Подробнее [о существующих атрибутах ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-valid-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "button-name": {
+    "title": "Названия кнопок доступны программам чтения с экрана",
+    "description": "Если у кнопки нет названия, доступного программам чтения с экрана, пользователи услышат слово \"кнопка\", но не поймут, для чего она нужна. Подробнее о том, [как сделать кнопки более доступными](https://dequeuniversity.com/rules/axe/4.13/button-name)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "bypass": {
+    "title": "Страница содержит заголовок, ссылку для пропуска контента или указание региона",
+    "description": "Чтобы пользователям было проще перемещаться по странице с помощью клавиатуры, добавьте возможность пропускать повторяющийся контент. Подробнее [о пропускаемых блоках данных](https://dequeuniversity.com/rules/axe/4.13/bypass)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "color-contrast": {
+    "title": "Цвета фона и переднего плана недостаточно контрастны",
+    "description": "Многие пользователи не видят текст с низкой контрастностью, или им сложно его воспринимать. Подробнее о том, [как обеспечить достаточный цветовой контраст](https://dequeuniversity.com/rules/axe/4.13/color-contrast)…",
+    "score": 0,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "node": {
+        "nodeLabel": "EN",
+        "snippet": "<button type=\"button\" class=\"lang-switch-opt\" aria-pressed=\"false\">",
+        "type": "node"
+       }
+      },
+      {
+       "node": {
+        "nodeLabel": "Политика конфиденциальности",
+        "snippet": "<a href=\"/legal/privacy#cookies\" class=\"cookie-banner-link\">",
+        "type": "node"
+       }
+      },
+      {
+       "node": {
+        "nodeLabel": "Принять",
+        "snippet": "<button class=\"cookie-btn cookie-btn--primary\">",
+        "type": "node"
+       }
+      }
+     ]
+    }
+   },
+   "definition-list": {
+    "title": "Элементы `<dl>` содержат только правильно размещенные группы `<dt>` и `<dd>` и элементы `<script>`, `<template>` или `<div>`.",
+    "description": "Если списки определений размечены с ошибками, программы чтения с экрана могут озвучивать их некорректно. Подробнее о том, [как правильно создавать списки определений](https://dequeuniversity.com/rules/axe/4.13/definition-list)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "dlitem": {
+    "title": "Элементы списков определений расположены внутри элементов `<dl>`",
+    "description": "Чтобы программы чтения с экрана правильно озвучивали элементы списков определений `<dt>` и `<dd>`, они должны располагаться внутри родительского элемента `<dl>`. Подробнее о том, [как правильно создавать списки определений](https://dequeuniversity.com/rules/axe/4.13/dlitem)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "document-title": {
+    "title": "Документ содержит элемент `<title>`",
+    "description": "Название (элемент title) нужно для того, чтобы программы чтения с экрана могли озвучивать название страницы. Также оно появляется в результатах поиска и позволяет определять, соответствует ли сайт запросу. Подробнее [о названиях документов](https://dequeuniversity.com/rules/axe/4.13/document-title)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "duplicate-id-aria": {
+    "title": "Идентификаторы ARIA уникальны",
+    "description": "Значение идентификатора ARIA должно быть уникальным, поскольку технологии специальных возможностей могут игнорировать повторяющиеся идентификаторы. Подробнее о том, [как убрать копии идентификаторов ARIA](https://dequeuniversity.com/rules/axe/4.13/duplicate-id-aria)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "form-field-multiple-labels": {
+    "title": "В форме нет полей с несколькими ярлыками",
+    "description": "Когда программы чтения с экрана или другие технологии специальных возможностей обнаруживают поля формы с несколькими ярлыками, они озвучивают только первый, последний или все ярлыки. Это может запутать пользователей. Подробнее о том, [как использовать ярлыки формы](https://dequeuniversity.com/rules/axe/4.13/form-field-multiple-labels)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "frame-title": {
+    "title": "У элементов `<frame>` и `<iframe>` есть атрибут title",
+    "description": "Чтобы программы чтения с экрана могли описывать содержимое фреймов, у каждого из них должно быть название (атрибут title). Подробнее [о названиях фреймов](https://dequeuniversity.com/rules/axe/4.13/frame-title)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "heading-order": {
+    "title": "Элементы заголовков расположены последовательно в порядке убывания",
+    "description": "Когда заголовки расположены в правильном порядке и между их уровнями нет пропусков, они образуют семантическую структуру страницы. Благодаря этому навигация с помощью технологий специальных возможностей становится проще и понятнее. Подробнее [о расположении заголовков](https://dequeuniversity.com/rules/axe/4.13/heading-order)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "html-has-lang": {
+    "title": "Элемент `<html>` содержит атрибут `[lang]`",
+    "description": "Если для страницы не указан атрибут `lang`, программа чтения с экрана предполагает, что текст приведен на языке по умолчанию, выбранном пользователем при установке программы. Если текст написан на другом языке, он может озвучиваться некорректно. Подробнее [об атрибуте `lang`](https://dequeuniversity.com/rules/axe/4.13/html-has-lang)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "html-lang-valid": {
+    "title": "Для элемента `<html>` указано действительное значение атрибута `[lang]`",
+    "description": "Чтобы программы чтения с экрана правильно озвучивали текст, укажите допустимый [языковой тег BCP 47](https://www.w3.org/International/questions/qa-choosing-language-tags#question). Подробнее о том, [как использовать атрибут `lang`](https://dequeuniversity.com/rules/axe/4.13/html-lang-valid)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "html-xml-lang-mismatch": {
+    "title": "У элемента `<html>` есть атрибут `[xml:lang]`, основной язык которого совпадает с языком в атрибуте `[lang]`",
+    "description": "Если для веб-страницы не указан подходящий язык, программа чтения с экрана может озвучивать текст некорректно. Подробнее [об атрибуте `lang`](https://dequeuniversity.com/rules/axe/4.13/html-xml-lang-mismatch)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "image-alt": {
+    "title": "У элементов изображений есть атрибут `[alt]`",
+    "description": "В информационных элементах должен содержаться короткий и ясный альтернативный текст. Если элемент декоративный, то атрибут alt для него можно оставить пустым. Подробнее [об атрибуте `alt`](https://dequeuniversity.com/rules/axe/4.13/image-alt)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "input-button-name": {
+    "title": "Текст кнопок ввода легко различим",
+    "description": "Добавьте к кнопкам ввода легко различимый текст, чтобы пользователи программы чтения с экрана могли понимать их назначение. Подробнее [о кнопках ввода](https://dequeuniversity.com/rules/axe/4.13/input-button-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "input-image-alt": {
+    "title": "Элементы `<input type=\"image\">` содержат атрибут `[alt]`",
+    "description": "Если в элементе `<input>` в качестве кнопки используется изображение, добавьте альтернативный текст, описывающий назначение этой кнопки для программ чтения с экрана. Подробнее [об альтернативном тексте для изображения в элементе ввода](https://dequeuniversity.com/rules/axe/4.13/input-image-alt)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "label": {
+    "title": "Элементам формы присвоены соответствующие ярлыки",
+    "description": "Ярлыки нужны для того, чтобы программы чтения с экрана и другие технологии специальных возможностей могли правильно озвучивать элементы управления формой. Подробнее [о ярлыках для элементов формы](https://dequeuniversity.com/rules/axe/4.13/label)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "link-in-text-block": {
+    "title": "Ссылки нельзя различить, не опираясь на цвет",
+    "description": "Многие пользователи не видят текст с низкой контрастностью, или им сложно его воспринимать. Хорошо различимый текст ссылки облегчает работу людям со слабым зрением. Подробнее о том, [как сделать ссылку хорошо различимой](https://dequeuniversity.com/rules/axe/4.13/link-in-text-block)…",
+    "score": 0,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "node": {
+        "nodeLabel": "Политика конфиденциальности",
+        "snippet": "<a href=\"/legal/privacy#cookies\" class=\"cookie-banner-link\">",
+        "type": "node"
+       }
+      }
+     ]
+    }
+   },
+   "link-name": {
+    "title": "Текст ссылок различим для программ чтения с экрана",
+    "description": "Текст ссылок (как и альтернативный текст для изображений, используемых в качестве ссылок) должен быть уникальным, фокусируемым и доступным для программ чтения с экрана. Подробнее о том, [как сделать ссылки доступными для программ с технологиями специальных возможностей](https://dequeuniversity.com/rules/axe/4.13/link-name)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "list": {
+    "title": "В списках содержатся только элементы `<li>` и элементы поддержки скрипта (`<script>` и `<template>`)",
+    "description": "Используйте правильную структуру кода при верстке списков, иначе программы чтения с экрана будут некорректно их озвучивать. Подробнее [о правильной структуре списков](https://dequeuniversity.com/rules/axe/4.13/list)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "listitem": {
+    "title": "Элементы списка (`<li>`) расположены внутри родительских элементов `<ul>`, `<ol>` или `<menu>`",
+    "description": "Чтобы программы чтения с экрана правильно озвучивали списки, элементы `<li>` должны располагаться внутри родительских элементов `<ul>`, `<ol>` или `<menu>`. Подробнее [о правильной структуре списков](https://dequeuniversity.com/rules/axe/4.13/listitem)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "meta-refresh": {
+    "title": "В документе не используется метатег `<meta http-equiv=\"refresh\">`",
+    "description": "Когда страница обновляется автоматически, фокус, используемый программами для чтения с экрана, перемещается в верхнюю часть. Это может мешать работе пользователей и вызывать у них негативные эмоции. Подробнее [о метатеге refresh](https://dequeuniversity.com/rules/axe/4.13/meta-refresh)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "meta-viewport": {
+    "title": "Атрибут `[user-scalable=\"no\"]` не используется в элементе `<meta name=\"viewport\">`, и значение атрибута `[maximum-scale]` больше или равно 5",
+    "description": "Не отключайте масштабирование. Эта функция помогает слабовидящим пользователям читать информацию на веб-страницах. Подробнее [о метатеге viewport](https://dequeuniversity.com/rules/axe/4.13/meta-viewport)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "object-alt": {
+    "title": "У элементов `<object>` есть альтернативный текст",
+    "description": "Чтобы программы чтения с экрана могли зачитывать содержимое элементов `<object>`, добавьте к ним альтернативный текст. Подробнее [об альтернативном тексте для элементов `object`](https://dequeuniversity.com/rules/axe/4.13/object-alt)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "select-name": {
+    "title": "У элементов select есть связанные элементы label",
+    "description": "Элементы формы без эффективных меток могут доставить неудобства пользователям программы чтения с экрана. Подробнее [об элементе `select`](https://dequeuniversity.com/rules/axe/4.13/select-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "skip-link": {
+    "title": "Ссылки для пропуска контента фокусируемые",
+    "description": "Добавьте ссылку для пропуска контента, чтобы пользователи могли сразу перейти к основному контенту. [Подробнее…](https://dequeuniversity.com/rules/axe/4.13/skip-link)",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "tabindex": {
+    "title": "Нет элементов со значением атрибута `[tabindex]` выше 0",
+    "description": "Значение больше 0 подразумевает явное указание порядка навигации. Это может создавать трудности для пользователей с ограниченными возможностями. Подробнее [об атрибуте `tabindex`](https://dequeuniversity.com/rules/axe/4.13/tabindex)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "target-size": {
+    "title": "Области прикосновения и расстояние между ними достаточно большие",
+    "description": "Области прикосновения должны быть достаточно большими, как и расстояние между ними. Так пользователям, у которых могут возникнуть трудности с нажатием на небольшие элементы управления, будет проще выбрать нужный. Подробнее [об областях прикосновения](https://dequeuniversity.com/rules/axe/4.13/target-size)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "td-headers-attr": {
+    "title": "Ячейки внутри элемента `<table>`, в которых используется атрибут `[headers]`, ссылаются на ячейки той же таблицы.",
+    "description": "Чтобы пользователям было проще перемещаться по таблицам с помощью программ чтения с экрана, убедитесь, что ячейки (элементы `<td>`) с атрибутом `[headers]` ссылаются только на другие ячейки в той же таблице. Подробнее [об атрибуте `headers`](https://dequeuniversity.com/rules/axe/4.13/td-headers-attr)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "th-has-data-cells": {
+    "title": "В элементах `<th>` и элементах с атрибутом `[role=\"columnheader\"/\"rowheader\"]` есть описываемые ими ячейки с данными",
+    "description": "Чтобы пользователям было проще перемещаться по таблицам с помощью программ чтения с экрана, убедитесь, что все заголовки в таблицах ссылаются на тот или иной набор ячеек. Подробнее [о заголовках таблиц](https://dequeuniversity.com/rules/axe/4.13/th-has-data-cells)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "valid-lang": {
+    "title": "Недействительные значения атрибутов `[lang]` отсутствуют",
+    "description": "Чтобы программы чтения с экрана правильно озвучивали текст, укажите для элементов допустимый [языковой тег BCP 47](https://www.w3.org/International/questions/qa-choosing-language-tags#question). Подробнее о том, [как использовать атрибут `lang`](https://dequeuniversity.com/rules/axe/4.13/valid-lang)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "video-caption": {
+    "title": "Элементы `<video>` содержат элемент `<track>` с атрибутом `[kind=\"captions\"]`",
+    "description": "Чтобы информация, озвучиваемая в видео, была доступна людям с нарушениями слуха, добавьте субтитры. Подробнее [о субтитрах в видео](https://dequeuniversity.com/rules/axe/4.13/video-caption)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "landmark-one-main": {
+    "title": "В документе есть ориентир main",
+    "description": "Если добавить ориентир main, пользователям программы чтения с экрана будет удобнее перемещаться по веб-странице. Подробнее [об ориентирах](https://dequeuniversity.com/rules/axe/4.13/landmark-one-main)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "autocomplete-valid": {
+    "title": "Атрибуты `autocomplete` используются правильно",
+    "description": "Значения атрибута `autocomplete` должны быть действительными и правильно применены, чтобы программы чтения с экрана работали корректно. Подробнее [о допустимых значениях атрибута autocomplete](https://dequeuniversity.com/rules/axe/4.13/autocomplete-valid)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "presentation-role-conflict": {
+    "title": "У элементов с атрибутом `role=\"none\"` (или `role=\"presentation\"`) нет конфликтов",
+    "description": "В некоторых случаях семантическая роль элемента с атрибутом `role=\"none\"` (или `role=\"presentation\"`) не распознается как none (или presentation). Чтобы элемент оставался исключенным из дерева доступности, не добавляйте к нему глобальные атрибуты ARIA и не делайте его фокусируемым. Подробнее [о конфликте с ролью presentation](https://dequeuniversity.com/rules/axe/4.13/presentation-role-conflict)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "svg-img-alt": {
+    "title": "У SVG-элементов с ролью `img` есть доступный альтернативный текст",
+    "description": "У SVG-элементов с ролью `img`, `graphics-document` или `graphics-symbol` должен быть доступный альтернативный текст. Подробнее [об альтернативном тексте для SVG](https://dequeuniversity.com/rules/axe/4.13/svg-img-alt)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "focusable-controls": {
+    "title": "Interactive controls are keyboard focusable",
+    "description": "Custom interactive controls are keyboard focusable and display a focus indicator. [Learn how to make custom controls focusable](https://developer.chrome.com/docs/lighthouse/accessibility/focusable-controls/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "interactive-element-affordance": {
+    "title": "Interactive elements indicate their purpose and state",
+    "description": "Interactive elements, such as links and buttons, should indicate their state and be distinguishable from non-interactive elements. [Learn how to decorate interactive elements with affordance hints](https://developer.chrome.com/docs/lighthouse/accessibility/interactive-element-affordance/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "logical-tab-order": {
+    "title": "The page has a logical tab order",
+    "description": "Tabbing through the page follows the visual layout. Users cannot focus elements that are offscreen. [Learn more about logical tab ordering](https://developer.chrome.com/docs/lighthouse/accessibility/logical-tab-order/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "visual-order-follows-dom": {
+    "title": "Visual order on the page follows DOM order",
+    "description": "DOM order matches the visual order, improving navigation for assistive technology. [Learn more about DOM and visual ordering](https://developer.chrome.com/docs/lighthouse/accessibility/visual-order-follows-dom/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "focus-traps": {
+    "title": "User focus is not accidentally trapped in a region",
+    "description": "A user can tab into and out of any control or region without accidentally trapping their focus. [Learn how to avoid focus traps](https://developer.chrome.com/docs/lighthouse/accessibility/focus-traps/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "managed-focus": {
+    "title": "The user's focus is directed to new content added to the page",
+    "description": "If new content, such as a dialog, is added to the page, the user's focus is directed to it. [Learn how to direct focus to new content](https://developer.chrome.com/docs/lighthouse/accessibility/managed-focus/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "use-landmarks": {
+    "title": "HTML5 landmark elements are used to improve navigation",
+    "description": "Landmark elements (`<main>`, `<nav>`, etc.) are used to improve the keyboard navigation of the page for assistive technology. [Learn more about landmark elements](https://developer.chrome.com/docs/lighthouse/accessibility/use-landmarks/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "offscreen-content-hidden": {
+    "title": "Offscreen content is hidden from assistive technology",
+    "description": "Offscreen content is hidden with display: none or aria-hidden=true. [Learn how to properly hide offscreen content](https://developer.chrome.com/docs/lighthouse/accessibility/offscreen-content-hidden/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "custom-controls-labels": {
+    "title": "Custom controls have associated labels",
+    "description": "Custom interactive controls have associated labels, provided by aria-label or aria-labelledby. [Learn more about custom controls and labels](https://developer.chrome.com/docs/lighthouse/accessibility/custom-controls-labels/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "custom-controls-roles": {
+    "title": "Custom controls have ARIA roles",
+    "description": "Custom interactive controls have appropriate ARIA roles. [Learn how to add roles to custom controls](https://developer.chrome.com/docs/lighthouse/accessibility/custom-control-roles/).",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   },
+   "table-duplicate-name": {
+    "title": "В таблицах указаны разные значения для атрибута summary и элемента `<caption>`",
+    "description": "Атрибут summary должен описывать структуру таблицы, а в элементе `<caption>` требуется указать экранный заголовок. Точная разметка таблиц упрощает работу пользователей программ чтения с экрана. Подробнее [об атрибуте summary и элементе caption](https://dequeuniversity.com/rules/axe/4.13/table-duplicate-name)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "empty-heading": {
+    "title": "Во всех элементах заголовка есть содержимое",
+    "description": "Если у заголовка нет содержимого или текст недоступен, пользователи программы чтения с экрана не могут получить информацию о структуре страницы. Подробнее [о заголовках](https://dequeuniversity.com/rules/axe/4.13/empty-heading)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "aria-allowed-role": {
+    "title": "Роли ARIA назначены только совместимым элементам",
+    "description": "Многим элементам HTML разрешается назначать только определенные роли ARIA. Если роли ARIA используются неподходящим способом, это может ухудшить доступность веб-страницы. Подробнее [о ролях ARIA](https://dequeuniversity.com/rules/axe/4.13/aria-allowed-role)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "image-redundant-alt": {
+    "title": "У изображений нет атрибутов `[alt]`, представляющих собой избыточный текст",
+    "description": "В информационных элементах должен содержаться короткий и ясный альтернативный текст. Если он будет повторять текст рядом со ссылкой или изображением, то одна и та же фраза может прозвучать дважды, что собьет с толку пользователей программы чтения с экрана. Подробнее [об атрибуте `alt`](https://dequeuniversity.com/rules/axe/4.13/image-redundant-alt)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "identical-links-same-purpose": {
+    "title": "У одинаковых ссылок одно назначение",
+    "description": "У ссылок с одним назначением должно быть одинаковое описание. Так пользователь поймет, куда они ведут, и решит, следует ли по ним переходить. Подробнее [об одинаковых ссылках](https://dequeuniversity.com/rules/axe/4.13/identical-links-same-purpose)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "label-content-name-mismatch": {
+    "title": "У элементов с видимыми текстовыми метками есть подходящие доступные названия",
+    "description": "Видимые текстовые метки, которые не совпадают с доступными названиями, могут запутать пользователей программ чтения с экрана. Подробнее [о доступных названиях](https://dequeuniversity.com/rules/axe/4.13/label-content-name-mismatch)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "table-fake-caption": {
+    "title": "Для обозначения подписей в таблицах используется элемент `<caption>` вместо ячеек с атрибутом `[colspan]`",
+    "description": "Чтобы пользователям было проще перемещаться по таблицам с помощью программ чтения с экрана, не используйте в таблицах ячейки с атрибутом `[colspan]` для обозначения подписей. Подробнее [о подписях](https://dequeuniversity.com/rules/axe/4.13/table-fake-caption)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "td-has-header": {
+    "title": "У элементов `<td>` есть один или несколько заголовков в большой таблице `<table>`",
+    "description": "Чтобы пользователям было проще перемещаться по таблицам с помощью программ чтения с экрана, рекомендуем добавлять заголовки для элементов `<td>` в больших таблицах (состоящих из трех или более ячеек в высоту и ширину). Подробнее [о заголовках таблиц](https://dequeuniversity.com/rules/axe/4.13/td-has-header)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "is-on-https": {
+    "title": "Используется протокол HTTPS",
+    "description": "Все сайты (даже если они не обрабатывают конфиденциальные данные) должны быть защищены протоколом HTTPS. Это в том числе означает, что не следует использовать [смешанный контент](https://developers.google.com/web/fundamentals/security/prevent-mixed-content/what-is-mixed-content): не должно быть ситуаций, когда некоторые ресурсы загружаются по протоколу HTTP, хотя первоначальный запрос передается с применением HTTPS. HTTPS обеспечивает защиту от взлома и не позволяет посторонним узнавать, как пользователи взаимодействуют с приложением. Кроме того, использование этого протокола обязательно при работе с версией HTTP/2 и многими новыми API для веб-платформ. Подробнее [об HTTPS](https://developer.chrome.com/docs/lighthouse/pwa/is-on-https/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "redirects-http": {
+    "title": "Перенаправляет трафик с HTTP на HTTPS",
+    "description": "Убедитесь, что весь трафик перенаправляется с HTTP на HTTPS, чтобы обеспечить безопасность для всех своих пользователей. [Подробнее…](https://developer.chrome.com/docs/lighthouse/pwa/redirects-http/)",
+    "score": null,
+    "scoreDisplayMode": "notApplicable"
+   },
+   "geolocation-on-start": {
+    "title": "Разрешение на определение местоположения не запрашивается при загрузке страницы",
+    "description": "Сайты, которые беспричинно запрашивают доступ к местоположению, вызывают у пользователей недоверие или недоумение. Рекомендуем связать этот запрос с определенными действиями пользователя. Узнайте больше [о разрешении на определение местоположения](https://developer.chrome.com/docs/lighthouse/best-practices/geolocation-on-start/). Также можно использовать [элемент `<geolocation>`](https://developer.chrome.com/blog/geolocation-html-element).",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "notification-on-start": {
+    "title": "Разрешение на отправку уведомлений не запрашивается при загрузке страницы",
+    "description": "Пользователи с подозрением относятся к сайтам, которые беспричинно запрашивают разрешение на отправку уведомлений. Рекомендуем связать этот запрос с определенными действиями пользователя. Подробнее о том, [как запрашивать разрешение на уведомления должным образом](https://developer.chrome.com/docs/lighthouse/best-practices/notification-on-start/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "csp-xss": {
+    "title": "Убедитесь, что политика CSP эффективна против атак XSS",
+    "description": "Надежная политика безопасности контента (Content Security Policy, CSP) существенно снижает риск атак XSS (межсайтовый скриптинг). Подробнее о том, [как использовать CSP для предотвращения атак XSS](https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "severity": "Средняя",
+       "description": "Чтобы обеспечить обратную совместимость с предыдущими версиями браузеров, добавьте директиву `'unsafe-inline'` (игнорируется браузерами с поддержкой nonce-значений и хешей).",
+       "directive": "script-src"
+      }
+     ]
+    }
+   },
+   "has-hsts": {
+    "title": "Использование строгого механизма HSTS",
+    "description": "При использовании заголовков HSTS существенно снижается риск изменения протокола HTTPS на HTTP и несанкционированного прослушивания. Рекомендуется внедрять этот механизм постепенно, начиная с малых значений max-age. Подробнее [об использовании строгого механизма HSTS](https://developer.chrome.com/docs/lighthouse/best-practices/has-hsts)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "severity": "Высокая",
+       "description": "Не найден заголовок HSTS."
+      }
+     ]
+    }
+   },
+   "origin-isolation": {
+    "title": "Обеспечьте надлежащую изоляцию источников с помощью COOP",
+    "description": "С помощью заголовков COOP можно изолировать окно верхнего уровня от других документов, таких как всплывающие окна. Подробнее [об использовании заголовков COOP](https://web.dev/articles/why-coop-coep#coop)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "description": "Не найден заголовок COOP.",
+       "severity": "Высокая"
+      }
+     ]
+    }
+   },
+   "clickjacking-mitigation": {
+    "title": "Защита от кликджекинга с использованием заголовка XFO или CSP",
+    "description": "Заголовок `X-Frame-Options` (XFO) или директива `frame-ancestors` в заголовке `Content-Security-Policy` (CSP) указывает, куда можно встроить страницу. Таким образом можно защититься от кликджекинга, запретив сайтам встраивать страницы. Подробнее о [защите от кликджекинга](https://developer.chrome.com/docs/lighthouse/best-practices/clickjacking-mitigation)…",
+    "score": null,
+    "scoreDisplayMode": "notApplicable",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "trusted-types-xss": {
+    "title": "Используйте Trusted Types для предотвращения XSS-атак на основе DOM",
+    "description": "Директива `require-trusted-types-for` в заголовке `Content-Security-Policy` (CSP) предписывает агентам пользователей управлять данными, которые передаются в приемники DOM XSS. Подробнее о том, [как использовать Trusted Types для предотвращения XSS-атак на основе DOM](https://developer.chrome.com/docs/lighthouse/best-practices/trusted-types-xss)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "description": "Заголовок `Content-Security-Policy` с директивой Trusted Types не найден",
+       "severity": "Высокая"
+      }
+     ]
+    }
+   },
+   "paste-preventing-inputs": {
+    "title": "Вставка контента в поля ввода разрешена",
+    "description": "Запрет на вставку информации в поле ввода негативно влияет на удобство использования и снижает безопасность, блокируя работу менеджеров паролей. Подробнее [об удобных полях ввода](https://developer.chrome.com/docs/lighthouse/best-practices/paste-preventing-inputs/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "image-aspect-ratio": {
+    "title": "Отсутствуют изображения с некорректным соотношением сторон",
+    "description": "Размеры отображаемого изображения должны соответствовать нормальному соотношению сторон. Подробнее [о соотношении сторон изображения](https://developer.chrome.com/docs/lighthouse/best-practices/image-aspect-ratio/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "image-size-responsive": {
+    "title": "Изображения показываются в нужном разрешении",
+    "description": "Чтобы обеспечить максимальное качество, размеры исходного изображения должны быть пропорциональны размерам при отображении на экране с учетом соотношения пикселей. Подробнее о том, [как добавлять адаптивные изображения](https://web.dev/articles/serve-responsive-images)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "doctype": {
+    "title": "Тип страницы (DOCTYPE): HTML",
+    "description": "Если для страницы указан параметр DOCTYPE, браузер не будет переключаться в режим совместимости. Подробнее [об указании DOCTYPE](https://developer.chrome.com/docs/lighthouse/best-practices/doctype/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary"
+   },
+   "charset": {
+    "title": "Правильно заданный набор символов",
+    "description": "Требуется задать кодировку символов. Это можно сделать с помощью тега `<meta>` в первых 1024 байтах HTML-страницы или в заголовке ответа HTTP Content-Type. Подробнее о том, [как задать кодировку символов](https://developer.chrome.com/docs/lighthouse/best-practices/charset/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary"
+   },
+   "baseline": {
+    "title": "Функции Baseline",
+    "description": "Список веб-функций, используемых на странице, и их статус Baseline на 2026-09-17. Подробнее [о Baseline](https://webstatus.dev/)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "source": {
+        "urlProvider": "network",
+        "column": -2,
+        "line": -2,
+        "url": "https://getgliph.com/",
+        "type": "source-location"
+       },
+       "displayStatus": {
+        "type": "baseline-status",
+        "displayString": "Limited Availability",
+        "status": "limited"
+       },
+       "featureId": {
+        "url": "https://webstatus.dev/features/marker",
+        "text": "marker",
+        "type": "link"
+       }
+      },
+      {
+       "source": {
+        "urlProvider": "network",
+        "column": -2,
+        "line": -2,
+        "type": "source-location",
+        "url": "https://getgliph.com/"
+       },
+       "displayStatus": {
+        "type": "baseline-status",
+        "displayString": "Limited Availability",
+        "status": "limited"
+       },
+       "featureId": {
+        "text": "background-clip-text",
+        "type": "link",
+        "url": "https://webstatus.dev/features/background-clip-text"
+       }
+      },
+      {
+       "source": {
+        "type": "source-location",
+        "urlProvider": "network",
+        "line": 0,
+        "column": 49396,
+        "url": "https://getgliph.com/_next/static/chunks/6863-f771e079c08862d6.js"
+       },
+       "featureId": {
+        "text": "referencetarget",
+        "type": "link",
+        "url": "https://webstatus.dev/features/referencetarget"
+       },
+       "displayStatus": {
+        "type": "baseline-status",
+        "status": "limited",
+        "displayString": "Limited Availability"
+       }
+      },
+      {
+       "source": {
+        "column": 136091,
+        "urlProvider": "network",
+        "line": 0,
+        "url": "https://getgliph.com/_next/static/chunks/828fd748-51bb6707a5106c0e.js",
+        "type": "source-location"
+       },
+       "displayStatus": {
+        "type": "baseline-status",
+        "displayString": "Newly Available (2025-12-12)",
+        "status": "low"
+       },
+       "featureId": {
+        "text": "scrollend",
+        "type": "link",
+        "url": "https://webstatus.dev/features/scrollend"
+       }
+      },
+      {
+       "source": {
+        "url": "https://getgliph.com/",
+        "urlProvider": "network",
+        "type": "source-location",
+        "column": -2,
+        "line": -2
+       },
+       "featureId": {
+        "text": "fetch-priority",
+        "type": "link",
+        "url": "https://webstatus.dev/features/fetch-priority"
+       },
+       "displayStatus": {
+        "type": "baseline-status",
+        "status": "low",
+        "displayString": "Newly Available (2024-10-29)"
+       }
+      },
+      {
+       "displayStatus": {
+        "type": "baseline-status",
+        "displayString": "Newly Available (2024-09-16)",
+        "status": "low"
+       },
+       "featureId": {
+        "type": "link",
+        "text": "backdrop-filter",
+        "url": "https://webstatus.dev/features/backdrop-filter"
+       },
+       "source": {
+        "type": "source-location",
+        "urlProvider": "network",
+        "line": -2,
+        "column": -2,
+        "url": "https://getgliph.com/"
+       }
+      }
+     ]
+    }
+   },
+   "js-libraries": {
+    "title": "Обнаруженные библиотеки JavaScript",
+    "description": "Все клиентские библиотеки JavaScript, обнаруженные на странице. Подробнее [о результатах диагностики этой библиотеки JavaScript](https://developer.chrome.com/docs/lighthouse/best-practices/js-libraries/)…",
+    "score": 1,
+    "scoreDisplayMode": "informative",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "npm": "core-js",
+       "name": "core-js",
+       "version": "core-js-global@2.6.5"
+      }
+     ]
+    }
+   },
+   "deprecations": {
+    "title": "Устаревшие API не используются",
+    "description": "В будущем устаревшие API будут удалены из браузера. Подробнее [об устаревших API](https://developer.chrome.com/docs/lighthouse/best-practices/deprecations/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "third-party-cookies": {
+    "title": "Сторонние файлы cookie не используются",
+    "description": "Иногда сторонние файлы cookie могут блокироваться. Узнайте, [что делать в случае ограничений на использование таких файлов](https://privacysandbox.google.com/cookies/prepare/overview).",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "errors-in-console": {
+    "title": "В журнале консоли нет ошибок браузера",
+    "description": "Ошибки, которые появляются в консоли, указывают на нерешенные проблемы. Это могут быть невыполненные сетевые запросы и другие сбои в работе браузера. Подробнее [об этих ошибках в результатах диагностики консоли](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "valid-source-maps": {
+    "title": "Отсутствуют карты исходного кода для собственных больших скриптов JavaScript",
+    "description": "Карты исходных кодов переводят минифицированный код в исходный. Благодаря этому разработчики могут выполнять отладку на действующем ресурсе. Кроме того, Lighthouse может предоставлять дополнительную информацию. Чтобы воспользоваться этими преимуществами, внедрите карты исходных кодов. Подробнее [о картах исходных кодов](https://developer.chrome.com/docs/devtools/javascript/source-maps/)…",
+    "score": 0,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": [
+      {
+       "scriptUrl": "https://getgliph.com/_next/static/chunks/3410-aac18d32b15ca7bd.js"
+      }
+     ]
+    }
+   },
+   "inspector-issues": {
+    "title": "Нет записей ошибок на панели `Issues` в инструментах разработчика в Chrome",
+    "description": "Ошибки, записанные на панели `Issues` в инструментах разработчика в Chrome, указывают на нерешенные проблемы. Это могут быть невыполненные сетевые запросы, низкий уровень защиты и другие сбои в работе браузера. Чтобы получить подробную информацию о каждой неполадке, откройте панель.",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "is-crawlable": {
+    "title": "Страница доступна для индексации",
+    "description": "Поисковые системы не смогут включать ваши страницы в результаты поиска, если вы не предоставите разрешение на сканирование. Подробнее [о директивах для поисковых роботов](https://developer.chrome.com/docs/lighthouse/seo/is-crawlable/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "meta-description": {
+    "title": "В документе есть метаописание",
+    "description": "Метаописания содержат общие сведения о контенте страницы и могут быть показаны в результатах поиска. Подробнее [о метаописании](https://developer.chrome.com/docs/lighthouse/seo/meta-description/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary"
+   },
+   "http-status-code": {
+    "title": "Код статуса HTTP действителен",
+    "description": "Если страница возвращает код статуса HTTP, который говорит об ошибках, она может не индексироваться правильно. Подробнее [о кодах статусов HTTP](https://developer.chrome.com/docs/lighthouse/seo/http-status-code/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary"
+   },
+   "link-text": {
+    "title": "У ссылок есть описания",
+    "description": "Сделайте текст ссылок содержательным, чтобы поисковые системы лучше распознавали ваш контент. Подробнее о том, [как повысить доступность ссылок](https://developer.chrome.com/docs/lighthouse/seo/link-text/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "crawlable-anchors": {
+    "title": "Ссылки можно просканировать",
+    "description": "Поисковые системы при сканировании сайтов учитывают содержащиеся в ссылках атрибуты `href`. Чтобы на вашем сайте могло быть проиндексировано максимально возможное количество страниц, атрибуты `href` в анкерах должны корректно ссылаться на целевые страницы. Подробнее о том, как [сделать ссылки доступными для сканирования](https://support.google.com/webmasters/answer/9112205)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "robots-txt": {
+    "title": "Файл robots.txt действителен",
+    "description": "Если файл robots.txt поврежден, поисковые роботы могут не распознать ваши инструкции по сканированию или индексации сайта. Подробнее [о файле robots.txt](https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "hreflang": {
+    "title": "Для документа указан действительный атрибут `hreflang`",
+    "description": "Добавьте на страницу элементы link с атрибутом hreflang. Тогда в результатах поиска будут представлены те версии ваших страниц, которые лучше всего подходят для языка и региона пользователя. Подробнее [об атрибуте `hreflang`](https://developer.chrome.com/docs/lighthouse/seo/hreflang/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary",
+    "details": {
+     "type": "table",
+     "items": []
+    }
+   },
+   "canonical": {
+    "title": "Для документа указан действительный атрибут `rel=canonical`",
+    "description": "Канонические ссылки помогают определить, какой URL будет показан в результатах поиска. Подробнее [о канонических ссылках](https://developer.chrome.com/docs/lighthouse/seo/canonical/)…",
+    "score": 1,
+    "scoreDisplayMode": "binary"
+   },
+   "structured-data": {
+    "title": "Структурированные данные действительны",
+    "description": "Чтобы протестировать структурированные данные, воспользуйтесь [инструментом для их проверки](https://developers.google.com/search/docs/appearance/structured-data/). Подробнее [о структурированных данных](https://developer.chrome.com/docs/lighthouse/seo/structured-data/)…",
+    "score": null,
+    "scoreDisplayMode": "manual"
+   }
+  }
+ }
+}
