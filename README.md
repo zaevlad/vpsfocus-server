@@ -38,6 +38,14 @@ database is PostgreSQL — their official images, pinned by digest in
 * **Versions older than the first one published here** are not here. If your
   server runs an older version, the app offers an update — after it you are
   on a published version.
+* **The first tag, `bundle-0.27.0`, is not exact for `agent/` and
+  `images/caddy/`.** Its images (agent 0.22.0, Caddy 2.11.4-rl2) were built
+  before this repository existed, from sources that differ from the tag only
+  in five code comments and in pins we added to the Dockerfiles: Caddy
+  modules pinned to the very versions inside the rl2 image, base images
+  pinned by digest (the digests used for those builds are not recorded).
+  The Go code is the same. From bundle 0.28.0 on, CI checks that every image
+  was built from exactly the tree in the tag.
 
 ## Things you will want to know before reading
 
