@@ -236,39 +236,63 @@ func (n *Notifier) SendTo(ctx context.Context, channel, subject, body string) ([
 	return nil, ErrUnknownChannel
 }
 
+// Сроки почты. Многие хостеры закрывают исходящие 465 и 587, и закрытый порт
+// молчит: без срока соединение ждало около двух минут, приложение сдавалось
+// раньше и называло виноватым мониторинг, а не почту.
+const (
+	mailDialTimeout = 15 * time.Second
+	mailTimeout     = 45 * time.Second
+)
+
+// ErrMailUnreachable — почтовый сервер не принял соединение: порт закрыт
+// хостером сервера, адрес неверный или почтовый сервер лежит. Отдельной
+// ошибкой: приложение говорит человеку, что делать, а не «отказ доставки».
+var ErrMailUnreachable = errors.New("почтовый сервер не отвечает")
+
+// implicitTLS — порт, где TLS начинается с первого байта. 2465 — тот же 465
+// у сервисов рассылки (Resend), которым хостеры не закрывают порт.
+func implicitTLS(port int) bool {
+	return port == 465 || port == 2465
+}
+
 // sendMail отправляет письмо.
 //
-// STARTTLS обязателен везде, кроме порта 465, где TLS начинается сразу.
+// STARTTLS обязателен везде, кроме портов с TLS сразу ([implicitTLS]).
 // Открытым текстом пароль не уходит: почтовый сервер клиента может стоять и
 // в чужой сети.
 func (n *Notifier) sendMail(subject, body string) error {
 	address := net.JoinHostPort(n.smtp.Host, fmt.Sprint(n.smtp.Port))
 	message := buildMessage(n.smtp.From, n.smtp.To, subject, body)
 
-	if n.smtp.Port == 465 {
-		conn, err := tls.Dial("tcp", address, &tls.Config{ServerName: n.smtp.Host})
-		if err != nil {
-			return err
-		}
-		defer conn.Close()
+	raw, err := (&net.Dialer{Timeout: mailDialTimeout}).Dial("tcp", address)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrMailUnreachable, err)
+	}
+	defer raw.Close()
+	// Срок на весь разговор: сервер, принявший соединение и замолчавший,
+	// держал бы его так же долго, как закрытый порт.
+	_ = raw.SetDeadline(time.Now().Add(mailTimeout))
 
-		client, err := smtp.NewClient(conn, n.smtp.Host)
-		if err != nil {
+	conn := raw
+	if implicitTLS(n.smtp.Port) {
+		secure := tls.Client(raw, &tls.Config{ServerName: n.smtp.Host})
+		if err := secure.Handshake(); err != nil {
 			return err
 		}
-		defer client.Quit()
-		return n.deliver(client, message)
+		conn = secure
 	}
 
-	client, err := smtp.Dial(address)
+	client, err := smtp.NewClient(conn, n.smtp.Host)
 	if err != nil {
 		return err
 	}
 	defer client.Quit()
 
-	if ok, _ := client.Extension("STARTTLS"); ok {
-		if err := client.StartTLS(&tls.Config{ServerName: n.smtp.Host}); err != nil {
-			return err
+	if !implicitTLS(n.smtp.Port) {
+		if ok, _ := client.Extension("STARTTLS"); ok {
+			if err := client.StartTLS(&tls.Config{ServerName: n.smtp.Host}); err != nil {
+				return err
+			}
 		}
 	}
 

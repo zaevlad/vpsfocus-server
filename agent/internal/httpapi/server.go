@@ -426,6 +426,15 @@ func (s *Server) handleTest(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
 		return
 	}
+	// Закрытый почтовый порт — частая беда, и у неё свой совет человеку:
+	// код в ответе, чтобы приложению не разбирать текст ошибки.
+	if errors.Is(err, notify.ErrMailUnreachable) {
+		writeJSON(w, http.StatusBadGateway, map[string]string{
+			"error": err.Error(),
+			"code":  "mailUnreachable",
+		})
+		return
+	}
 	if err != nil {
 		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
 		return

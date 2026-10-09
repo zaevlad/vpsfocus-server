@@ -3,6 +3,7 @@ package notify
 import (
 	"context"
 	"errors"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -159,5 +160,58 @@ func TestTelegramBadEndpointHidesToken(t *testing.T) {
 	}
 	if strings.Contains(err.Error(), testToken) {
 		t.Fatalf("токен бота в тексте ошибки разбора адреса: %v", err)
+	}
+}
+
+// Закрытый почтовый порт — отдельная ошибка: по ней приложение говорит
+// «хостер закрыл почтовые порты», а не «мониторинг не отвечает».
+func TestMailUnreachableIsItsOwnError(t *testing.T) {
+	n := &Notifier{smtp: config.SMTP{
+		// Порт 1 на петле: соединение отвергается сразу, тест не ждёт.
+		Host: "127.0.0.1", Port: 1, From: "bot@example.com", To: []string{"ops@example.com"},
+	}}
+	_, err := n.SendTo(context.Background(), ChannelSMTP, "тема", "текст")
+	if !errors.Is(err, ErrMailUnreachable) {
+		t.Fatalf("ждали ErrMailUnreachable, получили %v", err)
+	}
+}
+
+// Сервер принял соединение и молчит — срок обязан сработать, а не держать
+// разговор, пока приложение не сдастся.
+func TestSilentMailServerHitsTheDeadline(t *testing.T) {
+	if testing.Short() {
+		t.Skip("ждёт срок разговора с почтой")
+	}
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer listener.Close()
+	go func() {
+		conn, err := listener.Accept()
+		if err == nil {
+			defer conn.Close()
+			time.Sleep(mailTimeout + 5*time.Second)
+		}
+	}()
+
+	port := listener.Addr().(*net.TCPAddr).Port
+	n := &Notifier{smtp: config.SMTP{
+		Host: "127.0.0.1", Port: port, From: "bot@example.com", To: []string{"ops@example.com"},
+	}}
+	started := time.Now()
+	if err := n.sendMail("тема", "текст"); err == nil {
+		t.Fatal("молчащий сервер обязан дать ошибку")
+	}
+	if elapsed := time.Since(started); elapsed > mailTimeout+5*time.Second {
+		t.Fatalf("разговор длился %v, срок %v", elapsed, mailTimeout)
+	}
+}
+
+func TestImplicitTLSPorts(t *testing.T) {
+	for port, want := range map[int]bool{465: true, 2465: true, 587: false, 2587: false, 25: false} {
+		if got := implicitTLS(port); got != want {
+			t.Errorf("порт %d: TLS сразу = %v, ждали %v", port, got, want)
+		}
 	}
 }

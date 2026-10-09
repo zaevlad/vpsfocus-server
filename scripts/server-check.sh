@@ -206,8 +206,14 @@ if has apt-get; then
     # решателя в /var/log/apt/eipp.log.xz (найдено прогоном в контейнере
     # Ubuntu 24.04), а файлов на сервере мы не оставляем.
     if sim="$($LIMIT apt-get -s -o Debug::NoLocking=true -o Dir::Log::Planner=/dev/null         dist-upgrade 2>/dev/null)"; then
-        updates_total="$(printf '%s\n' "$sim" | grep -c '^Inst ')"
-        updates_security="$(printf '%s\n' "$sim" | grep '^Inst ' | grep -ci 'security')"
+        # Только обновления установленного: у них в скобках стоит старая
+        # версия (`Inst vim [9.1] (9.2 …)`). Без скобок — новый пакет, который
+        # `dist-upgrade` ставит зависимостью; он не обновление и не закрывает
+        # уязвимость. На живом Ubuntu 24.04 (2026-10-08) таких было 34 из 213,
+        # и единственная строка из -security была как раз новым пакетом.
+        upgrades="$(printf '%s\n' "$sim" | grep '^Inst [^ ]* \[')"
+        updates_total="$(printf '%s\n' "$upgrades" | grep -c '^Inst ')"
+        updates_security="$(printf '%s\n' "$upgrades" | grep -ci 'security')"
     fi
     # Когда сервер в последний раз обновлял списки пакетов: число выше
     # верно на этот день, а не на сегодня.
