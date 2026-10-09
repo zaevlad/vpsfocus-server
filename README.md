@@ -69,8 +69,8 @@ screen shows the bundle version and links to its tag.
 
 ```sh
 git clone https://github.com/zaevlad/vpsfocus-server && cd vpsfocus-server
-git checkout bundle-0.28.0
-go run ./tools/verify -version 0.28.0
+git checkout bundle-0.29.0
+go run ./tools/verify -version 0.29.0
 ```
 
 It checks that `bundle.sig` is a valid signature of `bundle.json` made with
@@ -82,16 +82,16 @@ You can also check the signature with the standard
 minisign signature encoded in base64 once more:
 
 ```sh
-base64 -d bundle/0.28.0/bundle.sig > /tmp/bundle.minisig
-minisign -V -p keys/release.pub -m bundle/0.28.0/bundle.json -x /tmp/bundle.minisig
+base64 -d bundle/0.29.0/bundle.sig > /tmp/bundle.minisig
+minisign -V -p keys/release.pub -m bundle/0.29.0/bundle.json -x /tmp/bundle.minisig
 ```
 
 **2. Compare with what your server got.** Download the archive the app
 downloads and compare it file by file:
 
 ```sh
-curl -fsSLo bundle-0.28.0.tar.gz https://vpsfocus.xyz/installer/bundle/0.28.0
-go run ./tools/verify -version 0.28.0 -archive bundle-0.28.0.tar.gz
+curl -fsSLo bundle-0.29.0.tar.gz https://vpsfocus.xyz/installer/bundle/0.29.0
+go run ./tools/verify -version 0.29.0 -archive bundle-0.29.0.tar.gz
 ```
 
 **3. Compare the images.** `bundle/<version>/docker-compose.yml.tpl` pins every
