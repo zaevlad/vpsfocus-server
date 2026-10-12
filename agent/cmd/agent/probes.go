@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"agent/internal/checks"
@@ -196,6 +197,11 @@ func (a *Agent) noteProbeChange(ctx context.Context, result probe.Result) {
 	if previous[0].OK == result.OK {
 		return
 	}
+	// «Не знаем» — не «закрыт» (спринт 149): таблица сокетов не прочиталась,
+	// и тревога о порте или отбой после такого круга были бы выдумкой.
+	if result.Code == probe.CodePortUnknown || previous[0].Code == probe.CodePortUnknown {
+		return
+	}
 
 	kind := events.KindProbeFailing
 	if result.OK {
@@ -215,9 +221,19 @@ func (a *Agent) noteProbeChange(ctx context.Context, result probe.Result) {
 		Subject: fmt.Sprintf(a.words().ProbeSubject, result.Name),
 		Body:    fmt.Sprintf(a.words().ProbeBody, result.Name, result.URL, result.Code),
 	}
-	if result.OK {
+	if result.Kind == probe.KindPort {
+		port := strings.TrimPrefix(result.URL, probe.PortScheme)
+		alert.Subject = fmt.Sprintf(a.words().PortSubject, result.Name, port)
+		alert.Body = fmt.Sprintf(a.words().PortBody, port, result.Name)
+		if result.OK {
+			alert.Subject = fmt.Sprintf(a.words().PortOKSubject, result.Name, port)
+			alert.Body = fmt.Sprintf(a.words().PortOKBody, port, result.Name)
+		}
+	} else if result.OK {
 		alert.Subject = fmt.Sprintf(a.words().ProbeOKSubject, result.Name)
 		alert.Body = fmt.Sprintf(a.words().ProbeOKBody, result.Name, result.URL)
+	}
+	if result.OK {
 		a.dispatch(ctx, nil, []checks.Alert{alert})
 		return
 	}

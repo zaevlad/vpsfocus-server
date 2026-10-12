@@ -827,7 +827,12 @@ func (c Config) ProbeProfiles() ([]probe.Profile, error) {
 		if profile.URL == "" || profile.ProjectID == "" {
 			continue
 		}
-		if !ProbeURLAllowed(profile.URL) {
+		// У проверки порта адрес не сетевой (`port:5432`) — свой отбор.
+		if profile.Kind == probe.KindPort {
+			if _, ok := probe.PortOf(profile.URL); !ok {
+				continue
+			}
+		} else if !ProbeURLAllowed(profile.URL) {
 			continue
 		}
 		if perProject[profile.ProjectID] >= MaxProbesPerProject {

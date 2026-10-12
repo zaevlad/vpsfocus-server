@@ -146,3 +146,22 @@ func TestNamelessProfileGetsItsURL(t *testing.T) {
 		t.Fatalf("имя %q", profiles[0].Name)
 	}
 }
+
+// Проверка порта (спринт 149) — адрес `port:N`, и только у вида `port`:
+// сетевой адрес у неё и `port:` у страницы выбрасываются оба.
+func TestPortProfileNeedsAPortAddress(t *testing.T) {
+	cfg := profilesFile(t, `[
+		{"projectId":"p1", "kind":"port", "url":"port:5432", "name":"База"},
+		{"projectId":"p1", "kind":"port", "url":"port:0"},
+		{"projectId":"p1", "kind":"port", "url":"https://example.com/"},
+		{"projectId":"p1", "kind":"page", "url":"port:5432"}
+	]`)
+
+	profiles, err := cfg.ProbeProfiles()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(profiles) != 1 || profiles[0].URL != "port:5432" {
+		t.Fatalf("выжили %+v, ждали один port:5432", profiles)
+	}
+}

@@ -751,7 +751,9 @@ func projectStates(in Input) []ProjectState {
 
 		for _, result := range probes[project.ID] {
 			newest = later(newest, result.CheckedAt)
-			if result.OK {
+			// «Не знаем» о порте (таблица сокетов не прочиталась) — не беда
+			// проекта: поднять уровень по нему значило бы выдумать поломку.
+			if result.OK || result.Code == probe.CodePortUnknown {
 				continue
 			}
 			// Целью находки идёт адрес, а не имя: приглушают конкретный

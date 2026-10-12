@@ -79,6 +79,10 @@ func main() {
 		log.Printf("часовой пояс сервера не определён, времена логов читаются как UTC")
 	}
 
+	// Проверка порта читает таблицу сокетов сервера из того же /proc, что и
+	// замеры (спринт 149).
+	probe.SetHostProc(cfg.HostProc)
+
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 

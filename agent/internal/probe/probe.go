@@ -44,6 +44,9 @@ const (
 	// KindText — на странице есть нужный текст. Тем и проверяют, что
 	// страница собралась целиком, а не отдала шаблон без данных.
 	KindText Kind = "text"
+	// KindPort — порт на сервере кто-то слушает (спринт 149, port.go).
+	// Объявлен здесь, в общем списке: его читают сверки приложения.
+	KindPort Kind = "port"
 )
 
 // Коды исходов. Пустой код — проверка прошла.
@@ -76,6 +79,11 @@ const (
 	CodeTextMissing = "probeTextMissing"
 	// Профиль заполнен так, что проверять нечего.
 	CodeMisconfigured = "probeMisconfigured"
+	// Порт никто не слушает: служба остановилась или перешла на другой.
+	CodePortClosed = "probePortClosed"
+	// Таблицу сокетов сервера прочитать не удалось — «не знаем», а не
+	// «закрыт»: о таком исходе агент не тревожит.
+	CodePortUnknown = "probePortUnknown"
 )
 
 // Сколько тела читаем. Проверке хватает начала страницы, а качать гигабайт
@@ -122,6 +130,9 @@ type Result struct {
 	// Сколько миллисекунд ждали ответа.
 	DurationMs int64     `json:"durationMs"`
 	CheckedAt  time.Time `json:"checkedAt"`
+	// Где слушает порт — только у проверки порта (`ListenLocal`,
+	// `ListenNetwork`). Пусто — порт никто не слушает или вид другой.
+	Listen string `json:"listen,omitempty"`
 }
 
 // Client — как ходить в сеть.
@@ -163,6 +174,10 @@ func Run(ctx context.Context, client *http.Client, profile Profile) Result {
 
 	if profile.URL == "" || !known(profile.Kind) {
 		return finish(CodeMisconfigured)
+	}
+	// Порт спрашивается не по сети, а у таблицы сокетов сервера (port.go).
+	if profile.Kind == KindPort {
+		return runPort(profile, result, started)
 	}
 	// Профиль без того, что составляет его смысл, — это не строгая
 	// проверка, а тихая: она проходила бы всегда.
@@ -219,7 +234,7 @@ func Run(ctx context.Context, client *http.Client, profile Profile) Result {
 
 func known(kind Kind) bool {
 	switch kind {
-	case KindPage, KindJSON, KindRedirect, KindText:
+	case KindPage, KindJSON, KindRedirect, KindText, KindPort:
 		return true
 	}
 	return false

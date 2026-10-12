@@ -147,6 +147,8 @@ var russian = phrases{
 		probe.CodeWrongTarget:   "перенаправляет не туда",
 		probe.CodeTextMissing:   "нужного текста на странице нет",
 		probe.CodeMisconfigured: "проверять нечего: профиль пуст",
+		probe.CodePortClosed:    "порт никто не слушает",
+		probe.CodePortUnknown:   "таблицу портов сервера прочитать не удалось",
 
 		backup.CodeNotConfigured:      "хранилище не настроено",
 		backup.CodeToolMissing:        "в образе агента нет pg_dump — обновите стек",
@@ -248,6 +250,8 @@ var english = phrases{
 		probe.CodeWrongTarget:   "it redirects somewhere else",
 		probe.CodeTextMissing:   "the text is not on the page",
 		probe.CodeMisconfigured: "there is nothing to check: the profile is empty",
+		probe.CodePortClosed:    "nothing listens on the port",
+		probe.CodePortUnknown:   "the server's table of ports could not be read",
 
 		backup.CodeNotConfigured:      "storage is not configured",
 		backup.CodeToolMissing:        "the agent image has no pg_dump — update the stack",

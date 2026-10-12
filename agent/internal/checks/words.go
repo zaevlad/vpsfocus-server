@@ -39,6 +39,12 @@ type Words struct {
 	ProbeBody      string // имя, адрес, код
 	ProbeOKSubject string // имя проверки
 	ProbeOKBody    string // имя, адрес
+	// Проверка порта (спринт 149): свои слова — за портом не адрес, а
+	// служба, и «ключевой адрес по адресу port:5432» читается как поломка.
+	PortSubject   string // имя проверки, порт
+	PortBody      string // порт, имя проверки
+	PortOKSubject string // имя проверки, порт
+	PortOKBody    string // порт, имя проверки
 
 	BackupSubject   string
 	BackupBody      string // код
@@ -96,6 +102,15 @@ var russian = Words{
 	ProbeOKSubject: "Ключевой адрес снова работает: %s",
 	ProbeOKBody:    "Проверка «%s» по адресу %s снова проходит.",
 
+	PortSubject: "Порт больше не слушается: %s (%s)",
+	PortBody: "Порт %s на сервере больше никто не слушает (проверка «%s»): служба, " +
+		"которая на нём работала, остановилась или перешла на другой порт.\n\n" +
+		"Проверка смотрит таблицу портов самого сервера: она говорит, занят ли " +
+		"порт, но не то, отвечает ли служба правильно. Если служба работает в " +
+		"контейнере без опубликованного порта, отсюда её не видно.",
+	PortOKSubject: "Порт снова слушается: %s (%s)",
+	PortOKBody:    "Порт %s на сервере снова занят службой (проверка «%s»).",
+
 	BackupSubject: "Копия базы не сделалась",
 	BackupBody: "Очередная копия аналитики не уехала в хранилище: %s.\n\n" +
 		"Пока копий нет, потеря диска на этом сервере означает потерю всей " +
@@ -148,6 +163,15 @@ var english = Words{
 		"provider's cloud firewall is not visible from here.",
 	ProbeOKSubject: "Key address works again: %s",
 	ProbeOKBody:    "The check “%s” at %s passes again.",
+
+	PortSubject: "Port is no longer listening: %s (%s)",
+	PortBody: "Nothing on the server listens on port %s any more (check “%s”): the " +
+		"service that ran there has stopped or moved to another port.\n\n" +
+		"The check reads the server's own table of ports: it tells whether the " +
+		"port is taken, not whether the service answers correctly. A service in " +
+		"a container without a published port is not visible from here.",
+	PortOKSubject: "Port is listening again: %s (%s)",
+	PortOKBody:    "A service listens on port %s on the server again (check “%s”).",
 
 	BackupSubject: "Database backup failed",
 	BackupBody: "The latest analytics backup did not reach the storage: %s.\n\n" +
