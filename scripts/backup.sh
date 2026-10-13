@@ -21,8 +21,11 @@ SUDO=""
 TMP=$($SUDO mktemp -d "$DIR/.backup-XXXXXX")
 trap '$SUDO rm -rf "$TMP"' EXIT
 
-$SUDO sh -c "cd $DIR && docker compose exec -T postgres pg_dump -U umami -d umami" > "$TMP/umami.sql"
-[ -s "$TMP/umami.sql" ] || exit 1
+# Перенаправление — внутри $SUDO: каталог от mktemp принадлежит root с
+# правами 700, а `>` снаружи открывала бы оболочка входа, у которой под
+# пользователем с sudo прав туда нет. По той же причине и проверка.
+$SUDO sh -c "cd '$DIR' && docker compose exec -T postgres pg_dump -U umami -d umami > '$TMP/umami.sql'"
+$SUDO test -s "$TMP/umami.sql" || exit 1
 
 for name in stack-version.json docker-compose.yml Caddyfile .env agent.env; do
     if $SUDO test -r "$DIR/$name"; then $SUDO cp "$DIR/$name" "$TMP/$name"; fi
