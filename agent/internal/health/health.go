@@ -61,6 +61,11 @@ const (
 	// Свободного места почти не осталось: пять процентов от порога тревоги
 	// или меньше пяти процентов диска.
 	CodeDiskFull = "healthDiskFull"
+	// Места под файлы (inodes) заняты от 90%: место на диске есть, а новые
+	// файлы скоро перестанут создаваться (идея 4 трека AB).
+	CodeInodesFilling = "healthInodesFilling"
+	// Места под файлы заняты от 97%: новые файлы вот-вот не создадутся.
+	CodeInodesFull = "healthInodesFull"
 	// Памяти занято столько, что следующий всплеск уйдёт в swap.
 	CodeMemoryTight = "healthMemoryTight"
 	// Замеров нет вовсе: агент только поставили или он не пишет в базу.
@@ -168,6 +173,12 @@ const (
 	// `healthNoChannels`, он висит, пока человек не починит или не
 	// выключит.
 	CodeBackupStale = "healthBackupStale"
+	// Копия сделалась, но дамп меньше половины прошлого удачного (Р12).
+	//
+	// Не отказ: копия сохранена, база могла похудеть по делу. Поэтому
+	// «посмотреть», и встаёт рядом с остальными поводами копий, а не вместо
+	// них. Снимается следующей копией обычного размера.
+	CodeBackupShrunk = "healthBackupShrunk"
 
 	// ── Сам агент ────────────────────────────────────────────────────────
 	// Каналов уведомлений нет ни одного: агент следит и молчит.
@@ -188,6 +199,8 @@ const (
 var levelByCode = map[string]Level{
 	CodeDiskFilling:    LevelAttention,
 	CodeDiskFull:       LevelProblem,
+	CodeInodesFilling:  LevelAttention,
+	CodeInodesFull:     LevelProblem,
 	CodeMemoryTight:    LevelAttention,
 	CodeMetricsMissing: LevelAttention,
 	CodeMetricsStale:   LevelAttention,
@@ -215,6 +228,7 @@ var levelByCode = map[string]Level{
 	CodeBackupFailed:  LevelAttention,
 	CodeBackupMissing: LevelAttention,
 	CodeBackupStale:   LevelAttention,
+	CodeBackupShrunk:  LevelAttention,
 
 	CodeNoChannels: LevelAttention,
 }
@@ -247,6 +261,11 @@ type Reason struct {
 	// «двести за пятнадцать минут» и «двести за сутки» это разные новости,
 	// а строку читают в письме, в чеклисте и на карточке порознь.
 	WindowMinutes int `json:"windowMinutes,omitempty"`
+	// Размер «было → стало» в байтах. Только у уменьшившейся копии: число
+	// байтов не влезает в смысл `Count`, а склейка в `Detail` читалась бы
+	// приложением как незнакомый код.
+	BytesBefore int64 `json:"bytesBefore,omitempty"`
+	Bytes       int64 `json:"bytes,omitempty"`
 	// Находку приглушили: «знаю, так и задумано».
 	//
 	// Приглушённая находка уровень не поднимает и в отчёт не попадает, но
@@ -391,6 +410,9 @@ type BackupState struct {
 	// Когда сделана самая свежая копия. Спрошено у хранилища, если оно
 	// отвечало; иначе — наша запись о последнем успехе.
 	Freshest time.Time
+	// Дампы двух последних удачных копий, если последняя меньше половины
+	// прошлой (`backup.Shrunk`). Нули — не похудела или сравнивать не с чем.
+	ShrunkFrom, ShrunkTo int64
 }
 
 // Через сколько интервалов копия считается несвежей.
@@ -415,6 +437,16 @@ func backupReasons(in Input) []Reason {
 	stale := state.Freshest.IsZero() ||
 		in.Now.Sub(state.Freshest) > time.Duration(backupStaleIntervals)*interval
 
+	// Похудевшая копия — отдельно от свежести: «последняя копия неделю
+	// назад» и «последняя удачная вдвое меньше прошлой» — разные новости, и
+	// вторая не должна прятаться за первой.
+	var shrunk []Reason
+	if state.ShrunkFrom > 0 {
+		item := reason(CodeBackupShrunk, "", nil, 0, "")
+		item.BytesBefore, item.Bytes = state.ShrunkFrom, state.ShrunkTo
+		shrunk = append(shrunk, item)
+	}
+
 	// Код последней беды едет рядом с обоими поводами: «копий нет» без «а
 	// почему» заставляет открывать второй экран ради одной строки.
 	if state.Freshest.IsZero() {
@@ -422,14 +454,14 @@ func backupReasons(in Input) []Reason {
 	}
 	if stale {
 		days := int(in.Now.Sub(state.Freshest).Hours() / 24)
-		return []Reason{reason(CodeBackupStale, "", nil, days, state.LastCode)}
+		return append([]Reason{reason(CodeBackupStale, "", nil, days, state.LastCode)}, shrunk...)
 	}
 
 	if !state.LastOK {
-		return []Reason{reason(CodeBackupFailed, "", nil, 0, state.LastCode)}
+		return append([]Reason{reason(CodeBackupFailed, "", nil, 0, state.LastCode)}, shrunk...)
 	}
 
-	return nil
+	return shrunk
 }
 
 // Compute считает свод.
@@ -593,6 +625,20 @@ func serverState(in Input) ServerState {
 			code = CodeDiskFull
 		}
 		state.Reasons = append(state.Reasons, reason(code, "", nil, disk, ""))
+	}
+
+	// Места под файлы — пороги постоянные (Р7) и те же, что у письма.
+	// Не знаем — повода нет: экран показывает «не знаем» серым сам, а
+	// вечное «посмотри» на сервере с btrfs было бы шумом, который учит не
+	// смотреть. Смотрится только корень сервера, как и место (Р9).
+	if in.Sample.InodesKnown() {
+		if used := in.Sample.InodesUsedPercent(); used >= checks.InodesAlertPercent {
+			code := CodeInodesFilling
+			if used >= checks.InodesFullPercent {
+				code = CodeInodesFull
+			}
+			state.Reasons = append(state.Reasons, reason(code, "", nil, used, ""))
+		}
 	}
 
 	// Порог памяти не настраивается и не уведомляет: занятая память сама по

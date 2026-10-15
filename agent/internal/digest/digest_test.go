@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"agent/internal/health"
+	"agent/internal/logs"
 )
 
 // codes читает список кодов поводов прямо из исходника свода.
@@ -293,5 +294,37 @@ func TestUnknownCodeIsShownNotDropped(t *testing.T) {
 
 	if !strings.Contains(text.Body, "healthSomethingNew") {
 		t.Errorf("незнакомый повод потерялся: %s", text.Body)
+	}
+}
+
+// Роботы — строкой в отчёте (Р4): только «посмотри», справки о роботах
+// обучения в письмо не идут; отказ на robots.txt назван.
+func TestRobotLinesInReport(t *testing.T) {
+	robots := []logs.RobotVerdict{
+		{Host: "shop.example", Name: "OAI-SearchBot", Verdict: logs.VerdictRefused, Level: logs.VerdictAttention,
+			Visits: 140, Refused: 120, Code: 403, RobotsTxt: 3},
+		{Host: "", Name: "Googlebot", Verdict: logs.VerdictGone, Level: logs.VerdictAttention, Before: 300},
+		{Host: "shop.example", Name: "GPTBot", Verdict: logs.VerdictRefused, Visits: 50, Refused: 50, Code: 403},
+	}
+	body := BuildWithRobots("ru", "vps-1", health.Snapshot{}, robots).Body
+	for _, want := range []string{
+		"Роботы поисковиков и ИИ",
+		"shop.example — OAI-SearchBot получает отказ (код 403): 120 из 140 запросов за неделю, в том числе на robots.txt",
+		"сервер целиком — Googlebot пропал",
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("нет строки %q в\n%s", want, body)
+		}
+	}
+	if strings.Contains(body, "GPTBot") {
+		t.Error("справка о роботе обучения попала в письмо")
+	}
+
+	if strings.Contains(Build("ru", "vps-1", health.Snapshot{}).Body, "Роботы") {
+		t.Error("блок роботов без выводов")
+	}
+	english := BuildWithRobots("en", "vps-1", health.Snapshot{}, robots).Body
+	if !strings.Contains(english, "OAI-SearchBot is refused (code 403): 120 of 140 requests this week") {
+		t.Errorf("английский отчёт:\n%s", english)
 	}
 }

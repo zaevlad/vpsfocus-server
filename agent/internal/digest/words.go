@@ -42,7 +42,16 @@ type phrases struct {
 	footer           string
 	markProblem      string
 	markAttention    string
-	reasons          map[string]string
+	mb               string // «%d МБ»
+	underOneMB       string
+	// Роботы поиска и ИИ (идея 10 трека AB).
+	robotsTitle       string
+	robotsHint        string
+	robotsWholeServer string
+	robotRefused      string // имя, код, отказов, запросов
+	robotRobotsTxt    string
+	robotGone         string // имя, запросов раньше
+	reasons           map[string]string
 	// Уточнения: почему проверка не состоялась.
 	//
 	// Отдельной картой от поводов, потому что список свой: повод приходит
@@ -61,22 +70,32 @@ func dictionary(locale string) phrases {
 }
 
 var russian = phrases{
-	subject:          "Отчёт за неделю",
-	intro:            "Еженедельный отчёт о сервере %s и проектах на нём.",
-	summaryOK:        "Делать нечего: всё в порядке.",
-	summaryAttention: "Стоит посмотреть: %d.",
-	summaryProblem:   "Требует вмешательства: %d.",
-	serverTitle:      "Сервер",
-	noProjects:       "Проектов на сервере пока нет.",
-	nothing:          "всё в порядке",
-	muted:            "Приглушено находок: %d. Их можно вернуть в отчёт на экране проектов.",
-	maintenance:      "Сейчас идёт обслуживание: тревоги приглушены до его конца.",
-	footer:           "Отчёт отправлен агентом vpsFocus с этого сервера. День и час меняются в настройках уведомлений.",
-	markProblem:      "[!]",
-	markAttention:    "[·]",
+	subject:           "Отчёт за неделю",
+	intro:             "Еженедельный отчёт о сервере %s и проектах на нём.",
+	summaryOK:         "Делать нечего: всё в порядке.",
+	summaryAttention:  "Стоит посмотреть: %d.",
+	summaryProblem:    "Требует вмешательства: %d.",
+	serverTitle:       "Сервер",
+	noProjects:        "Проектов на сервере пока нет.",
+	nothing:           "всё в порядке",
+	muted:             "Приглушено находок: %d. Их можно вернуть в отчёт на экране проектов.",
+	maintenance:       "Сейчас идёт обслуживание: тревоги приглушены до его конца.",
+	footer:            "Отчёт отправлен агентом vpsFocus с этого сервера. День и час меняются в настройках уведомлений.",
+	markProblem:       "[!]",
+	markAttention:     "[·]",
+	mb:                "%d МБ",
+	underOneMB:        "меньше 1 МБ",
+	robotsTitle:       "Роботы поисковиков и ИИ",
+	robotsHint:        "Что это значит и где обычно стоит такое правило — на экране «Агенты и ИИ» в приложении. Имя робота мог взять и самозванец.",
+	robotsWholeServer: "сервер целиком",
+	robotRefused:      "%s получает отказ (код %d): %d из %d запросов за неделю",
+	robotRobotsTxt:    ", в том числе на robots.txt",
+	robotGone:         "%s пропал: раньше приходил почти каждый день (%d запросов за неделю), а за последние 3 дня — ни разу",
 	reasons: map[string]string{
 		health.CodeDiskFilling:    "диск занят на {count}%",
 		health.CodeDiskFull:       "диск занят на {count}% — сервер начнёт ломаться сам",
+		health.CodeInodesFilling:  "места под файлы заняты на {count}%: место на диске есть, а новые файлы скоро не создадутся",
+		health.CodeInodesFull:     "места под файлы заняты на {count}% — новые файлы вот-вот перестанут создаваться",
 		health.CodeMemoryTight:    "память занята на {count}%",
 		health.CodeMetricsMissing: "замеров нет вовсе, возможно, агент не запустился",
 		health.CodeMetricsStale:   "последнему замеру {count} минут — похоже, агент встал",
@@ -104,6 +123,7 @@ var russian = phrases{
 		// было бы неправдой в самую тревожную сторону.
 		health.CodeBackupStale:   "свежей копии базы нет: последняя {count} дн. назад ({detail})",
 		health.CodeBackupMissing: "копий базы нет ни одной ({detail})",
+		health.CodeBackupShrunk:  "последняя копия базы намного меньше прошлой: было {before}, стало {after} — проверьте, не пропали ли данные",
 	},
 	details: map[string]string{
 		checks.ErrNoExpiry:   "реестр не назвал срок",
@@ -166,22 +186,32 @@ var russian = phrases{
 }
 
 var english = phrases{
-	subject:          "Weekly report",
-	intro:            "Weekly report on server %s and the projects it runs.",
-	summaryOK:        "Nothing to do: everything is fine.",
-	summaryAttention: "Worth a look: %d.",
-	summaryProblem:   "Needs attention: %d.",
-	serverTitle:      "Server",
-	noProjects:       "No projects on this server yet.",
-	nothing:          "all fine",
-	muted:            "Muted findings: %d. They can be brought back on the projects screen.",
-	maintenance:      "Maintenance is running: alerts are muted until it ends.",
-	footer:           "Sent by the vpsFocus agent on this server. The day and hour are set in notification settings.",
-	markProblem:      "[!]",
-	markAttention:    "[·]",
+	subject:           "Weekly report",
+	intro:             "Weekly report on server %s and the projects it runs.",
+	summaryOK:         "Nothing to do: everything is fine.",
+	summaryAttention:  "Worth a look: %d.",
+	summaryProblem:    "Needs attention: %d.",
+	serverTitle:       "Server",
+	noProjects:        "No projects on this server yet.",
+	nothing:           "all fine",
+	muted:             "Muted findings: %d. They can be brought back on the projects screen.",
+	maintenance:       "Maintenance is running: alerts are muted until it ends.",
+	footer:            "Sent by the vpsFocus agent on this server. The day and hour are set in notification settings.",
+	markProblem:       "[!]",
+	markAttention:     "[·]",
+	mb:                "%d MB",
+	underOneMB:        "under 1 MB",
+	robotsTitle:       "Search and AI robots",
+	robotsHint:        "What this means and where such a rule usually sits is on the Agents and AI screen in the app. The robot's name could also be taken by an impostor.",
+	robotsWholeServer: "whole server",
+	robotRefused:      "%s is refused (code %d): %d of %d requests this week",
+	robotRobotsTxt:    ", including robots.txt",
+	robotGone:         "%s has disappeared: it used to come almost every day (%d requests in a week), and not once in the last 3 days",
 	reasons: map[string]string{
 		health.CodeDiskFilling:    "disk is {count}% full",
 		health.CodeDiskFull:       "disk is {count}% full — the server will start failing on its own",
+		health.CodeInodesFilling:  "file slots are {count}% used: there is disk space, but new files will soon fail to be created",
+		health.CodeInodesFull:     "file slots are {count}% used — new files are about to stop being created",
 		health.CodeMemoryTight:    "memory is {count}% used",
 		health.CodeMetricsMissing: "no measurements at all, the agent may not have started",
 		health.CodeMetricsStale:   "the last measurement is {count} minutes old — the agent seems to have stopped",
@@ -207,6 +237,7 @@ var english = phrases{
 		health.CodeBackupFailed:   "the last database copy failed ({detail})",
 		health.CodeBackupStale:    "no fresh database copy: the last one is {count} days old ({detail})",
 		health.CodeBackupMissing:  "there is no database copy at all ({detail})",
+		health.CodeBackupShrunk:   "the last database copy is much smaller than the previous one: {before} then, {after} now — check that no data went missing",
 	},
 	details: map[string]string{
 		checks.ErrNoExpiry:   "the registry did not give a date",

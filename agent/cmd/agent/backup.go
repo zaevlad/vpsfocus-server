@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 	"time"
 
@@ -148,6 +149,39 @@ func (a *Agent) notifyBackup(ctx context.Context, record backup.Record) {
 		Subject: a.words().BackupOKSubject,
 		Body:    fmt.Sprintf(a.words().BackupOKBody, record.Key, record.Bytes),
 	}})
+
+	a.notifyShrunk(ctx, record)
+}
+
+// notifyShrunk зовёт человека, когда удачная копия вдвое меньше прошлой
+// удачной (Р12, Р32). Только после удачного круга: неудачный о размере не
+// говорит ничего, и пометка остаётся, какой была. Отбой — следующей копией
+// обычного размера.
+func (a *Agent) notifyShrunk(ctx context.Context, record backup.Record) {
+	sizes, err := a.db.LastDumps(ctx)
+	if err != nil {
+		log.Printf("размеры прошлых копий: %v", err)
+		return
+	}
+	if len(sizes) < 2 {
+		return
+	}
+	words := a.words()
+	if backup.Shrunk(sizes[1], sizes[0]) {
+		a.dispatch(ctx, []checks.Alert{{
+			Kind:    checks.KindBackupShrunk,
+			Target:  "database",
+			Subject: words.BackupShrunkSubject,
+			Body:    fmt.Sprintf(words.BackupShrunkBody, megabytes(sizes[1]), megabytes(sizes[0])),
+		}}, nil)
+		return
+	}
+	a.dispatch(ctx, nil, []checks.Alert{{
+		Kind:    checks.KindBackupShrunk,
+		Target:  "database",
+		Subject: words.BackupShrunkOKSubject,
+		Body:    fmt.Sprintf(words.BackupShrunkOKBody, megabytes(record.DumpBytes)),
+	}})
 }
 
 // backupState — то, что свод знает о копиях.
@@ -177,6 +211,13 @@ func (a *Agent) backupState(ctx context.Context) health.BackupState {
 	}
 	if hasSuccess {
 		state.Freshest = success.StartedAt
+	}
+	// Похудевшая копия (Р12) — сравнением двух последних удачных, при
+	// чтении: колонки под пометку у агента нет (Р5).
+	if sizes, err := a.db.LastDumps(ctx); err != nil {
+		log.Printf("свод: размеры копий: %v", err)
+	} else if len(sizes) == 2 && backup.Shrunk(sizes[1], sizes[0]) {
+		state.ShrunkFrom, state.ShrunkTo = sizes[1], sizes[0]
 	}
 	// Хранилище важнее нашей памяти: оно знает и о копиях, стёртых мимо нас.
 	if hasLast && !last.NewestAt.IsZero() {
@@ -245,9 +286,15 @@ func (a *Agent) Backups(prefix string) (any, error) {
 		Objects:       []StoredCopy{},
 	}
 
-	runs, err := a.db.BackupRuns(ctx, backupRunsShown)
+	// На один круг больше, чем показываем: самому старому из показанных
+	// нужен прошлый, чтобы сказать, не похудел ли он (Р12).
+	runs, err := a.db.BackupRuns(ctx, backupRunsShown+1)
 	if err != nil {
 		return nil, err
+	}
+	backup.MarkShrunk(runs)
+	if len(runs) > backupRunsShown {
+		runs = runs[:backupRunsShown]
 	}
 	state.Runs = runs
 
@@ -322,4 +369,14 @@ func (a *Agent) BackupLink(key string) (any, error) {
 		// действует» одинаково читается по обе стороны туннеля.
 		"expiresIn": int(backupLinkTTL.Seconds()),
 	}, nil
+}
+
+// megabytes — размер дампа для письма: «120» или «0.4», без нуля у копии
+// меньше мегабайта — «стало 0 МБ» читалось бы как «копия пустая».
+func megabytes(bytes int64) string {
+	mb := float64(bytes) / (1024 * 1024)
+	if mb >= 10 {
+		return strconv.FormatFloat(mb, 'f', 0, 64)
+	}
+	return strconv.FormatFloat(mb, 'f', 1, 64)
 }

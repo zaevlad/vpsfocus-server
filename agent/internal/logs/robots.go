@@ -39,11 +39,23 @@ type RobotCount struct {
 // Robots сводит строки одного прохода в счётчики. Ключей немного — роботов
 // в списке полтора десятка, — поэтому потолка, как у групп ошибок, не нужно.
 type Robots struct {
-	counts map[[3]string]*RobotCount
+	counts   map[[3]string]*RobotCount
+	refusals map[refusalKey]*RobotRefusal
+}
+
+type refusalKey struct {
+	day       int64
+	host      string
+	name      string
+	status    int
+	robotsTxt bool
 }
 
 func NewRobots() *Robots {
-	return &Robots{counts: map[[3]string]*RobotCount{}}
+	return &Robots{
+		counts:   map[[3]string]*RobotCount{},
+		refusals: map[refusalKey]*RobotRefusal{},
+	}
 }
 
 func dayOf(at time.Time) int64 {
@@ -76,6 +88,17 @@ func (r *Robots) Add(event Event) {
 	}
 	if event.Robot != "" {
 		r.bump(event, event.Robot)
+		// Отказ роботу из списка (Р14). «Прочих» не считаем: вывода о них
+		// экран не делает, а строк в таблице стало бы на порядок больше.
+		if event.Robot != bots.Other && Refusal(event.Status) {
+			key := refusalKey{dayOf(event.At), event.Host, event.Robot, event.Status, event.Path == "/robots.txt"}
+			if item, ok := r.refusals[key]; ok {
+				item.Count++
+			} else {
+				r.refusals[key] = &RobotRefusal{Day: key.day, Host: key.host, Name: key.name,
+					Status: key.status, RobotsTxt: key.robotsTxt, Count: 1}
+			}
+		}
 	}
 	if bots.Scanner(event.Path) {
 		r.bump(event, MetaScan)
@@ -83,6 +106,15 @@ func (r *Robots) Add(event Event) {
 	if event.Status == 200 && bots.Secret(event.Path) {
 		r.bump(event, MetaExposed)
 	}
+}
+
+// Refusals — отказы роботам за проход, для таблицы robot_refusals.
+func (r *Robots) Refusals() []RobotRefusal {
+	out := make([]RobotRefusal, 0, len(r.refusals))
+	for _, item := range r.refusals {
+		out = append(out, *item)
+	}
+	return out
 }
 
 // Counts отдаёт собранное. Порядок не важен: дальше их складывают в базу.

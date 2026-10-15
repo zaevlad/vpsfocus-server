@@ -54,6 +54,16 @@ create table if not exists samples (
     uptime_seconds  integer not null
 );
 
+-- Места под файлы (inodes) к замеру — идея 4 трека AB. Своей таблицей, а
+-- не колонками samples: миграций у агента нет, и alter table на живой базе
+-- клиента не выполняется (Р5). Ключ тот же — время замера; замер без строки
+-- здесь — «не знаем».
+create table if not exists inode_samples (
+    at           integer primary key,
+    inodes_total integer not null,
+    inodes_free  integer not null
+);
+
 create table if not exists checks (
     kind       text not null,
     target     text not null,
@@ -170,6 +180,19 @@ create table if not exists robot_visits (
     count   integer not null,
     last_at integer not null,
     primary key (day, host, name)
+);
+
+-- Отказы роботам из списка (идея 10 трека AB, Р5, Р14): сутки, сайт, имя,
+-- код отказа (403, 429, 444) и был ли это запрос /robots.txt — и число.
+-- Своей таблицей: колонки в robot_visits у агента не добавляются.
+create table if not exists robot_refusals (
+    day        integer not null,
+    host       text    not null default '',
+    name       text    not null,
+    status     integer not null,
+    robots_txt integer not null,
+    count      integer not null,
+    primary key (day, host, name, status, robots_txt)
 );
 
 create table if not exists seo_scans (
@@ -352,8 +375,23 @@ func (s *Store) SaveSample(ctx context.Context, sample metrics.Sample) error {
 		sample.At.Unix(), sample.CPUPercent, sample.MemTotalMB, sample.MemAvailableMB,
 		sample.DiskTotalMB, sample.DiskFreeMB, sample.Load1, sample.UptimeSeconds,
 	)
+	if err != nil || !sample.InodesKnown() {
+		return err
+	}
+	_, err = s.db.ExecContext(ctx,
+		`insert or replace into inode_samples (at, inodes_total, inodes_free) values (?, ?, ?)`,
+		sample.At.Unix(), sample.InodesTotal, sample.InodesFree,
+	)
 	return err
 }
+
+// Столбцы замера вместе с местами под файлы. Одна строка на все три
+// запроса: разойдись они, история показала бы места под файлы, а «последний
+// перед падением» — нет.
+const sampleColumns = `samples.at, cpu_percent, mem_total_mb, mem_available_mb,
+		        disk_total_mb, disk_free_mb, load1, uptime_seconds,
+		        coalesce(inode_samples.inodes_total, 0), coalesce(inode_samples.inodes_free, 0)
+		 from samples left join inode_samples on inode_samples.at = samples.at`
 
 // Samples отдаёт замеры с указанного момента и до сейчас, от старых к новым.
 func (s *Store) Samples(ctx context.Context, since time.Time) ([]metrics.Sample, error) {
@@ -368,9 +406,8 @@ func (s *Store) Samples(ctx context.Context, since time.Time) ([]metrics.Sample,
 // разойдётся тот, про который забыли.
 func (s *Store) SamplesBetween(ctx context.Context, from, to time.Time) ([]metrics.Sample, error) {
 	rows, err := s.db.QueryContext(ctx,
-		`select at, cpu_percent, mem_total_mb, mem_available_mb,
-		        disk_total_mb, disk_free_mb, load1, uptime_seconds
-		 from samples where at >= ? and at <= ? order by at`,
+		`select `+sampleColumns+`
+		 where samples.at >= ? and samples.at <= ? order by samples.at`,
 		from.Unix(), to.Unix(),
 	)
 	if err != nil {
@@ -383,7 +420,8 @@ func (s *Store) SamplesBetween(ctx context.Context, from, to time.Time) ([]metri
 		var sample metrics.Sample
 		var at int64
 		if err := rows.Scan(&at, &sample.CPUPercent, &sample.MemTotalMB, &sample.MemAvailableMB,
-			&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds); err != nil {
+			&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds,
+			&sample.InodesTotal, &sample.InodesFree); err != nil {
 			return nil, err
 		}
 		sample.At = time.Unix(at, 0).UTC()
@@ -409,12 +447,12 @@ func (s *Store) SampleBefore(ctx context.Context, at time.Time) (metrics.Sample,
 	var sample metrics.Sample
 	var unix int64
 	err := s.db.QueryRowContext(ctx,
-		`select at, cpu_percent, mem_total_mb, mem_available_mb,
-		        disk_total_mb, disk_free_mb, load1, uptime_seconds
-		 from samples where at < ? order by at desc limit 1`,
+		`select `+sampleColumns+`
+		 where samples.at < ? order by samples.at desc limit 1`,
 		at.Unix(),
 	).Scan(&unix, &sample.CPUPercent, &sample.MemTotalMB, &sample.MemAvailableMB,
-		&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds)
+		&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds,
+		&sample.InodesTotal, &sample.InodesFree)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return metrics.Sample{}, false, nil
@@ -431,9 +469,12 @@ func (s *Store) SampleBefore(ctx context.Context, at time.Time) (metrics.Sample,
 // Без неё база растёт вечно на сервере, который нам не принадлежит: замер в
 // минуту это полмиллиона строк в год. Место клиента — не наше место.
 func (s *Store) Rotate(ctx context.Context, keep time.Duration) (int64, error) {
-	result, err := s.db.ExecContext(ctx,
-		`delete from samples where at < ?`, time.Now().Add(-keep).Unix())
+	cutoff := time.Now().Add(-keep).Unix()
+	result, err := s.db.ExecContext(ctx, `delete from samples where at < ?`, cutoff)
 	if err != nil {
+		return 0, err
+	}
+	if _, err := s.db.ExecContext(ctx, `delete from inode_samples where at < ?`, cutoff); err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()
@@ -865,6 +906,29 @@ func (s *Store) LastBackup(ctx context.Context) (last, success backup.Record, ha
 	}
 	success, hasSuccess, err = read("where ok = 1")
 	return
+}
+
+// LastDumps — размеры дампов двух последних удачных копий, от новой к
+// старой. Ими свод решает, не похудела ли копия (Р12): колонки под пометку
+// нет, сравнение — при чтении, и оно работает и на записях старых агентов.
+func (s *Store) LastDumps(ctx context.Context) ([]int64, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select dump_bytes from backup_runs where ok = 1
+		 order by started_at desc, id desc limit 2`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var sizes []int64
+	for rows.Next() {
+		var size int64
+		if err := rows.Scan(&size); err != nil {
+			return nil, err
+		}
+		sizes = append(sizes, size)
+	}
+	return sizes, rows.Err()
 }
 
 // newestUnix — ноль вместо отрицательного числа у нулевого времени.
@@ -1711,6 +1775,74 @@ func (s *Store) AddRobotCounts(ctx context.Context, counts []logs.RobotCount) er
 	return nil
 }
 
+// AddRobotRefusals прибавляет отказы роботам за проход к накопленным.
+func (s *Store) AddRobotRefusals(ctx context.Context, refusals []logs.RobotRefusal) error {
+	for _, item := range refusals {
+		robotsTxt := 0
+		if item.RobotsTxt {
+			robotsTxt = 1
+		}
+		if _, err := s.db.ExecContext(ctx,
+			`insert into robot_refusals (day, host, name, status, robots_txt, count)
+			 values (?, ?, ?, ?, ?, ?)
+			 on conflict do update set count = count + excluded.count`,
+			item.Day, item.Host, item.Name, item.Status, robotsTxt, item.Count,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RobotRefusals — суточные отказы роботам с указанного момента.
+func (s *Store) RobotRefusals(ctx context.Context, since time.Time) ([]logs.RobotRefusal, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select day, host, name, status, robots_txt, count
+		 from robot_refusals where day >= ?`,
+		since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []logs.RobotRefusal{}
+	for rows.Next() {
+		var item logs.RobotRefusal
+		var robotsTxt int
+		if err := rows.Scan(&item.Day, &item.Host, &item.Name, &item.Status, &robotsTxt, &item.Count); err != nil {
+			return nil, err
+		}
+		item.RobotsTxt = robotsTxt == 1
+		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// RobotDays — суточные счётчики роботов (со служебными строками) с
+// указанного момента, без сложения по дням: «робот пропал» считается по
+// дням (Р15).
+func (s *Store) RobotDays(ctx context.Context, since time.Time) ([]logs.RobotCount, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select day, host, name, count, last_at from robot_visits where day >= ?`,
+		since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []logs.RobotCount{}
+	for rows.Next() {
+		var count logs.RobotCount
+		var lastAt int64
+		if err := rows.Scan(&count.Day, &count.Host, &count.Name, &count.Count, &lastAt); err != nil {
+			return nil, err
+		}
+		count.LastAt = time.Unix(lastAt, 0).UTC()
+		out = append(out, count)
+	}
+	return out, rows.Err()
+}
+
 // RobotSummary — счётчики роботов за период, сложенные по сайту и имени.
 func (s *Store) RobotSummary(ctx context.Context, since time.Time) ([]logs.RobotCount, error) {
 	rows, err := s.db.QueryContext(ctx,
@@ -1916,6 +2048,9 @@ func (s *Store) RotateLogEvents(ctx context.Context, days int) (int64, error) {
 	// Счётчики роботов живут столько же, сколько ошибки: это та же история
 	// логов, и место на диске клиента — не наше место.
 	if _, err := s.db.ExecContext(ctx, `delete from robot_visits where day < ?`, cutoff); err != nil {
+		return 0, err
+	}
+	if _, err := s.db.ExecContext(ctx, `delete from robot_refusals where day < ?`, cutoff); err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()

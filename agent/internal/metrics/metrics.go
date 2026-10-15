@@ -31,6 +31,13 @@ type Sample struct {
 	DiskTotalMB uint64 `json:"diskTotalMb"`
 	DiskFreeMB  uint64 `json:"diskFreeMb"`
 
+	// Места под файлы (inodes) на том же разделе, что и диск (идея 4,
+	// трек AB). Ноль в обоих — «не знаем»: файловая система их не считает
+	// (btrfs отдаёт Files == 0) или замер снят старым агентом. Экран и свод
+	// читают ноль как «не знаем», а не как «всё свободно».
+	InodesTotal uint64 `json:"inodesTotal,omitempty"`
+	InodesFree  uint64 `json:"inodesFree,omitempty"`
+
 	Load1 float64 `json:"load1"`
 
 	// Аптайм сервера в секундах.
@@ -53,6 +60,46 @@ func (s Sample) DiskUsedPercent() int {
 	}
 	used := s.DiskTotalMB - s.DiskFreeMB
 	return int(used * 100 / s.DiskTotalMB)
+}
+
+// InodesKnown — посчитаны ли места под файлы.
+func (s Sample) InodesKnown() bool {
+	return s.InodesTotal > 0
+}
+
+// InodesUsedPercent — сколько мест под файлы занято. Ноль, если не знаем:
+// спрашивать сначала InodesKnown.
+func (s Sample) InodesUsedPercent() int {
+	if s.InodesTotal == 0 || s.InodesFree > s.InodesTotal {
+		return 0
+	}
+	used := s.InodesTotal - s.InodesFree
+	return int(used * 100 / s.InodesTotal)
+}
+
+// diskFigures — то, что известно о корневом разделе.
+type diskFigures struct {
+	totalMB, freeMB         uint64
+	inodesTotal, inodesFree uint64
+}
+
+// diskFrom пересчитывает ответ statfs в мегабайты и места под файлы.
+//
+// Отдельной функцией без платформы: `syscall.Statfs` есть только под Linux,
+// а пересчёт проверяется тестами и на машине разработчика.
+func diskFrom(blockSize, blocks, available, files, filesFree uint64) diskFigures {
+	figures := diskFigures{
+		totalMB: blocks * blockSize / (1024 * 1024),
+		// Bavail, а не Bfree: часть места зарезервирована под root, и
+		// обещать её пользователю нечестно.
+		freeMB: available * blockSize / (1024 * 1024),
+	}
+	// Files == 0 — файловая система мест под файлы не считает (btrfs и
+	// др.): «не знаем», а не «занято ноль».
+	if files > 0 {
+		figures.inodesTotal, figures.inodesFree = files, filesFree
+	}
+	return figures
 }
 
 // Collector помнит предыдущий счётчик процессора: мгновенной загрузки в
@@ -90,9 +137,11 @@ func (c *Collector) Collect() (Sample, error) {
 		sample.MemAvailableMB = available
 	}
 
-	if total, free, err := c.disk(); err == nil {
-		sample.DiskTotalMB = total
-		sample.DiskFreeMB = free
+	if disk, err := c.disk(); err == nil {
+		sample.DiskTotalMB = disk.totalMB
+		sample.DiskFreeMB = disk.freeMB
+		sample.InodesTotal = disk.inodesTotal
+		sample.InodesFree = disk.inodesFree
 	}
 
 	sample.Load1 = c.loadAverage()

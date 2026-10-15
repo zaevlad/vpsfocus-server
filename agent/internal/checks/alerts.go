@@ -60,6 +60,21 @@ const (
 	// идёт круг копии: Evaluate не знает ни про хранилище, ни про то, чем
 	// кончилась выгрузка.
 	KindBackup = "backup"
+	// На диске кончаются места под файлы (inodes): место есть, а новый
+	// файл не создаётся (идея 4 трека AB).
+	KindInodes = "inodes"
+	// Копия сделалась, но дамп меньше половины прошлого удачного (Р12,
+	// Р32): «внимание», а не отказ. Решение — там же, где круг копии.
+	KindBackupShrunk = "backupShrunk"
+)
+
+// Пороги мест под файлы — постоянными, а не настройкой (Р7): порог
+// настройкой значил бы новый ключ в шаблоне agent.env, а новая подстановка
+// роняет старые сборки приложения. С 90% свод говорит «посмотри» и уходит
+// письмо, с 97% — «сломано»: новые файлы вот-вот перестанут создаваться.
+const (
+	InodesAlertPercent = 90
+	InodesFullPercent  = 97
 )
 
 // Evaluate решает, о чём стоит сообщить, и говорит об этом словами words.
@@ -93,6 +108,29 @@ func Evaluate(
 				Target:  "root",
 				Subject: words.DiskOKSubject,
 				Body:    fmt.Sprintf(words.DiskOKBody, used, sample.DiskFreeMB),
+			})
+		}
+	}
+
+	// ── Места под файлы ───────────────────────────────────────────────────
+	// Кончаются так же молча, как место: диск полупустой, а сайт не может
+	// записать сессию. Не знаем (файловая система их не считает) — ни
+	// тревоги, ни отбоя.
+	if sample.InodesKnown() {
+		used := sample.InodesUsedPercent()
+		if used >= InodesAlertPercent {
+			firing = append(firing, Alert{
+				Kind:    KindInodes,
+				Target:  "root",
+				Subject: fmt.Sprintf(words.InodesSubject, used),
+				Body:    fmt.Sprintf(words.InodesBody, used, sample.InodesFree),
+			})
+		} else {
+			resolved = append(resolved, Alert{
+				Kind:    KindInodes,
+				Target:  "root",
+				Subject: words.InodesOKSubject,
+				Body:    fmt.Sprintf(words.InodesOKBody, used),
 			})
 		}
 	}

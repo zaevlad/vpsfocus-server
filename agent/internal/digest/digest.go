@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"agent/internal/health"
+	"agent/internal/logs"
 )
 
 // Text — тема и тело письма.
@@ -36,6 +37,14 @@ type Text struct {
 // приглушения: свод их показывает, чтобы было что снимать, а письмо о них
 // молчит, потому что человек уже сказал «знаю».
 func Build(locale, host string, snapshot health.Snapshot) Text {
+	return BuildWithRobots(locale, host, snapshot, nil)
+}
+
+// BuildWithRobots — отчёт со строками о роботах поиска и ИИ: кому сервер
+// отказывает и кто пропал (идея 10 трека AB). Отдельных сообщений об этом
+// нет (Р4) — только экран и эта строка раз в неделю. Справки о роботах
+// обучения в письмо не идут: отказ им бывает выбором человека.
+func BuildWithRobots(locale, host string, snapshot health.Snapshot, robots []logs.RobotVerdict) Text {
 	words := dictionary(locale)
 
 	server := speaking(snapshot.Server.Reasons)
@@ -106,6 +115,21 @@ func Build(locale, host string, snapshot health.Snapshot) Text {
 	// приглушение и заводили.
 	if muted := countMuted(snapshot); muted > 0 {
 		body.WriteString("\n" + fmt.Sprintf(words.muted, muted) + "\n")
+	}
+
+	var robotLines []string
+	for _, verdict := range robots {
+		if verdict.Level != logs.VerdictAttention {
+			continue
+		}
+		robotLines = append(robotLines, robotLine(words, verdict))
+	}
+	if len(robotLines) > 0 {
+		body.WriteString("\n" + words.robotsTitle + "\n")
+		for _, text := range robotLines {
+			body.WriteString("  " + words.markAttention + " " + text + "\n")
+		}
+		body.WriteString("  " + words.robotsHint + "\n")
 	}
 
 	if snapshot.Maintenance != nil {
@@ -202,6 +226,8 @@ func line(words phrases, item health.Reason) string {
 		"{count}", fmt.Sprint(item.Count),
 		"{minutes}", fmt.Sprint(item.WindowMinutes),
 		"{detail}", detail(words, item.Detail),
+		"{before}", megabytes(words, item.BytesBefore),
+		"{after}", megabytes(words, item.Bytes),
 	).Replace(text)
 
 	prefix := words.markAttention
@@ -229,6 +255,34 @@ func detail(words phrases, code string) string {
 		return text
 	}
 	return code
+}
+
+// robotLine — одна строка о роботе: сайт, имя и что с ним.
+func robotLine(words phrases, verdict logs.RobotVerdict) string {
+	site := verdict.Host
+	if site == "" {
+		site = words.robotsWholeServer
+	}
+	var text string
+	if verdict.Verdict == logs.VerdictGone {
+		text = fmt.Sprintf(words.robotGone, verdict.Name, verdict.Before)
+	} else {
+		text = fmt.Sprintf(words.robotRefused, verdict.Name, verdict.Code, verdict.Refused, verdict.Visits)
+		if verdict.RobotsTxt > 0 {
+			text += words.robotRobotsTxt
+		}
+	}
+	return site + " — " + text
+}
+
+// megabytes — размер копии словами: «120 МБ». Меньше мегабайта — «меньше
+// 1 МБ», а не «0 МБ»: ноль читался бы как «копия пустая».
+func megabytes(words phrases, bytes int64) string {
+	mb := bytes / (1024 * 1024)
+	if mb < 1 {
+		return words.underOneMB
+	}
+	return fmt.Sprintf(words.mb, mb)
 }
 
 func absDays(item health.Reason) int {

@@ -1,6 +1,7 @@
 package checks
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -260,4 +261,28 @@ func contains(haystack, needle string) bool {
 		}
 		return false
 	})()
+}
+
+// Места под файлы: тревога с 90%, отбой ниже, а «не знаем» (Files == 0) —
+// ни того, ни другого: тишина о слепой проверке не должна выглядеть отбоем.
+func TestInodesAlert(t *testing.T) {
+	words := WordsFor("ru")
+	full := metrics.Sample{DiskTotalMB: 1000, DiskFreeMB: 900, InodesTotal: 1000, InodesFree: 100}
+	firing, _ := Evaluate(thresholds(), words, full, nil, nil)
+	if alert := find(firing, KindInodes, "root"); alert == nil || !strings.Contains(alert.Subject, "90%") {
+		t.Fatalf("тревога: %+v", firing)
+	}
+
+	fine := full
+	fine.InodesFree = 101
+	_, resolved := Evaluate(thresholds(), words, fine, nil, nil)
+	if find(resolved, KindInodes, "root") == nil {
+		t.Fatal("нет отбоя ниже порога")
+	}
+
+	unknown := metrics.Sample{DiskTotalMB: 1000, DiskFreeMB: 900}
+	firing, resolved = Evaluate(thresholds(), words, unknown, nil, nil)
+	if find(firing, KindInodes, "root") != nil || find(resolved, KindInodes, "root") != nil {
+		t.Fatal("неизвестные места под файлы дали тревогу или отбой")
+	}
 }

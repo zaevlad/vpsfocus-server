@@ -111,3 +111,23 @@ func TestMissingProcIsAnError(t *testing.T) {
 		t.Error("отсутствие /proc должно быть ошибкой")
 	}
 }
+
+// Места под файлы считаются из ответа statfs, а файловая система, которая
+// их не считает (Files == 0, бывает у btrfs), — «не знаем», а не «свободно
+// всё» (идея 4, Р9).
+func TestDiskFromCountsInodes(t *testing.T) {
+	figures := diskFrom(4096, 262_144, 131_072, 1000, 30)
+	if figures.totalMB != 1024 || figures.freeMB != 512 {
+		t.Errorf("место: %d из %d МБ", figures.freeMB, figures.totalMB)
+	}
+	sample := Sample{InodesTotal: figures.inodesTotal, InodesFree: figures.inodesFree}
+	if !sample.InodesKnown() || sample.InodesUsedPercent() != 97 {
+		t.Errorf("места под файлы: известно %v, занято %d%%", sample.InodesKnown(), sample.InodesUsedPercent())
+	}
+
+	unknown := diskFrom(4096, 262_144, 131_072, 0, 0)
+	sample = Sample{InodesTotal: unknown.inodesTotal, InodesFree: unknown.inodesFree}
+	if sample.InodesKnown() || sample.InodesUsedPercent() != 0 {
+		t.Error("Files == 0 должно читаться как «не знаем»")
+	}
+}

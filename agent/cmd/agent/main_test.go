@@ -103,3 +103,17 @@ func TestLinkErrorCodeSeesLoopTimeout(t *testing.T) {
 		t.Fatalf("код %q, ожидался lycheeUnavailable", code)
 	}
 }
+
+// Размер в письме о похудевшей копии: без «стало 0 МБ» у копии меньше
+// мегабайта (аудит спринта 165).
+func TestShrunkSizesInLetter(t *testing.T) {
+	for bytes, want := range map[int64]string{
+		400 * 1024:        "0.4",
+		5 * 1024 * 1024:   "5.0",
+		120 * 1024 * 1024: "120",
+	} {
+		if got := megabytes(bytes); got != want {
+			t.Errorf("megabytes(%d) = %q, ждали %q", bytes, got, want)
+		}
+	}
+}

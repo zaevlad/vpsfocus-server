@@ -753,7 +753,13 @@ func (a *Agent) maybeSendDigest(ctx context.Context) {
 		return
 	}
 
-	text := digest.Build(a.cfg.Locale, config.HostName(a.cfg.HostRoot), snapshot)
+	// Роботы — строкой в отчёте (Р4). Не прочитались — отчёт уходит без
+	// них: молчать о неделе из-за одной строки хуже.
+	robots, _, err := a.robotVerdicts(ctx)
+	if err != nil {
+		log.Printf("еженедельный отчёт: роботы: %v", err)
+	}
+	text := digest.BuildWithRobots(a.cfg.Locale, config.HostName(a.cfg.HostRoot), snapshot, robots)
 
 	if err := a.notifier.SendReport(ctx, text.Subject, text.Body); err != nil {
 		log.Printf("отправка отчёта: %v", err)
@@ -780,6 +786,10 @@ type Snapshot struct {
 	// Пороги, при которых агент начинает беспокоить: экран показывает их
 	// рядом с числами, чтобы «85%» не выглядело выдумкой.
 	DiskAlertPercent int `json:"diskAlertPercent"`
+	// Пороги мест под файлы (Р7): «посмотри» и «сломано». Экран берёт их
+	// отсюда, а не держит свою копию (агент 0.26.0).
+	InodesAlertPercent int `json:"inodesAlertPercent"`
+	InodesFullPercent  int `json:"inodesFullPercent"`
 }
 
 func (a *Agent) Snapshot(hours int) (any, error) {
@@ -798,7 +808,12 @@ func (a *Agent) Snapshot(hours int) (any, error) {
 		history = []metrics.Sample{}
 	}
 
-	snapshot := Snapshot{History: history, DiskAlertPercent: a.cfg.Alerts.DiskPercent}
+	snapshot := Snapshot{
+		History:            history,
+		DiskAlertPercent:   a.cfg.Alerts.DiskPercent,
+		InodesAlertPercent: checks.InodesAlertPercent,
+		InodesFullPercent:  checks.InodesFullPercent,
+	}
 	if len(history) > 0 {
 		snapshot.Current = &history[len(history)-1]
 	}
@@ -1849,6 +1864,11 @@ func (a *Agent) scanLogs(ctx context.Context) {
 				log.Printf("запись счётчиков роботов: %v", err)
 			}
 		}
+		if refusals := robots.Refusals(); len(refusals) > 0 {
+			if err := a.db.AddRobotRefusals(ctx, refusals); err != nil {
+				log.Printf("запись отказов роботам: %v", err)
+			}
+		}
 		if err := a.db.SaveLogPosition(ctx, source.Path, position, failure); err != nil {
 			log.Printf("позиция в логе: %v", err)
 		}
@@ -1974,6 +1994,10 @@ type RobotHost struct {
 	// адреса с секретом (`.env`, `.git`).
 	Scans   int `json:"scans"`
 	Exposed int `json:"exposed"`
+	// Кому сервер отказывает и кто пропал (идея 10 трека AB) — всегда за
+	// последние семь дней, какой бы период ни спросил экран: вывод по доле
+	// за неделю (Р14) не должен меняться от переключателя периода.
+	Verdicts []logs.RobotVerdict `json:"verdicts"`
 }
 
 // RobotsState — ответ `GET /robots`.
@@ -1986,6 +2010,24 @@ type RobotsState struct {
 	// Сколько логов читается: ноль — читать нечего, и пустой список роботов
 	// значит «не знаем», а не «не приходили».
 	Sources int `json:"sources"`
+	// Считается ли «робот пропал»: счётчики живут меньше десяти дней
+	// (`LOG_RETENTION_DAYS`) — «не знаем», а не «все на месте» (Р16).
+	GoneKnown bool `json:"goneKnown"`
+}
+
+// robotVerdicts — кому отказывают и кто пропал, по сайтам.
+func (a *Agent) robotVerdicts(ctx context.Context) ([]logs.RobotVerdict, bool, error) {
+	since := time.Now().UTC().AddDate(0, 0, -logs.GoneNeedsDays)
+	days, err := a.db.RobotDays(ctx, since)
+	if err != nil {
+		return nil, false, err
+	}
+	refusals, err := a.db.RobotRefusals(ctx, since)
+	if err != nil {
+		return nil, false, err
+	}
+	verdicts, goneKnown := logs.AssessRobots(time.Now(), a.cfg.Logs.RetentionDays, days, refusals)
+	return verdicts, goneKnown, nil
 }
 
 func (a *Agent) Robots(days int) (any, error) {
@@ -2001,15 +2043,24 @@ func (a *Agent) Robots(days int) (any, error) {
 		return nil, err
 	}
 
+	verdicts, goneKnown, err := a.robotVerdicts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	byHost := map[string]*RobotHost{}
 	order := []string{}
-	for _, count := range counts {
-		host, ok := byHost[count.Host]
+	hostOf := func(name string) *RobotHost {
+		host, ok := byHost[name]
 		if !ok {
-			host = &RobotHost{Host: count.Host, Visits: []RobotVisit{}}
-			byHost[count.Host] = host
-			order = append(order, count.Host)
+			host = &RobotHost{Host: name, Visits: []RobotVisit{}, Verdicts: []logs.RobotVerdict{}}
+			byHost[name] = host
+			order = append(order, name)
 		}
+		return host
+	}
+	for _, count := range counts {
+		host := hostOf(count.Host)
 		switch count.Name {
 		case logs.MetaLines:
 			host.Lines = count.Count
@@ -2028,6 +2079,13 @@ func (a *Agent) Robots(days int) (any, error) {
 		}
 	}
 
+	// Пропавший робот на коротком периоде экрана не встречается вовсе, а
+	// сайт без визитов за период — тоже: вывод создаёт сайт сам.
+	for _, verdict := range verdicts {
+		host := hostOf(verdict.Host)
+		host.Verdicts = append(host.Verdicts, verdict)
+	}
+
 	hosts := make([]RobotHost, 0, len(order))
 	for _, name := range order {
 		hosts = append(hosts, *byHost[name])
@@ -2038,7 +2096,7 @@ func (a *Agent) Robots(days int) (any, error) {
 			sources++
 		}
 	}
-	return RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources}, nil
+	return RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources, GoneKnown: goneKnown}, nil
 }
 
 func (a *Agent) Logs(hours int) (any, error) {
