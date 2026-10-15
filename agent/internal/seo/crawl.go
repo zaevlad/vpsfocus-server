@@ -155,6 +155,7 @@ func Crawl(ctx context.Context, client *http.Client, startURL string, limits Lim
 		return scan, []Page{}
 	}
 	worker.robots = rules
+	scan.RobotsBody, scan.RobotsRead = rules.Body(), true
 	worker.delay = rules.DelayAtLeast(limits.Delay)
 	worker.stats.DelayMS = worker.delay.Milliseconds()
 

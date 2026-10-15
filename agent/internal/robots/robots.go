@@ -194,6 +194,14 @@ func Parse(body []byte, agent string) *Rules {
 	return &robots
 }
 
+// Body — прочитанный файл целиком; nil — файла не было (AllowAll).
+func (r *Rules) Body() []byte {
+	if r == nil {
+		return nil
+	}
+	return r.body
+}
+
 // AllowedFor решает, можно ли этот путь другому боту — тем же разбором, что
 // и для нас.
 //

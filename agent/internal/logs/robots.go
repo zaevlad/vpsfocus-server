@@ -39,8 +39,11 @@ type RobotCount struct {
 // Robots сводит строки одного прохода в счётчики. Ключей немного — роботов
 // в списке полтора десятка, — поэтому потолка, как у групп ошибок, не нужно.
 type Robots struct {
-	counts   map[[3]string]*RobotCount
-	refusals map[refusalKey]*RobotRefusal
+	counts     map[[3]string]*RobotCount
+	refusals   map[refusalKey]*RobotRefusal
+	traffic    map[trafficKey]*SiteTraffic
+	violations map[violationKey]*RobotViolation
+	policy     Policy
 }
 
 type refusalKey struct {
@@ -53,9 +56,18 @@ type refusalKey struct {
 
 func NewRobots() *Robots {
 	return &Robots{
-		counts:   map[[3]string]*RobotCount{},
-		refusals: map[refusalKey]*RobotRefusal{},
+		counts:     map[[3]string]*RobotCount{},
+		refusals:   map[refusalKey]*RobotRefusal{},
+		traffic:    map[trafficKey]*SiteTraffic{},
+		violations: map[violationKey]*RobotViolation{},
 	}
+}
+
+// UseRules задаёт правила robots.txt сайтов, с которыми сверяются заходы
+// роботов. Без них заходы в закрытое не считаются — «не знаем».
+func (r *Robots) UseRules(policy Policy) *Robots {
+	r.policy = policy
+	return r
 }
 
 func dayOf(at time.Time) int64 {
@@ -83,6 +95,12 @@ func (r *Robots) Add(event Event) {
 	}
 	if event.HasAgent {
 		r.bump(event, MetaLines)
+		// Нагрузка считается только по строкам, где формат называет
+		// посетителя: без поля User-agent долю роботов не узнать.
+		r.addTraffic(event, TrafficAll)
+		if kind := trafficKind(event.Robot); kind != "" {
+			r.addTraffic(event, kind)
+		}
 	} else {
 		r.bump(event, MetaNoAgent)
 	}
@@ -99,6 +117,7 @@ func (r *Robots) Add(event Event) {
 					Status: key.status, RobotsTxt: key.robotsTxt, Count: 1}
 			}
 		}
+		r.checkRules(event)
 	}
 	if bots.Scanner(event.Path) {
 		r.bump(event, MetaScan)

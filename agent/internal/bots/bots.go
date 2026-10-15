@@ -62,6 +62,16 @@ var List = []Bot{
 	{Name: "Perplexity-User", Kind: AIUser, InLogs: true},
 }
 
+// KindOf — роль робота из списка по имени.
+func KindOf(name string) (string, bool) {
+	for _, bot := range List {
+		if bot.Name == name {
+			return bot.Kind, true
+		}
+	}
+	return "", false
+}
+
 // ForRobots — роботы, о которых спрашивают robots.txt: все, кроме тех,
 // кого запускает человек своим вопросом.
 func ForRobots() []Bot {

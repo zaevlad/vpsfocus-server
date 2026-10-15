@@ -136,6 +136,7 @@ func (a *Agent) notifyBackup(ctx context.Context, record backup.Record) {
 		Target:  "database",
 		Subject: a.words().BackupSubject,
 		Body:    fmt.Sprintf(a.words().BackupBody, record.Code),
+		Urgent:  true,
 	}
 
 	if !record.OK {
@@ -148,16 +149,25 @@ func (a *Agent) notifyBackup(ctx context.Context, record backup.Record) {
 		Target:  "database",
 		Subject: a.words().BackupOKSubject,
 		Body:    fmt.Sprintf(a.words().BackupOKBody, record.Key, record.Bytes),
+		Urgent:  true,
 	}})
-
-	a.notifyShrunk(ctx, record)
 }
 
 // notifyShrunk зовёт человека, когда удачная копия вдвое меньше прошлой
-// удачной (Р12, Р32). Только после удачного круга: неудачный о размере не
-// говорит ничего, и пометка остаётся, какой была. Отбой — следующей копией
-// обычного размера.
-func (a *Agent) notifyShrunk(ctx context.Context, record backup.Record) {
+// удачной (Р12, Р32). Смотрит только на удачные копии: неудачный круг о
+// размере не говорит ничего, и пометка остаётся, какой была. Отбой —
+// следующей копией обычного размера.
+//
+// Зовётся на каждом круге замеров, а не только после копии (Р39): копия
+// делается раз в сутки, обычно в одно и то же время, и тревога, заглушённая
+// тихими часами, иначе глушилась бы каждую ночь и не пришла никогда. На
+// каждом круге она приходит утром, как остальные. Повтор раз в сутки ей не
+// нужен — о той же копии второй раз не говорим, — поэтому тревога
+// ступенчатая с единственной ступенью: одно письмо, пока не придёт отбой.
+func (a *Agent) notifyShrunk(ctx context.Context) {
+	if !a.cfg.Backup.Enabled {
+		return
+	}
 	sizes, err := a.db.LastDumps(ctx)
 	if err != nil {
 		log.Printf("размеры прошлых копий: %v", err)
@@ -173,6 +183,7 @@ func (a *Agent) notifyShrunk(ctx context.Context, record backup.Record) {
 			Target:  "database",
 			Subject: words.BackupShrunkSubject,
 			Body:    fmt.Sprintf(words.BackupShrunkBody, megabytes(sizes[1]), megabytes(sizes[0])),
+			Step:    1,
 		}}, nil)
 		return
 	}
@@ -180,7 +191,7 @@ func (a *Agent) notifyShrunk(ctx context.Context, record backup.Record) {
 		Kind:    checks.KindBackupShrunk,
 		Target:  "database",
 		Subject: words.BackupShrunkOKSubject,
-		Body:    fmt.Sprintf(words.BackupShrunkOKBody, megabytes(record.DumpBytes)),
+		Body:    fmt.Sprintf(words.BackupShrunkOKBody, megabytes(sizes[0])),
 	}})
 }
 

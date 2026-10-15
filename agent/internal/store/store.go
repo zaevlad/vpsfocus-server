@@ -195,6 +195,41 @@ create table if not exists robot_refusals (
     primary key (day, host, name, status, robots_txt)
 );
 
+-- Нагрузка на сайт по видам посетителей (идея 7 трека AB, Р5, Р22): сутки,
+-- сайт, вид (all — все запросы с полем User-agent; роль робота; other) —
+-- запросы и байты. Байты — только по строкам с размером (sized): формат
+-- без размера даёт «не знаем», а не ноль.
+create table if not exists site_traffic (
+    day      integer not null,
+    host     text    not null default '',
+    kind     text    not null,
+    requests integer not null,
+    bytes    integer not null,
+    sized    integer not null,
+    primary key (day, host, kind)
+);
+
+-- Заходы роботов поиска и обучения туда, куда их не пускает robots.txt
+-- сайта (Р23, Р24): сутки, сайт, имя, число и пример адреса без строки
+-- параметров.
+create table if not exists robot_violations (
+    day     integer not null,
+    host    text    not null,
+    name    text    not null,
+    count   integer not null,
+    example text    not null,
+    primary key (day, host, name)
+);
+
+-- Текст robots.txt сайта из последнего обхода SEO (Р31): по нему заходы
+-- роботов из логов сверяются с правилами. Пустой текст — файла на сайте
+-- нет. Сайт из списка ушёл — строка уходит вместе со снимками обхода.
+create table if not exists robots_files (
+    domain     text    primary key,
+    body       blob    not null,
+    fetched_at integer not null
+);
+
 create table if not exists seo_scans (
     id          integer primary key autoincrement,
     domain      text    not null,
@@ -2053,6 +2088,12 @@ func (s *Store) RotateLogEvents(ctx context.Context, days int) (int64, error) {
 	if _, err := s.db.ExecContext(ctx, `delete from robot_refusals where day < ?`, cutoff); err != nil {
 		return 0, err
 	}
+	if _, err := s.db.ExecContext(ctx, `delete from site_traffic where day < ?`, cutoff); err != nil {
+		return 0, err
+	}
+	if _, err := s.db.ExecContext(ctx, `delete from robot_violations where day < ?`, cutoff); err != nil {
+		return 0, err
+	}
 	return result.RowsAffected()
 }
 
@@ -2616,4 +2657,152 @@ func (s *Store) LatestSeoAt(ctx context.Context) (time.Time, bool, error) {
 		return time.Time{}, false, nil
 	}
 	return time.Unix(startedAt.Int64, 0).UTC(), true, nil
+}
+
+// ── Нагрузка роботов и robots.txt (идея 7 трека AB) ──────────────────────
+
+// AddSiteTraffic прибавляет счётчики нагрузки прохода к накопленным.
+func (s *Store) AddSiteTraffic(ctx context.Context, items []logs.SiteTraffic) error {
+	for _, item := range items {
+		if _, err := s.db.ExecContext(ctx,
+			`insert into site_traffic (day, host, kind, requests, bytes, sized)
+			 values (?, ?, ?, ?, ?, ?)
+			 on conflict do update set
+			     requests = requests + excluded.requests,
+			     bytes = bytes + excluded.bytes,
+			     sized = sized + excluded.sized`,
+			item.Day, item.Host, item.Kind, item.Requests, item.Bytes, item.Sized,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// SiteTraffic — нагрузка за период, сложенная по сайту и виду.
+func (s *Store) SiteTraffic(ctx context.Context, since time.Time) ([]logs.SiteTraffic, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select host, kind, sum(requests), sum(bytes), sum(sized)
+		 from site_traffic where day >= ?
+		 group by host, kind order by host, kind`,
+		since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []logs.SiteTraffic{}
+	for rows.Next() {
+		var item logs.SiteTraffic
+		if err := rows.Scan(&item.Host, &item.Kind, &item.Requests, &item.Bytes, &item.Sized); err != nil {
+			return nil, err
+		}
+		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// AddRobotViolations прибавляет заходы в закрытое за проход. Пример адреса
+// остаётся первым записанным: он нужен как образец, а не как последний.
+func (s *Store) AddRobotViolations(ctx context.Context, items []logs.RobotViolation) error {
+	for _, item := range items {
+		if _, err := s.db.ExecContext(ctx,
+			`insert into robot_violations (day, host, name, count, example)
+			 values (?, ?, ?, ?, ?)
+			 on conflict do update set count = count + excluded.count`,
+			item.Day, item.Host, item.Name, item.Count, item.Example,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RobotViolations — заходы в закрытое за период, сложенные по сайту и
+// роботу; пример — из самых свежих суток.
+func (s *Store) RobotViolations(ctx context.Context, since time.Time) ([]logs.RobotViolation, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select host, name, sum(count),
+		     (select example from robot_violations newest
+		      where newest.host = v.host and newest.name = v.name and newest.day >= ?
+		      order by newest.day desc limit 1)
+		 from robot_violations v where day >= ?
+		 group by host, name order by host, sum(count) desc, name`,
+		since.Unix()-since.Unix()%86_400, since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := []logs.RobotViolation{}
+	for rows.Next() {
+		var item logs.RobotViolation
+		if err := rows.Scan(&item.Host, &item.Name, &item.Count, &item.Example); err != nil {
+			return nil, err
+		}
+		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// SaveRobotsFile запоминает robots.txt сайта из обхода SEO (Р31). Пустой
+// текст — файла на сайте нет. Файл, который не отдался, сюда не приходит:
+// прошлые правила остаются, пока не прочитаются новые.
+func (s *Store) SaveRobotsFile(ctx context.Context, domain string, body []byte, at time.Time) error {
+	if body == nil {
+		body = []byte{}
+	}
+	_, err := s.db.ExecContext(ctx,
+		`insert into robots_files (domain, body, fetched_at) values (?, ?, ?)
+		 on conflict do update set body = excluded.body, fetched_at = excluded.fetched_at`,
+		strings.ToLower(domain), body, at.Unix())
+	return err
+}
+
+// RobotsFile — файл robots.txt одного сайта и когда он прочитан.
+type RobotsFile struct {
+	Body      []byte
+	FetchedAt time.Time
+}
+
+// RobotsFiles — правила всех сайтов, у которых был обход.
+func (s *Store) RobotsFiles(ctx context.Context) (map[string]RobotsFile, error) {
+	rows, err := s.db.QueryContext(ctx, `select domain, body, fetched_at from robots_files`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := map[string]RobotsFile{}
+	for rows.Next() {
+		var domain string
+		var file RobotsFile
+		var at int64
+		if err := rows.Scan(&domain, &file.Body, &at); err != nil {
+			return nil, err
+		}
+		if file.Body == nil {
+			file.Body = []byte{}
+		}
+		file.FetchedAt = time.Unix(at, 0).UTC()
+		out[domain] = file
+	}
+	return out, rows.Err()
+}
+
+// ForgetRobotsFiles убирает правила сайтов, которых больше нет в списке.
+func (s *Store) ForgetRobotsFiles(ctx context.Context, alive map[string]bool) error {
+	files, err := s.RobotsFiles(ctx)
+	if err != nil {
+		return err
+	}
+	for domain := range files {
+		if alive[domain] {
+			continue
+		}
+		if _, err := s.db.ExecContext(ctx, `delete from robots_files where domain = ?`, domain); err != nil {
+			return err
+		}
+	}
+	return nil
 }

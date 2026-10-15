@@ -79,6 +79,14 @@ func main() {
 		log.Printf("часовой пояс сервера не определён, времена логов читаются как UTC")
 	}
 
+	switch {
+	case cfg.Quiet.Problem != "":
+		log.Printf("тихие часы не разобрались (%s: %q, %q), уведомления уходят сразу",
+			cfg.Quiet.Problem, cfg.Quiet.Raw, cfg.Quiet.Zone)
+	case cfg.Quiet.Enabled:
+		log.Printf("тихие часы: %s по поясу %s", cfg.Quiet.Raw, cfg.Quiet.Zone)
+	}
+
 	// Проверка порта читает таблицу сокетов сервера из того же /proc, что и
 	// замеры (спринт 149).
 	probe.SetHostProc(cfg.HostProc)
@@ -172,6 +180,11 @@ type Agent struct {
 	collector *metrics.Collector
 	domains   *checks.DomainChecker
 	notifier  *notify.Notifier
+
+	// Подмены для тестов `dispatch`: куда уходят тревоги и который час.
+	// Пустые — настоящий notifier и настоящие часы.
+	sendVia alertSender
+	clock   func() time.Time
 
 	// Контекст, который гасится по SIGINT/SIGTERM. Циклы получают его
 	// параметром явно, но круг ссылок стартует и из HTTP-обработчика — ему
@@ -375,6 +388,7 @@ func (a *Agent) sampleLoop(ctx context.Context) {
 			}
 			previousUptime, knownUptime = sample.UptimeSeconds, true
 			a.notifyDisk(ctx, sample)
+			a.notifyShrunk(ctx)
 
 		case <-rotate.C:
 			removed, err := a.db.Rotate(ctx, a.cfg.Retention)
@@ -457,12 +471,36 @@ type Result struct {
 	// них верить» (трек U).
 	DomainDays int `json:"domainDays"`
 	CertDays   int `json:"certDays"`
+	// Тихие часы, как их понял агент (идея 6 трека AB). Поле есть всегда:
+	// его отсутствие говорит приложению, что агент старый и тихих часов не
+	// умеет. Указатель — чтобы старый ответ, пересобранный приложением, не
+	// выдал себя за «выключены».
+	QuietHours *QuietState `json:"quietHours"`
 }
 
-// thresholds вписывает пороги сроков — те же, что у свода и у писем.
+// QuietState — тихие часы для экрана.
+type QuietState struct {
+	// Как записано в agent.env; пусто — выключены.
+	Hours string `json:"hours"`
+	Zone  string `json:"zone"`
+	// Тихо ли прямо сейчас.
+	Active bool `json:"active"`
+	// Значение задано, но не разобралось: код, тихих часов нет — агент
+	// шлёт всё сразу, а экран говорит почему (не молчание, а отказ).
+	Problem string `json:"problem,omitempty"`
+}
+
+// thresholds вписывает пороги сроков — те же, что у свода и у писем, — и
+// тихие часы.
 func (a *Agent) thresholds(result *Result) {
 	result.DomainDays = checks.LargestStep(a.cfg.Alerts.DomainSteps)
 	result.CertDays = a.cfg.Alerts.CertDays
+	result.QuietHours = &QuietState{
+		Hours:   a.cfg.Quiet.Raw,
+		Zone:    a.cfg.Quiet.Zone,
+		Active:  a.cfg.Quiet.Active(a.now()),
+		Problem: a.cfg.Quiet.Problem,
+	}
 }
 
 func (a *Agent) runChecks(ctx context.Context) (Result, error) {
@@ -552,7 +590,8 @@ func (a *Agent) runChecks(ctx context.Context) (Result, error) {
 // пишет письмо каждую минуту, и письма перестают читать — а вместе с ними
 // пропускают и настоящую беду.
 func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
-	if a.notifier.Silent() {
+	out := a.sender()
+	if out.Silent() {
 		return
 	}
 
@@ -568,7 +607,19 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 		return
 	}
 
+	// Тихие часы (Р19–Р20) — тот же приём, что окно работ, но только для
+	// того, что может ждать утра: тревога не уходит и состояние её **не
+	// записывается**. После тихих часов незакрытая тревога уйдёт как свежая
+	// на ближайшем своём круге; прошедшая за ночь не уйдёт вовсе — ни
+	// тревогой, ни отбоем. Накопленного не хранится, и перезапуск агента
+	// ночью ничего не теряет. Беда и её отбой идут сразу.
+	now := a.now()
+	hushed := a.cfg.Quiet.Active(now)
+
 	for _, alert := range firing {
+		if hushed && !alert.Urgent {
+			continue
+		}
 		state, err := a.db.AlertState(ctx, alert.Kind, alert.Target)
 		if err != nil {
 			log.Printf("состояние тревоги: %v", err)
@@ -593,18 +644,18 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 			}
 		} else {
 			fresh := !state.Firing
-			stale := state.Firing && time.Since(state.LastSent) >= a.cfg.Alerts.RepeatAfter
+			stale := state.Firing && now.Sub(state.LastSent) >= a.cfg.Alerts.RepeatAfter
 			if !fresh && !stale {
 				continue
 			}
 		}
 
-		if err := a.notifier.Send(ctx, alert.Subject, alert.Body); err != nil {
+		if err := out.Send(ctx, alert.Subject, alert.Body); err != nil {
 			log.Printf("отправка уведомления: %v", err)
 			continue
 		}
 		if err := a.db.SaveAlertState(ctx, alert.Kind, alert.Target,
-			store.AlertState{Firing: true, LastSent: time.Now().UTC()}); err != nil {
+			store.AlertState{Firing: true, LastSent: now.UTC()}); err != nil {
 			log.Printf("запись состояния тревоги: %v", err)
 		}
 		if alert.Step > 0 {
@@ -620,18 +671,21 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 	}
 
 	for _, alert := range resolved {
+		if hushed && !alert.Urgent {
+			continue
+		}
 		state, err := a.db.AlertState(ctx, alert.Kind, alert.Target)
 		if err != nil || !state.Firing {
 			// Не горело — и сообщать не о чем.
 			continue
 		}
 
-		if err := a.notifier.Send(ctx, alert.Subject, alert.Body); err != nil {
+		if err := out.Send(ctx, alert.Subject, alert.Body); err != nil {
 			log.Printf("отправка уведомления: %v", err)
 			continue
 		}
 		if err := a.db.SaveAlertState(ctx, alert.Kind, alert.Target,
-			store.AlertState{Firing: false, LastSent: time.Now().UTC()}); err != nil {
+			store.AlertState{Firing: false, LastSent: now.UTC()}); err != nil {
 			log.Printf("запись состояния тревоги: %v", err)
 		}
 		// Беда кончилась — счёт ступеней начинается заново. Продлённый
@@ -644,13 +698,33 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 	}
 }
 
+// alertSender — то, чем dispatch зовёт человека.
+type alertSender interface {
+	Silent() bool
+	Send(ctx context.Context, subject, body string) error
+}
+
+func (a *Agent) sender() alertSender {
+	if a.sendVia != nil {
+		return a.sendVia
+	}
+	return a.notifier
+}
+
+func (a *Agent) now() time.Time {
+	if a.clock != nil {
+		return a.clock()
+	}
+	return time.Now()
+}
+
 // maintaining — идёт ли сейчас обслуживание.
 //
 // Неудачу чтения считаем «не идёт»: сломанная база не повод замолчать о
 // кончающемся диске. Ошибиться в эту сторону значит прислать лишнее письмо,
 // в другую — промолчать о настоящей беде.
 func (a *Agent) maintaining(ctx context.Context) bool {
-	_, active, err := a.db.MaintenanceWindow(ctx, time.Now())
+	_, active, err := a.db.MaintenanceWindow(ctx, a.now())
 	if err != nil {
 		log.Printf("окно обслуживания: %v", err)
 		return false
@@ -1834,6 +1908,19 @@ func (a *Agent) scanLogs(ctx context.Context) {
 
 	alive := make(map[string]bool, len(sources))
 
+	// Правила robots.txt сайтов — один раз на проход (Р31): ими сверяются
+	// заходы роботов. Не прочитались — заходы в закрытое просто не
+	// считаются, остальное идёт как обычно.
+	bodies := map[string][]byte{}
+	if files, err := a.db.RobotsFiles(ctx); err != nil {
+		log.Printf("правила robots.txt: %v", err)
+	} else {
+		for domain, file := range files {
+			bodies[domain] = file.Body
+		}
+	}
+	rules := logs.NewRobotsFiles(bodies)
+
 	for _, source := range sources {
 		if ctx.Err() != nil {
 			return
@@ -1847,7 +1934,7 @@ func (a *Agent) scanLogs(ctx context.Context) {
 		batch := logs.NewBatch(logs.DefaultGroupLimit)
 		// Роботы считаются тем же проходом: второе чтение файла — это вдвое
 		// больше работы диска чужого сервера (трек V, Р20).
-		robots := logs.NewRobots()
+		robots := logs.NewRobots().UseRules(rules)
 		position, failure := logs.Read(full, positions[source.Path].Position,
 			a.cfg.Logs.MaxBytes, func(event logs.Event) {
 				batch.AddInteresting(event)
@@ -1867,6 +1954,16 @@ func (a *Agent) scanLogs(ctx context.Context) {
 		if refusals := robots.Refusals(); len(refusals) > 0 {
 			if err := a.db.AddRobotRefusals(ctx, refusals); err != nil {
 				log.Printf("запись отказов роботам: %v", err)
+			}
+		}
+		if traffic := robots.Traffic(); len(traffic) > 0 {
+			if err := a.db.AddSiteTraffic(ctx, traffic); err != nil {
+				log.Printf("запись нагрузки сайтов: %v", err)
+			}
+		}
+		if violations := robots.Violations(); len(violations) > 0 {
+			if err := a.db.AddRobotViolations(ctx, violations); err != nil {
+				log.Printf("запись заходов в закрытое: %v", err)
 			}
 		}
 		if err := a.db.SaveLogPosition(ctx, source.Path, position, failure); err != nil {
@@ -1929,6 +2026,8 @@ func (a *Agent) notifyLogSpike(ctx context.Context) {
 		Target:  "5xx",
 		Subject: fmt.Sprintf(a.words().LogsSubject, count, minutes),
 		Body:    fmt.Sprintf(a.words().LogsBody, minutes, count, threshold),
+		// Всплеск пятисоток — сайт ломается сейчас: беда и ночью (Р40).
+		Urgent: true,
 	}
 
 	if count >= threshold {
@@ -1941,6 +2040,7 @@ func (a *Agent) notifyLogSpike(ctx context.Context) {
 		Target:  "5xx",
 		Subject: a.words().LogsOKSubject,
 		Body:    fmt.Sprintf(a.words().LogsOKBody, minutes, count, threshold),
+		Urgent:  true,
 	}})
 }
 
@@ -1998,6 +2098,44 @@ type RobotHost struct {
 	// последние семь дней, какой бы период ни спросил экран: вывод по доле
 	// за неделю (Р14) не должен меняться от переключателя периода.
 	Verdicts []logs.RobotVerdict `json:"verdicts"`
+	// Нагрузка за период экрана (идея 7 трека AB): все запросы с полем
+	// User-agent и доли видов роботов. Нет строк — nil: «не знаем».
+	Traffic *RobotTraffic `json:"traffic"`
+	// Robots.txt сайта, по которому сверяются заходы: когда прочитан
+	// последним обходом SEO. Пусто — правил не знаем (обхода не было или
+	// домен в логе не назван, Р24), и заходов в закрытое не считали.
+	RulesAt string `json:"rulesAt,omitempty"`
+	// Роботы поиска и обучения, ходившие туда, куда robots.txt их не
+	// пускает (Р23: роботы по просьбе человека сюда не входят).
+	Violations []RobotTrespass `json:"violations"`
+}
+
+// RobotTraffic — нагрузка на сайт за период. Это нагрузка на сервер: то,
+// что отдал из кеша Cloudflare, до сервера не дошло (Р22).
+type RobotTraffic struct {
+	Requests int64 `json:"requests"`
+	// Байты — по строкам, где формат пишет размер. BytesKnown=false —
+	// формат размера не пишет, доля трафика «не знаем».
+	Bytes      int64 `json:"bytes"`
+	BytesKnown bool  `json:"bytesKnown"`
+	// По видам роботов: роль из bots или other.
+	Kinds []RobotKindTraffic `json:"kinds"`
+}
+
+// RobotKindTraffic — запросы и байты одного вида роботов.
+type RobotKindTraffic struct {
+	Kind     string `json:"kind"`
+	Requests int64  `json:"requests"`
+	Bytes    int64  `json:"bytes"`
+}
+
+// RobotTrespass — робот ходил в закрытое robots.txt: сколько раз за
+// период и пример адреса без параметров.
+type RobotTrespass struct {
+	Name    string `json:"name"`
+	Kind    string `json:"kind"`
+	Count   int    `json:"count"`
+	Example string `json:"example"`
 }
 
 // RobotsState — ответ `GET /robots`.
@@ -2013,6 +2151,10 @@ type RobotsState struct {
 	// Считается ли «робот пропал»: счётчики живут меньше десяти дней
 	// (`LOG_RETENTION_DAYS`) — «не знаем», а не «все на месте» (Р16).
 	GoneKnown bool `json:"goneKnown"`
+	// Имена роботов взяты из строки User-agent и не проверяются: назваться
+	// GPTBot может кто угодно. Флаг есть, чтобы экран это сказал, и по нему
+	// же приложение узнаёт агента с нагрузкой и robots.txt (0.27.0).
+	NamesUnverified bool `json:"namesUnverified"`
 }
 
 // robotVerdicts — кому отказывают и кто пропал, по сайтам.
@@ -2053,7 +2195,8 @@ func (a *Agent) Robots(days int) (any, error) {
 	hostOf := func(name string) *RobotHost {
 		host, ok := byHost[name]
 		if !ok {
-			host = &RobotHost{Host: name, Visits: []RobotVisit{}, Verdicts: []logs.RobotVerdict{}}
+			host = &RobotHost{Host: name, Visits: []RobotVisit{}, Verdicts: []logs.RobotVerdict{},
+				Violations: []RobotTrespass{}}
 			byHost[name] = host
 			order = append(order, name)
 		}
@@ -2086,9 +2229,16 @@ func (a *Agent) Robots(days int) (any, error) {
 		host.Verdicts = append(host.Verdicts, verdict)
 	}
 
+	if err := a.robotLoad(ctx, since, hostOf); err != nil {
+		return nil, err
+	}
+
 	hosts := make([]RobotHost, 0, len(order))
 	for _, name := range order {
 		hosts = append(hosts, *byHost[name])
+	}
+	if err := a.rulesDates(ctx, hosts); err != nil {
+		return nil, err
 	}
 	sources := 0
 	for _, source := range a.logSources() {
@@ -2096,7 +2246,8 @@ func (a *Agent) Robots(days int) (any, error) {
 			sources++
 		}
 	}
-	return RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources, GoneKnown: goneKnown}, nil
+	return RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources, GoneKnown: goneKnown,
+		NamesUnverified: true}, nil
 }
 
 func (a *Agent) Logs(hours int) (any, error) {
@@ -2329,6 +2480,13 @@ func (a *Agent) crawlSites(ctx context.Context, only string) error {
 		}); err != nil {
 			log.Printf("запись обхода: %v", err)
 		}
+		if scan.RobotsRead {
+			if err := a.saving(func(save context.Context) error {
+				return a.db.SaveRobotsFile(save, site.Domain, scan.RobotsBody, time.Now())
+			}); err != nil {
+				log.Printf("запись robots.txt: %v", err)
+			}
+		}
 	}
 
 	// Сайт удалили — его снимки больше не наша забота. Только в полном
@@ -2338,6 +2496,9 @@ func (a *Agent) crawlSites(ctx context.Context, only string) error {
 		return nil
 	}
 	if err := a.saving(func(save context.Context) error {
+		if err := a.db.ForgetRobotsFiles(save, lowered(alive)); err != nil {
+			return err
+		}
 		return a.db.ForgetSeoScans(save, alive)
 	}); err != nil {
 		log.Printf("уборка обходов: %v", err)
@@ -2492,4 +2653,75 @@ func (a *Agent) RunSeo(domain string) (any, error) {
 // по-английски — хуже, чем оба на любом одном.
 func (a *Agent) words() checks.Words {
 	return checks.WordsFor(a.cfg.Locale)
+}
+
+// lowered — те же ключи в нижнем регистре: robots.txt хранится по домену в
+// нижнем регистре, а список сайтов пишет человек.
+func lowered(set map[string]bool) map[string]bool {
+	out := make(map[string]bool, len(set))
+	for key, value := range set {
+		out[strings.ToLower(key)] = value
+	}
+	return out
+}
+
+// robotLoad вписывает в сайты нагрузку, заходы в закрытое и дату правил
+// robots.txt (идея 7 трека AB). Сайты без строк за период не заводятся:
+// нагрузки, которой нет, показывать нечем.
+func (a *Agent) robotLoad(ctx context.Context, since time.Time, hostOf func(string) *RobotHost) error {
+	traffic, err := a.db.SiteTraffic(ctx, since)
+	if err != nil {
+		return err
+	}
+	for _, item := range traffic {
+		host := hostOf(item.Host)
+		if host.Traffic == nil {
+			host.Traffic = &RobotTraffic{Kinds: []RobotKindTraffic{}}
+		}
+		if item.Kind == logs.TrafficAll {
+			host.Traffic.Requests = item.Requests
+			host.Traffic.Bytes = item.Bytes
+			host.Traffic.BytesKnown = item.Sized > 0
+			continue
+		}
+		host.Traffic.Kinds = append(host.Traffic.Kinds, RobotKindTraffic{
+			Kind: item.Kind, Requests: item.Requests, Bytes: item.Bytes,
+		})
+	}
+
+	violations, err := a.db.RobotViolations(ctx, since)
+	if err != nil {
+		return err
+	}
+	for _, item := range violations {
+		host := hostOf(item.Host)
+		kind, _ := bots.KindOf(item.Name)
+		host.Violations = append(host.Violations, RobotTrespass{
+			Name: item.Name, Kind: kind, Count: item.Count, Example: item.Example,
+		})
+	}
+
+	return nil
+}
+
+// rulesDates вписывает сайтам, когда прочитан их robots.txt — тем же
+// поиском домена, что и сверка (с «www.» и без).
+func (a *Agent) rulesDates(ctx context.Context, hosts []RobotHost) error {
+	files, err := a.db.RobotsFiles(ctx)
+	if err != nil {
+		return err
+	}
+	for i := range hosts {
+		if hosts[i].Host == "" {
+			continue
+		}
+		domain, ok := logs.RobotsDomain(hosts[i].Host, func(name string) bool {
+			_, found := files[name]
+			return found
+		})
+		if ok {
+			hosts[i].RulesAt = files[domain].FetchedAt.Format(time.RFC3339)
+		}
+	}
+	return nil
 }

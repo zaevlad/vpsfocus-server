@@ -220,6 +220,9 @@ func (a *Agent) noteProbeChange(ctx context.Context, result probe.Result) {
 		Label:   result.URL,
 		Subject: fmt.Sprintf(a.words().ProbeSubject, result.Name),
 		Body:    fmt.Sprintf(a.words().ProbeBody, result.Name, result.URL, result.Code),
+		// Любая ключевая проверка — беда и ночью (Р40): тревога уходит
+		// только на переломе, и заглушённую утром повторить было бы некому.
+		Urgent: true,
 	}
 	if result.Kind == probe.KindPort {
 		port := strings.TrimPrefix(result.URL, probe.PortScheme)

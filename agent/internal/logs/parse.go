@@ -57,6 +57,20 @@ func ParseAccess(line string) (Event, bool) {
 
 	event := Event{Kind: KindAccess, At: at, Status: status}
 
+	// Размер ответа — следующее поле за кодом в общем и комбинированном
+	// формате. Начинается с кавычки — формат его не пишет, это «не знаем»,
+	// а не ноль.
+	if len(fields) >= 2 {
+		switch size := fields[1]; {
+		case size == "-":
+			event.HasBytes = true
+		case isDigits(size):
+			if bytes, err := strconv.ParseInt(size, 10, 64); err == nil {
+				event.Bytes, event.HasBytes = bytes, true
+			}
+		}
+	}
+
 	// User-agent — второе поле в кавычках после запроса (первое — источник
 	// перехода) в формате combined. Нет его — формат лога его не пишет, и
 	// это «не знаем», а не «людей нет». Сама строка не сохраняется: из неё
@@ -73,9 +87,11 @@ func ParseAccess(line string) (Event, bool) {
 	case 0:
 		event.Path = "/"
 	case 1:
+		event.Target = parts[0]
 		event.Path = NormalizePath(parts[0])
 	default:
 		event.Method = parts[0]
+		event.Target = parts[1]
 		event.Path = NormalizePath(parts[1])
 	}
 

@@ -33,6 +33,17 @@ type Alert struct {
 	// бы тридцать раз подряд — а письма, которые приходят тридцать раз,
 	// перестают читать вместе со всеми остальными.
 	Step int
+	// Беда (Р20, Р40): уходит сразу и в тихие часы. Отметка — у самой
+	// тревоги, а не списком видов: у сертификата один вид на «истёк» (беда)
+	// и «кончится через неделю» (ждёт утра).
+	//
+	// У отбоя отметка своя (Р41, Р44). Сразу уходит отбой того, что
+	// проверяется непрерывно и чинится руками сейчас: диск, места под файлы,
+	// ключевой адрес, пятисотки, копия. Отбой сроков (сертификат, домен)
+	// ждёт утра: их проверяет круг по расписанию раз в несколько часов, и
+	// «домен продлён» пришёл бы в три часа ночи — будить хорошей новостью
+	// незачем.
+	Urgent bool
 }
 
 // Shown — как тревога называется в журнале сервера.
@@ -99,6 +110,7 @@ func Evaluate(
 			Target:  "root",
 			Subject: fmt.Sprintf(words.DiskSubject, used),
 			Body:    fmt.Sprintf(words.DiskBody, used, sample.DiskFreeMB, sample.DiskTotalMB),
+			Urgent:  true,
 		}
 		if used >= cfg.DiskPercent {
 			firing = append(firing, alert)
@@ -108,6 +120,7 @@ func Evaluate(
 				Target:  "root",
 				Subject: words.DiskOKSubject,
 				Body:    fmt.Sprintf(words.DiskOKBody, used, sample.DiskFreeMB),
+				Urgent:  true,
 			})
 		}
 	}
@@ -124,6 +137,7 @@ func Evaluate(
 				Target:  "root",
 				Subject: fmt.Sprintf(words.InodesSubject, used),
 				Body:    fmt.Sprintf(words.InodesBody, used, sample.InodesFree),
+				Urgent:  true,
 			})
 		} else {
 			resolved = append(resolved, Alert{
@@ -131,6 +145,7 @@ func Evaluate(
 				Target:  "root",
 				Subject: words.InodesOKSubject,
 				Body:    fmt.Sprintf(words.InodesOKBody, used),
+				Urgent:  true,
 			})
 		}
 	}
@@ -140,7 +155,7 @@ func Evaluate(
 		// Цель — с портом, когда он не 443: сайт клиента и край нашего
 		// стека на том же имени — разные проверки (правка 1б).
 		target := cert.Target()
-		alert := Alert{Kind: KindCert, Target: target}
+		alert := Alert{Kind: KindCert, Target: target, Urgent: true}
 
 		switch {
 		case cert.Error != "" && cert.Error != ErrTLSIncomplete:
@@ -151,11 +166,17 @@ func Evaluate(
 		case cert.DaysLeft != nil && *cert.DaysLeft <= cfg.CertDays:
 			alert.Subject = fmt.Sprintf(words.CertExpiringSubject, target, *cert.DaysLeft)
 			alert.Body = fmt.Sprintf(words.CertExpiringBody, cert.ExpiresAt.Format("2006-01-02"))
+			// Срок ещё не вышел — ждёт утра; выходит сегодня или вышел — сайт
+			// уже ругается в браузере. Ноль — и «осталось меньше суток», и
+			// «вышел меньше суток назад»: дни считаются с отбрасыванием дроби.
+			alert.Urgent = *cert.DaysLeft <= 0
 			firing = append(firing, alert)
 
 		default:
 			alert.Subject = fmt.Sprintf(words.CertOKSubject, target)
 			alert.Body = words.CertOKBody
+			// Отбой сроков ждёт утра (Р44).
+			alert.Urgent = false
 			resolved = append(resolved, alert)
 		}
 	}
@@ -167,7 +188,7 @@ func Evaluate(
 	// напоминание за тридцать дней, повторённое тридцать раз, — это не
 	// забота, а шум за нашей подписью.
 	for _, domain := range domains {
-		alert := Alert{Kind: KindDomain, Target: domain.Domain}
+		alert := Alert{Kind: KindDomain, Target: domain.Domain, Urgent: true}
 
 		// Неизвестный срок — не повод для тревоги: у половины зон нет ни
 		// RDAP, ни разбираемого whois. Кричать об этом раз в сутки значит
@@ -182,10 +203,15 @@ func Evaluate(
 			alert.Body = fmt.Sprintf(words.DomainExpiringBody,
 				domain.ExpiresAt.Format("2006-01-02"),
 				registrarSuffix(domain.Registrar))
+			// Истекает сегодня или истёк — сайт вот-вот пропадёт; кончится
+			// через N дней — утром.
+			alert.Urgent = *domain.DaysLeft <= 0
 			firing = append(firing, alert)
 		} else {
 			alert.Subject = fmt.Sprintf(words.DomainRenewedSubject, domain.Domain)
 			alert.Body = fmt.Sprintf(words.DomainRenewedBody, domain.ExpiresAt.Format("2006-01-02"))
+			// Отбой сроков ждёт утра (Р44).
+			alert.Urgent = false
 			resolved = append(resolved, alert)
 		}
 	}

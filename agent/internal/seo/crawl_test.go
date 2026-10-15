@@ -103,6 +103,10 @@ func TestCrawlRespectsRobots(t *testing.T) {
 	if _, ok := pageByURL(pages, server.URL+"/public"); !ok {
 		t.Fatal("разрешённая страница не обойдена")
 	}
+	// Текст файла уходит агенту — сверять заходы роботов из логов (Р31).
+	if !scan.RobotsRead || string(scan.RobotsBody) != "User-agent: *\nDisallow: /private/\n" {
+		t.Fatalf("robots.txt обхода: %v %q", scan.RobotsRead, scan.RobotsBody)
+	}
 }
 
 func TestCrawlRobotsUnavailableStopsScan(t *testing.T) {
@@ -124,6 +128,10 @@ func TestCrawlRobotsUnavailableStopsScan(t *testing.T) {
 	}
 	if requests != 1 {
 		t.Fatalf("сделано запросов: %d — после отказа ходить больше некуда", requests)
+	}
+	// Не отдался — прошлые правила остаются: прочитанным файл не считается.
+	if scan.RobotsRead {
+		t.Fatal("неотданный robots.txt объявлен прочитанным")
 	}
 }
 

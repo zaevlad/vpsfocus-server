@@ -286,3 +286,55 @@ func TestInodesAlert(t *testing.T) {
 		t.Fatal("неизвестные места под файлы дали тревогу или отбой")
 	}
 }
+
+// Беда и ночью (Р40): сломанный или истёкший сертификат, истекающий
+// сегодня домен, диск. Срок через несколько дней ждёт утра. Отбой диска —
+// сразу (Р41), отбой сроков — утром (Р44): их проверяет круг по расписанию.
+func TestUrgentAlerts(t *testing.T) {
+	soon, today := 3, 0
+	certs := []TLSStatus{
+		{Domain: "soon.example.com", Valid: true, DaysLeft: &soon, ExpiresAt: ptr(time.Now().Add(72 * time.Hour))},
+		{Domain: "today.example.com", Valid: true, DaysLeft: &today, ExpiresAt: ptr(time.Now().Add(time.Hour))},
+		{Domain: "broken.example.com", Error: ErrTLSExpired},
+	}
+	far := 200
+	domains := []DomainStatus{
+		{Domain: "soon.ru", DaysLeft: &soon, ExpiresAt: ptr(time.Now().Add(72 * time.Hour))},
+		{Domain: "today.ru", DaysLeft: &today, ExpiresAt: ptr(time.Now().Add(time.Hour))},
+		{Domain: "fine.ru", DaysLeft: &far, ExpiresAt: ptr(time.Now().Add(4800 * time.Hour))},
+	}
+	full := metrics.Sample{DiskTotalMB: 100, DiskFreeMB: 5, InodesTotal: 100, InodesFree: 5}
+
+	firing, resolved := Evaluate(thresholds(), WordsFor("ru"), full, domains, certs)
+
+	want := map[[2]string]bool{
+		{KindCert, "soon.example.com"}:   false,
+		{KindCert, "today.example.com"}:  true,
+		{KindCert, "broken.example.com"}: true,
+		{KindDomain, "soon.ru"}:          false,
+		{KindDomain, "today.ru"}:         true,
+		{KindDisk, "root"}:               true,
+		{KindInodes, "root"}:             true,
+	}
+	for key, urgent := range want {
+		alert := find(firing, key[0], key[1])
+		if alert == nil {
+			t.Errorf("%v: нет тревоги", key)
+			continue
+		}
+		if alert.Urgent != urgent {
+			t.Errorf("%v: беда %v, ждали %v", key, alert.Urgent, urgent)
+		}
+	}
+	if renewed := find(resolved, KindDomain, "fine.ru"); renewed == nil || renewed.Urgent {
+		t.Error("отбой домена ждёт утра")
+	}
+	_, calm := Evaluate(thresholds(), WordsFor("ru"), metrics.Sample{DiskTotalMB: 100, DiskFreeMB: 90}, nil,
+		[]TLSStatus{{Domain: "ok.example.com", Valid: true, DaysLeft: &far, ExpiresAt: ptr(time.Now().Add(4800 * time.Hour))}})
+	if disk := find(calm, KindDisk, "root"); disk == nil || !disk.Urgent {
+		t.Error("отбой диска уходит сразу")
+	}
+	if cert := find(calm, KindCert, "ok.example.com"); cert == nil || cert.Urgent {
+		t.Error("отбой сертификата ждёт утра")
+	}
+}

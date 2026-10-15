@@ -24,6 +24,7 @@ import (
 	"agent/internal/domains"
 	"agent/internal/logs"
 	"agent/internal/probe"
+	"agent/internal/quiet"
 	"agent/internal/s3"
 )
 
@@ -69,6 +70,10 @@ type Config struct {
 	// общие на все серверы, а писать должен не каждый. Агент при этом следит
 	// как обычно — молчат только тревоги и недельный отчёт.
 	NotifyMuted bool
+	// Тихие часы (идея 6 трека AB): ночью сразу уходит только беда. Ключи
+	// `QUIET_HOURS` и `NOTIFY_TZ` дописывает приложение, в шаблоне бандла
+	// их нет; пусто — тихих часов нет.
+	Quiet quiet.Hours
 
 	Alerts Alerts
 
@@ -447,6 +452,7 @@ func Load() (Config, error) {
 		},
 		// Пусто — не выключены: так выглядит и файл, написанный до 0.20.0.
 		NotifyMuted: envBool("NOTIFY_MUTED", false),
+		Quiet:       quiet.Parse(os.Getenv("QUIET_HOURS"), os.Getenv("NOTIFY_TZ")),
 		Alerts: Alerts{
 			DiskPercent: envInt("ALERT_DISK_PERCENT", 85),
 			CertDays:    envInt("ALERT_CERT_DAYS", 14),
