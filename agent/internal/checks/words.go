@@ -130,17 +130,17 @@ var russian = Words{
 	BackupOKSubject: "Копия базы снова делается",
 	BackupOKBody:    "Копия аналитики уехала в хранилище: %s, %d байт.",
 
-	InodesSubject: "На диске сервера кончаются места под файлы: занято %d%%",
-	InodesBody: "Занято %d%% мест под файлы (inodes), свободно %d.\n\n" +
-		"Свободное место на диске при этом может быть, но новый файл не " +
+	InodesSubject: "На сервере заканчивается лимит файлов: занято %d%%",
+	InodesBody: "Лимит файлов на диске (inodes) занят на %d%%, осталось %d.\n\n" +
+		"Свободное место на диске при этом может оставаться, но новый файл не " +
 		"создастся — сайт перестанет сохранять сессии, загрузки и кеш. Обычно " +
-		"виноват каталог с огромным числом мелких файлов: кеш, сессии, старые " +
-		"письма. Подробности — на экране «Здоровье сервера» в приложении.",
-	InodesOKSubject: "Места под файлы на диске сервера снова в норме",
-	InodesOKBody:    "Занято %d%% мест под файлы.",
+		"его съедает папка с множеством мелких файлов: кеш, сессии, старая " +
+		"почта. Подробности — на экране «Здоровье сервера» в приложении.",
+	InodesOKSubject: "Лимит файлов на сервере снова в норме",
+	InodesOKBody:    "Лимит файлов на диске занят на %d%%.",
 
 	BackupShrunkSubject: "Копия базы стала намного меньше прошлой",
-	BackupShrunkBody: "Копия аналитики сделалась и проверена, но внутри меньше половины " +
+	BackupShrunkBody: "Копия аналитики создана и проверена, но внутри меньше половины " +
 		"прошлой: было %s МБ, стало %s МБ.\n\n" +
 		"Так бывает после чистки старой статистики — тогда делать ничего не нужно. " +
 		"Если вы ничего не удаляли, проверьте, не пропали ли данные: история копий — " +
@@ -209,20 +209,20 @@ var english = Words{
 	BackupOKSubject: "Database backups work again",
 	BackupOKBody:    "The analytics backup reached the storage: %s, %d bytes.",
 
-	InodesSubject: "The server disk is running out of file slots: %d%% used",
-	InodesBody: "%d%% of the file slots (inodes) are used, %d left.\n\n" +
+	InodesSubject: "The server is running out of its file limit: %d%% used",
+	InodesBody: "%d%% of the disk’s file limit (inodes) is used, %d left.\n\n" +
 		"There may still be free space on the disk, but no new file can be " +
 		"created — the site will stop saving sessions, uploads and cache. Usually " +
 		"a folder with a huge number of small files is to blame: cache, sessions, " +
 		"old mail. Details are on the Server health screen in the app.",
-	InodesOKSubject: "File slots on the server disk are back to normal",
-	InodesOKBody:    "%d%% of the file slots are used.",
+	InodesOKSubject: "The server’s file limit is back to normal",
+	InodesOKBody:    "%d%% of the disk’s file limit is used.",
 
 	BackupShrunkSubject: "The database backup is much smaller than the last one",
 	BackupShrunkBody: "The analytics backup was made and checked, but it holds less than half " +
 		"of the previous one: it was %s MB, now %s MB.\n\n" +
 		"This happens after old statistics are cleaned up — then there is nothing to do. " +
-		"If you deleted nothing, check that no data went missing: the backup history " +
+		"If you deleted nothing, make sure no data is missing: the backup history " +
 		"is on the Backups screen in the app.",
 	BackupShrunkOKSubject: "The database backup is its usual size again",
 	BackupShrunkOKBody:    "The latest analytics backup is %s MB, no less than half of the previous one.",

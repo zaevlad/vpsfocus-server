@@ -310,7 +310,7 @@ func TestRobotLinesInReport(t *testing.T) {
 	for _, want := range []string{
 		"Роботы поисковиков и ИИ",
 		"shop.example — OAI-SearchBot получает отказ (код 403): 120 из 140 запросов за неделю, в том числе на robots.txt",
-		"сервер целиком — Googlebot пропал",
+		"сервер целиком — Googlebot перестал заходить",
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("нет строки %q в\n%s", want, body)
