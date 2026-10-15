@@ -1,1 +1,1 @@
-ghcr.io/zaevlad/vpsfocus-agent:0.26.0@sha256:7a7e4059189213e3bb752606ffdd3f91dbea1410c32baef15ce94a973fc54094
+ghcr.io/zaevlad/vpsfocus-agent:0.27.0@sha256:ea24986edb25a008081bff2ec4cba92418bbc0a6f4a69cac4d02ed614b1ed6b8
