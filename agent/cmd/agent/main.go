@@ -45,6 +45,7 @@ import (
 	"agent/internal/httpapi"
 	"agent/internal/links"
 	"agent/internal/logs"
+	"agent/internal/mailhtml"
 	"agent/internal/metrics"
 	"agent/internal/notify"
 	"agent/internal/outage"
@@ -102,6 +103,7 @@ func main() {
 		notifier:  notify.New(cfg),
 		rootCtx:   ctx,
 	}
+	agent.notifier.SetMail(agent.mailWords())
 
 	// Первая отметка в журнале — собственный запуск.
 	//
@@ -650,7 +652,7 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 			}
 		}
 
-		if err := out.Send(ctx, alert.Subject, alert.Body); err != nil {
+		if err := out.Send(ctx, a.alertLook(alert, false), alert.Subject, alert.Body); err != nil {
 			log.Printf("отправка уведомления: %v", err)
 			continue
 		}
@@ -680,7 +682,7 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 			continue
 		}
 
-		if err := out.Send(ctx, alert.Subject, alert.Body); err != nil {
+		if err := out.Send(ctx, a.alertLook(alert, true), alert.Subject, alert.Body); err != nil {
 			log.Printf("отправка уведомления: %v", err)
 			continue
 		}
@@ -701,7 +703,7 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 // alertSender — то, чем dispatch зовёт человека.
 type alertSender interface {
 	Silent() bool
-	Send(ctx context.Context, subject, body string) error
+	Send(ctx context.Context, look notify.Look, subject, body string) error
 }
 
 func (a *Agent) sender() alertSender {
@@ -835,7 +837,7 @@ func (a *Agent) maybeSendDigest(ctx context.Context) {
 	}
 	text := digest.BuildWithRobots(a.cfg.Locale, config.HostName(a.cfg.HostRoot), snapshot, robots)
 
-	if err := a.notifier.SendReport(ctx, text.Subject, text.Body); err != nil {
+	if err := a.notifier.SendReport(ctx, notify.Look{Tone: text.Tone, Band: text.Band}, text.Subject, text.Body); err != nil {
 		log.Printf("отправка отчёта: %v", err)
 		return
 	}
@@ -2653,6 +2655,37 @@ func (a *Agent) RunSeo(domain string) (any, error) {
 // по-английски — хуже, чем оба на любом одном.
 func (a *Agent) words() checks.Words {
 	return checks.WordsFor(a.cfg.Locale)
+}
+
+// mailWords — слова оформления писем этого сервера (трек AC): язык,
+// источник в шапке и подвал «кто прислал и где выключить».
+func (a *Agent) mailWords() notify.Mail {
+	words := a.words()
+	host := config.HostName(a.cfg.HostRoot)
+	lang := "ru"
+	if a.cfg.Locale == "en" {
+		lang = "en"
+	}
+	return notify.Mail{
+		Lang:   lang,
+		Source: fmt.Sprintf(words.MailSource, host),
+		Footer: fmt.Sprintf(words.MailFooter, host),
+	}
+}
+
+// alertLook — тон письма о тревоге (трек AC, Р11): беда, которая уходит и в
+// тихие часы (`Urgent`), — «проблема», остальное — «предупреждение», отбой —
+// «снова в порядке».
+func (a *Agent) alertLook(alert checks.Alert, resolved bool) notify.Look {
+	words := a.words()
+	switch {
+	case resolved:
+		return notify.Look{Tone: mailhtml.OK, Band: words.MailBandOK}
+	case alert.Urgent:
+		return notify.Look{Tone: mailhtml.Problem, Band: words.MailBandProblem}
+	default:
+		return notify.Look{Tone: mailhtml.Warning, Band: words.MailBandWarning}
+	}
 }
 
 // lowered — те же ключи в нижнем регистре: robots.txt хранится по домену в

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"agent/internal/checks"
+	"agent/internal/notify"
 	"agent/internal/quiet"
 	"agent/internal/store"
 )
@@ -15,7 +16,7 @@ import (
 type recorder struct{ sent []string }
 
 func (r *recorder) Silent() bool { return false }
-func (r *recorder) Send(_ context.Context, subject, _ string) error {
+func (r *recorder) Send(_ context.Context, _ notify.Look, subject, _ string) error {
 	r.sent = append(r.sent, subject)
 	return nil
 }

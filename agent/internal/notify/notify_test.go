@@ -46,7 +46,7 @@ func TestTelegramTransportFailureHidesToken(t *testing.T) {
 // Тот же путь, но через `Send`: когда Telegram — единственный настроенный
 // канал, склейка отказов уходит наружу целиком.
 func TestSendFailureHidesToken(t *testing.T) {
-	err := deadNotifier().Send(context.Background(), "тема", "текст")
+	err := deadNotifier().Send(context.Background(), Look{}, "тема", "текст")
 	if err == nil {
 		t.Fatal("единственный отказавший канал обязан быть ошибкой")
 	}
@@ -112,7 +112,7 @@ func TestMutedServerStaysSilentButStillTests(t *testing.T) {
 	if len(notifier.Channels()) != 1 {
 		t.Fatalf("каналы выключенного сервера: %v", notifier.Channels())
 	}
-	if err := notifier.Send(context.Background(), "тревога", "текст"); !errors.Is(err, ErrMuted) {
+	if err := notifier.Send(context.Background(), Look{}, "тревога", "текст"); !errors.Is(err, ErrMuted) {
 		t.Fatalf("тревога с выключенного сервера: %v", err)
 	}
 	if hits != 0 {
@@ -200,7 +200,7 @@ func TestSilentMailServerHitsTheDeadline(t *testing.T) {
 		Host: "127.0.0.1", Port: port, From: "bot@example.com", To: []string{"ops@example.com"},
 	}}
 	started := time.Now()
-	if err := n.sendMail("тема", "текст"); err == nil {
+	if err := n.sendMail(KindAlert, Look{}, "тема", "текст"); err == nil {
 		t.Fatal("молчащий сервер обязан дать ошибку")
 	}
 	if elapsed := time.Since(started); elapsed > mailTimeout+5*time.Second {

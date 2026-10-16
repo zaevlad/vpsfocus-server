@@ -64,7 +64,7 @@ func TestHooksSendTheirOwnPayloads(t *testing.T) {
 	transport := &recorder{status: http.StatusOK}
 	notifier := hookNotifier(transport)
 
-	if err := notifier.Send(context.Background(), "Диск заполнен", "Занято 91%"); err != nil {
+	if err := notifier.Send(context.Background(), Look{}, "Диск заполнен", "Занято 91%"); err != nil {
 		t.Fatalf("рассылка: %v", err)
 	}
 	if len(transport.requests) != 3 {
@@ -114,8 +114,8 @@ func TestWebhookTellsAlertReportAndTestApart(t *testing.T) {
 	notifier := hookNotifier(transport)
 	notifier.slack, notifier.discord = "", ""
 
-	_ = notifier.Send(context.Background(), "т", "т")
-	_ = notifier.SendReport(context.Background(), "т", "т")
+	_ = notifier.Send(context.Background(), Look{}, "т", "т")
+	_ = notifier.SendReport(context.Background(), Look{}, "т", "т")
 	if _, err := notifier.SendTo(context.Background(), ChannelWebhook, "т", "т"); err != nil {
 		t.Fatalf("проверка вебхука: %v", err)
 	}
@@ -189,7 +189,7 @@ func TestHookFailureCarriesNeitherAddressNorBody(t *testing.T) {
 func TestHookTransportFailureHidesAddress(t *testing.T) {
 	notifier := hookNotifier(failing{errors.New("connection refused")})
 
-	err := notifier.Send(context.Background(), "тема", "текст")
+	err := notifier.Send(context.Background(), Look{}, "тема", "текст")
 	if err == nil {
 		t.Fatal("отказ всех каналов обязан быть ошибкой")
 	}

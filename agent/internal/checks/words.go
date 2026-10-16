@@ -63,6 +63,15 @@ type Words struct {
 
 	TestSubject string
 	TestBody    string // имя сервера
+
+	// Оформление письма (трек AC, Р26): слово на полосе по тону, источник в
+	// шапке и подвал «кто прислал и где выключить». Только почта — в
+	// Telegram и вебхуки уходит текст без них.
+	MailBandProblem string
+	MailBandWarning string
+	MailBandOK      string
+	MailSource      string // имя сервера
+	MailFooter      string // имя сервера
 }
 
 // WordsFor — тексты на языке `AGENT_LOCALE`; всё, кроме `en`, — русский,
@@ -77,7 +86,7 @@ func WordsFor(locale string) Words {
 var russian = Words{
 	DiskSubject: "Диск сервера занят на %d%%",
 	DiskBody: "Занято %d%% дискового пространства, свободно %d МБ из %d МБ.\n\n" +
-		"Когда место кончится, встанут и аналитика, и сайт клиента.",
+		"Когда место кончится, встанут и аналитика, и сайт.",
 	DiskOKSubject: "Место на диске сервера снова в норме",
 	DiskOKBody:    "Занято %d%%, свободно %d МБ.",
 
@@ -86,7 +95,7 @@ var russian = Words{
 		"Посетители сайта видят предупреждение браузера.",
 	CertExpiringSubject: "Сертификат %s истекает через %d дн.",
 	CertExpiringBody: "Сертификат действует до %s.\n\n" +
-		"Если он выпущен нашим стеком, продление автоматическое — " +
+		"Если его выпустил мониторинг vpsFocus, продление автоматическое — " +
 		"проверьте, что домен всё ещё указывает на сервер.",
 	CertOKSubject: "Сертификат %s снова в порядке",
 	CertOKBody:    "Проверка проходит, срок не близко.",
@@ -124,7 +133,7 @@ var russian = Words{
 	BackupSubject: "Копия базы не сделалась",
 	BackupBody: "Очередная копия аналитики не уехала в хранилище: %s.\n\n" +
 		"Пока копий нет, потеря диска на этом сервере означает потерю всей " +
-		"статистики клиентов. Настройки хранилища — в приложении, на экране " +
+		"статистики посещений. Настройки хранилища — в приложении, на экране " +
 		"уведомлений; что именно не заладилось, видно на экране безопасности " +
 		"сервера.",
 	BackupOKSubject: "Копия базы снова делается",
@@ -149,9 +158,18 @@ var russian = Words{
 	BackupShrunkOKBody:    "Очередная копия аналитики — %s МБ, не меньше половины прошлой.",
 
 	TestSubject: "Проверка уведомлений",
-	TestBody: "Это проверочное сообщение от агента на сервере %s.\n\n" +
+	TestBody: "Это проверочное сообщение с сервера %s.\n\n" +
 		"Если вы его читаете, уведомления о диске, сертификатах и доменах " +
 		"дойдут тем же путём.",
+
+	MailBandProblem: "Проблема",
+	MailBandWarning: "Предупреждение",
+	MailBandOK:      "Снова в порядке",
+	MailSource:      "сервер %s",
+	MailFooter: "Это письмо прислал мониторинг vpsFocus с сервера %s — через почту, " +
+		"указанную в «Каналах уведомлений», а не через нас. Выключить уведомления " +
+		"с этого сервера: приложение vpsFocus → «Все серверы» → «Настройки» → " +
+		"«Уведомления», блок «Какие серверы присылают уведомления».",
 }
 
 var english = Words{
@@ -228,7 +246,16 @@ var english = Words{
 	BackupShrunkOKBody:    "The latest analytics backup is %s MB, no less than half of the previous one.",
 
 	TestSubject: "Notification test",
-	TestBody: "This is a test message from the agent on server %s.\n\n" +
+	TestBody: "This is a test message from server %s.\n\n" +
 		"If you are reading it, notifications about the disk, certificates and " +
 		"domains will arrive the same way.",
+
+	MailBandProblem: "Problem",
+	MailBandWarning: "Heads-up",
+	MailBandOK:      "Back to normal",
+	MailSource:      "server %s",
+	MailFooter: "This email was sent by vpsFocus monitoring on server %s — through the " +
+		"mail account set in Notification channels, not through us. To turn off " +
+		"notifications from this server: vpsFocus app → All servers → Settings → " +
+		"Notifications, the “Which servers send notifications” block.",
 }

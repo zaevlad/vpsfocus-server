@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"agent/internal/config"
+	"agent/internal/mailhtml"
 )
 
 // Адрес Bot API. Отдельной константой, потому что база уезжает в поле
@@ -51,6 +52,33 @@ type Notifier struct {
 	// Уведомления с этого сервера выключены человеком. Каналы при этом
 	// настроены — они общие на все серверы, — а писать агент не должен.
 	muted bool
+	// Слова оформления письма на языке AGENT_LOCALE (трек AC): задаёт
+	// main через [Notifier.SetMail] — тексты живут в checks.Words.
+	mail Mail
+}
+
+// Look — как выглядит письмо (трек AC, Р11): тон полосы и слово на ней.
+// Нужен только почте: Telegram, Slack, Discord и вебхук получают текст как
+// раньше. Нулевой Look — письмо без полосы.
+type Look struct {
+	Tone mailhtml.Tone
+	Band string
+}
+
+// Mail — то, что одинаково у всех писем этого сервера.
+type Mail struct {
+	// Lang — «ru» или «en», для атрибута lang письма.
+	Lang string
+	// Source — «сервер web-1» серым рядом с названием в шапке.
+	Source string
+	// Footer — подвал тревог и проверочного письма (Р12, Р21): кто прислал
+	// и где выключить. Отчёту не дописывается — у него свой (Р20).
+	Footer string
+}
+
+// SetMail задаёт слова оформления писем.
+func (n *Notifier) SetMail(mail Mail) {
+	n.mail = mail
 }
 
 func New(cfg config.Config) *Notifier {
@@ -108,7 +136,7 @@ func (n *Notifier) Channels() []string {
 	// Пустой срез, а не nil: он уезжает в JSON, а null там означал бы
 	// «неизвестно», тогда как мы точно знаем — каналов нет.
 	channels := []string{}
-	for _, channel := range n.routes(context.Background(), KindAlert, "", "") {
+	for _, channel := range n.routes(context.Background(), KindAlert, Look{}, "", "") {
 		if channel.configured {
 			channels = append(channels, channel.name)
 		}
@@ -128,10 +156,10 @@ type route struct {
 // routes перечисляет все каналы, которые агент знает. Один список на
 // [Notifier.Channels], рассылку и проверку одного канала: новый канал,
 // добавленный в одно место из трёх, молчал бы в двух других.
-func (n *Notifier) routes(ctx context.Context, kind, subject, body string) []route {
+func (n *Notifier) routes(ctx context.Context, kind string, look Look, subject, body string) []route {
 	return []route{
 		{ChannelSMTP, n.smtp.Configured(), "почта не настроена",
-			func() error { return n.sendMail(subject, body) }},
+			func() error { return n.sendMail(kind, look, subject, body) }},
 		{ChannelTelegram, n.telegram.Configured(), "telegram не настроен",
 			func() error { return n.sendTelegram(ctx, subject, body) }},
 		{ChannelSlack, n.slack != "", "slack не настроен",
@@ -145,17 +173,20 @@ func (n *Notifier) routes(ctx context.Context, kind, subject, body string) []rou
 
 // Send рассылает тревогу. Ошибка одного канала не отменяет второй: письмо
 // могло не уйти из-за почтового сервера, а Telegram при этом работает.
-func (n *Notifier) Send(ctx context.Context, subject, body string) error {
-	return n.deliverAll(ctx, KindAlert, subject, body)
+//
+// look — тон и слово полосы для письма; остальные каналы его не видят.
+func (n *Notifier) Send(ctx context.Context, look Look, subject, body string) error {
+	return n.deliverAll(ctx, KindAlert, look, subject, body)
 }
 
 // SendReport рассылает еженедельный отчёт — теми же каналами, что и тревогу.
-// Отдельным именем только ради поля `kind` в теле вебхука.
-func (n *Notifier) SendReport(ctx context.Context, subject, body string) error {
-	return n.deliverAll(ctx, KindReport, subject, body)
+// Отдельным именем ради поля `kind` в теле вебхука и подвала письма: у
+// отчёта он свой (Р20).
+func (n *Notifier) SendReport(ctx context.Context, look Look, subject, body string) error {
+	return n.deliverAll(ctx, KindReport, look, subject, body)
 }
 
-func (n *Notifier) deliverAll(ctx context.Context, kind, subject, body string) error {
+func (n *Notifier) deliverAll(ctx context.Context, kind string, look Look, subject, body string) error {
 	// Вторая линия: круги спрашивают [Notifier.Silent] сами, но письмо с
 	// выключенного сервера не должно уйти, даже если новый круг про это
 	// забудет.
@@ -163,15 +194,15 @@ func (n *Notifier) deliverAll(ctx context.Context, kind, subject, body string) e
 		return ErrMuted
 	}
 
-	return n.sendAll(ctx, kind, subject, body)
+	return n.sendAll(ctx, kind, look, subject, body)
 }
 
 // sendAll шлёт во все настроенные каналы, не спрашивая про выключатель.
-func (n *Notifier) sendAll(ctx context.Context, kind, subject, body string) error {
+func (n *Notifier) sendAll(ctx context.Context, kind string, look Look, subject, body string) error {
 	var failures []string
 	configured := 0
 
-	for _, channel := range n.routes(ctx, kind, subject, body) {
+	for _, channel := range n.routes(ctx, kind, look, subject, body) {
 		if !channel.configured {
 			continue
 		}
@@ -217,11 +248,12 @@ var ErrMuted = errors.New("уведомления с этого сервера �
 // Выключенный сервер проверочное всё равно шлёт: человек нажал кнопку сам и
 // проверяет, доходит ли отсюда, — а молчат тревоги и отчёт.
 func (n *Notifier) SendTo(ctx context.Context, channel, subject, body string) ([]string, error) {
+	// Проверочное письмо — без полосы: оно ни о какой беде.
 	if channel == "" {
-		return n.Channels(), n.sendAll(ctx, KindTest, subject, body)
+		return n.Channels(), n.sendAll(ctx, KindTest, Look{Tone: mailhtml.Info}, subject, body)
 	}
 
-	for _, known := range n.routes(ctx, KindTest, subject, body) {
+	for _, known := range n.routes(ctx, KindTest, Look{Tone: mailhtml.Info}, subject, body) {
 		if known.name != channel {
 			continue
 		}
@@ -260,9 +292,9 @@ func implicitTLS(port int) bool {
 // STARTTLS обязателен везде, кроме портов с TLS сразу ([implicitTLS]).
 // Открытым текстом пароль не уходит: почтовый сервер клиента может стоять и
 // в чужой сети.
-func (n *Notifier) sendMail(subject, body string) error {
+func (n *Notifier) sendMail(kind string, look Look, subject, body string) error {
 	address := net.JoinHostPort(n.smtp.Host, fmt.Sprint(n.smtp.Port))
-	message := buildMessage(n.smtp.From, n.smtp.To, subject, body)
+	message := buildMessage(n.smtp.From, n.smtp.To, n.letter(kind, look, subject, body))
 
 	raw, err := (&net.Dialer{Timeout: mailDialTimeout}).Dial("tcp", address)
 	if err != nil {
@@ -326,22 +358,48 @@ func (n *Notifier) deliver(client *smtp.Client, message []byte) error {
 	return writer.Close()
 }
 
-// buildMessage собирает письмо.
+// letter — письмо для оформления (трек AC). Подвал «кто прислал и где
+// выключить» дописывается только в почту и не к отчёту: у отчёта он свой
+// (Р20), а в Telegram и вебхук уходит прежний текст (Р11).
+func (n *Notifier) letter(kind string, look Look, subject, body string) mailhtml.Letter {
+	text := body
+	if kind != KindReport && n.mail.Footer != "" {
+		text += "\n\n—\n" + n.mail.Footer
+	}
+	return mailhtml.Letter{
+		Lang: n.mail.Lang, Subject: subject, Text: text,
+		Tone: look.Tone, Band: look.Band, Source: n.mail.Source,
+	}
+}
+
+// buildMessage собирает письмо: текст и HTML с логотипом (трек AC, Р2).
 //
 // Тема кодируется по RFC 2047: она приходит на русском, а заголовки писем
-// — семибитные, и без кодирования почтовые клиенты покажут мусор.
-func buildMessage(from string, to []string, subject, body string) []byte {
+// — семибитные, и без кодирования почтовые клиенты покажут мусор. Обе части
+// — base64 по 76 знаков (Р15): до трека AC текст уходил восьмибитным без
+// объявления и без предела длины строки, и часть серверов такое режет.
+func buildMessage(from string, to []string, letter mailhtml.Letter) []byte {
 	var message bytes.Buffer
 
 	fmt.Fprintf(&message, "From: %s\r\n", from)
 	fmt.Fprintf(&message, "To: %s\r\n", strings.Join(to, ", "))
-	fmt.Fprintf(&message, "Subject: %s\r\n", mime.QEncoding.Encode("utf-8", subject))
+	fmt.Fprintf(&message, "Subject: %s\r\n", mime.QEncoding.Encode("utf-8", letter.Subject))
 	fmt.Fprintf(&message, "Date: %s\r\n", time.Now().Format(time.RFC1123Z))
+	// Свой Message-ID (Р16): почтовый сервер клиента может его не ставить.
+	fmt.Fprintf(&message, "Message-ID: %s\r\n", mailhtml.MessageID(from))
 	message.WriteString("MIME-Version: 1.0\r\n")
-	message.WriteString("Content-Type: text/plain; charset=utf-8\r\n")
-	message.WriteString("\r\n")
-	message.WriteString(strings.ReplaceAll(body, "\n", "\r\n"))
 
+	contentType, body, err := mailhtml.Assemble(letter)
+	if err != nil {
+		// Письмо важнее оформления: без HTML, но уходит.
+		log.Printf("оформление письма: %v", err)
+		message.WriteString("Content-Type: text/plain; charset=utf-8\r\n")
+		message.WriteString("Content-Transfer-Encoding: base64\r\n\r\n")
+		message.WriteString(mailhtml.Base64Lines([]byte(letter.Text)))
+		return message.Bytes()
+	}
+	fmt.Fprintf(&message, "Content-Type: %s\r\n\r\n", contentType)
+	message.Write(body)
 	return message.Bytes()
 }
 

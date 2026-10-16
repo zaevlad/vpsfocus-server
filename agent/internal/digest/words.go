@@ -40,10 +40,14 @@ type phrases struct {
 	muted            string
 	maintenance      string
 	footer           string
-	markProblem      string
-	markAttention    string
-	mb               string // «%d МБ»
-	underOneMB       string
+	// Слово на полосе письма по худшему пункту (трек AC, Р20).
+	bandProblem   string
+	bandAttention string
+	bandOK        string
+	markProblem   string
+	markAttention string
+	mb            string // «%d МБ»
+	underOneMB    string
 	// Роботы поиска и ИИ (идея 10 трека AB).
 	robotsTitle       string
 	robotsHint        string
@@ -80,7 +84,10 @@ var russian = phrases{
 	nothing:           "всё в порядке",
 	muted:             "Приглушено находок: %d. Их можно вернуть в отчёт на экране проектов.",
 	maintenance:       "Сейчас идёт обслуживание: тревоги приглушены до его конца.",
-	footer:            "Отчёт отправлен агентом vpsFocus с этого сервера. День и час меняются в настройках уведомлений.",
+	footer:            "Отчёт прислал мониторинг vpsFocus с этого сервера. День и час меняются в настройках уведомлений.",
+	bandProblem:       "Требует вмешательства",
+	bandAttention:     "Стоит посмотреть",
+	bandOK:            "Всё в порядке",
 	markProblem:       "[!]",
 	markAttention:     "[·]",
 	mb:                "%d МБ",
@@ -97,8 +104,8 @@ var russian = phrases{
 		health.CodeInodesFilling:  "лимит файлов на диске занят на {count}%: место есть, но скоро новые файлы не смогут создаваться",
 		health.CodeInodesFull:     "лимит файлов на диске занят на {count}% — новые файлы вот-вот перестанут создаваться",
 		health.CodeMemoryTight:    "память занята на {count}%",
-		health.CodeMetricsMissing: "замеров нет вовсе, возможно, агент не запустился",
-		health.CodeMetricsStale:   "последнему замеру {count} минут — похоже, агент встал",
+		health.CodeMetricsMissing: "замеров нет вовсе, возможно, мониторинг не запустился",
+		health.CodeMetricsStale:   "последнему замеру {count} минут — похоже, мониторинг остановился",
 		health.CodeNoChannels:     "не настроен ни один канал уведомлений",
 		health.CodeDomainExpiring: "регистрация домена кончается через {days} дн.",
 		health.CodeDomainExpired:  "регистрация домена кончилась",
@@ -116,7 +123,7 @@ var russian = phrases{
 		health.CodeProbeFailing:   "ключевой адрес не работает как должен ({detail})",
 		health.CodeErrorSpike:     "веб-сервер отдал ошибок: {count} за {minutes} мин.",
 		health.CodeNotFoundSpike:  "ответов «страницы нет»: {count} за {minutes} мин.",
-		health.CodeServiceDown:    "сервис стека не отвечает ({detail})",
+		health.CodeServiceDown:    "служба мониторинга не отвечает ({detail})",
 		health.CodeTrackerMissing: "скрипт трекинга не отдаётся — аналитика не собирается ({detail})",
 		health.CodeBackupFailed:   "последняя копия базы не сделалась ({detail})",
 		// Ноль дней здесь означает «копий нет вовсе»: подставлять «0 дн.»
@@ -171,7 +178,7 @@ var russian = phrases{
 		probe.CodePortUnknown:   "таблицу портов сервера прочитать не удалось",
 
 		backup.CodeNotConfigured:      "хранилище не настроено",
-		backup.CodeToolMissing:        "в образе агента нет pg_dump — обновите стек",
+		backup.CodeToolMissing:        "в мониторинге нет pg_dump — обновите мониторинг",
 		backup.CodeDumpFailed:         "дамп базы не снялся",
 		backup.CodeDumpEmpty:          "дамп оказался пустым",
 		backup.CodeArchiveFailed:      "архив не собрался",
@@ -196,7 +203,10 @@ var english = phrases{
 	nothing:           "all fine",
 	muted:             "Muted findings: %d. They can be brought back on the projects screen.",
 	maintenance:       "Maintenance is running: alerts are muted until it ends.",
-	footer:            "Sent by the vpsFocus agent on this server. The day and hour are set in notification settings.",
+	footer:            "Sent by vpsFocus monitoring on this server. The day and hour are set in notification settings.",
+	bandProblem:       "Needs action",
+	bandAttention:     "Worth a look",
+	bandOK:            "All fine",
 	markProblem:       "[!]",
 	markAttention:     "[·]",
 	mb:                "%d MB",
@@ -213,8 +223,8 @@ var english = phrases{
 		health.CodeInodesFilling:  "the disk’s file limit is {count}% used: there is free space, but new files will soon fail to be created",
 		health.CodeInodesFull:     "the disk’s file limit is {count}% used — new files are about to stop being created",
 		health.CodeMemoryTight:    "memory is {count}% used",
-		health.CodeMetricsMissing: "no measurements at all, the agent may not have started",
-		health.CodeMetricsStale:   "the last measurement is {count} minutes old — the agent seems to have stopped",
+		health.CodeMetricsMissing: "no measurements at all, monitoring may not have started",
+		health.CodeMetricsStale:   "the last measurement is {count} minutes old — monitoring seems to have stopped",
 		health.CodeNoChannels:     "no notification channel is configured",
 		health.CodeDomainExpiring: "the domain registration ends in {days} days",
 		health.CodeDomainExpired:  "the domain registration has run out",
@@ -232,7 +242,7 @@ var english = phrases{
 		health.CodeProbeFailing:   "a key URL is not working as it should ({detail})",
 		health.CodeErrorSpike:     "the web server returned {count} errors in {minutes} min",
 		health.CodeNotFoundSpike:  "{count} not-found responses in {minutes} min",
-		health.CodeServiceDown:    "a stack service is not answering ({detail})",
+		health.CodeServiceDown:    "a monitoring service is not answering ({detail})",
 		health.CodeTrackerMissing: "the tracking script is not served — analytics is not being collected ({detail})",
 		health.CodeBackupFailed:   "the last database copy failed ({detail})",
 		health.CodeBackupStale:    "no fresh database copy: the last one is {count} days old ({detail})",
@@ -285,7 +295,7 @@ var english = phrases{
 		probe.CodePortUnknown:   "the server's table of ports could not be read",
 
 		backup.CodeNotConfigured:      "storage is not configured",
-		backup.CodeToolMissing:        "the agent image has no pg_dump — update the stack",
+		backup.CodeToolMissing:        "monitoring has no pg_dump — update monitoring",
 		backup.CodeDumpFailed:         "the database dump failed",
 		backup.CodeDumpEmpty:          "the dump came out empty",
 		backup.CodeArchiveFailed:      "the archive was not built",

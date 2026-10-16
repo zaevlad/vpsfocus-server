@@ -23,12 +23,18 @@ import (
 
 	"agent/internal/health"
 	"agent/internal/logs"
+	"agent/internal/mailhtml"
 )
 
 // Text — тема и тело письма.
 type Text struct {
 	Subject string
 	Body    string
+	// Тон и слово полосы письма — по худшему пункту отчёта (трек AC, Р20):
+	// отчёт о сервере, которому плохо, не должен выглядеть как «всё в
+	// порядке» оттого, что он еженедельный.
+	Tone mailhtml.Tone
+	Band string
 }
 
 // Build собирает отчёт по своду.
@@ -138,7 +144,14 @@ func BuildWithRobots(locale, host string, snapshot health.Snapshot, robots []log
 
 	body.WriteString("\n" + words.footer + "\n")
 
-	return Text{Subject: subject, Body: body.String()}
+	text := Text{Subject: subject, Body: body.String(), Tone: mailhtml.OK, Band: words.bandOK}
+	switch {
+	case problems > 0:
+		text.Tone, text.Band = mailhtml.Problem, words.bandProblem
+	case attention > 0:
+		text.Tone, text.Band = mailhtml.Warning, words.bandAttention
+	}
+	return text
 }
 
 // speaking — поводы, о которых письмо говорит: не приглушённые и не
