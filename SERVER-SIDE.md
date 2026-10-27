@@ -67,8 +67,8 @@
 | `certscan.sh` + `cert-paths.sh` | «Найти сертификат» | пары «сертификат — ключ», уже лежащие на сервере (ключ — только путём). ТОЛЬКО ЧТЕНИЕ |
 | `certscan-read-pair.sh` | выбран найденный сертификат | читает выбранную пару; ключ уходит обратно на этот же сервер. ТОЛЬКО ЧТЕНИЕ |
 | `server-check.sh` | «Безопасность» → «Проверить сервер» | файрвол, порты, SSH, обновления, перезагрузка; с трека Z — служба времени и отметка timesyncd, срок хранения логов по logrotate, контейнеры с `privileged` или сокетом Docker (`docker inspect`), свежесть копий в папках из профилей сайтов (параметр `BACKUP_PATHS`, `find` только по каталогам). ТОЛЬКО ЧТЕНИЕ, не оставляет даже служебных следов (проверено `find / -newer` в контейнере Ubuntu 24.04, 2026-10-12) |
-| `containers.sh` | «Проверить контейнеры» при разборе сбоя | `docker ps -a` и `docker inspect`. ТОЛЬКО ЧТЕНИЕ |
-| `services-failed.sh` | «Здоровье сервера»: открытие экрана и «Обновить» | `systemctl --failed` — упавшие службы; нет systemd — «не знаем». ТОЛЬКО ЧТЕНИЕ, следов нет (`find / -newer` на тестовом сервере, 2026-10-15) |
+| `containers.sh` | «Проверить контейнеры» при разборе сбоя; «Проекты» — открытие экрана и «Обновить» (опрос `portfolio_details`, трек AD) | `docker ps -a` и `docker inspect`. ТОЛЬКО ЧТЕНИЕ |
+| `services-failed.sh` | «Здоровье сервера» и «Проекты»: открытие экрана и «Обновить» | `systemctl --failed` — упавшие службы; нет systemd — «не знаем». ТОЛЬКО ЧТЕНИЕ, следов нет (`find / -newer` на тестовом сервере, 2026-10-15) |
 | `container-stats.sh` | «Здоровье сервера»: открытие экрана и «Обновить» | `docker stats --no-stream` и `docker ps` по метке стека (параметр `STACK`) — процессор и память контейнеров сейчас. ТОЛЬКО ЧТЕНИЕ, следов нет (`find / -newer` на тестовом сервере, 2026-10-15) |
 | `docker-inspect.sh` | «Данные сайта», база в Docker | адрес контейнера базы для туннеля. ТОЛЬКО ЧТЕНИЕ |
 | `sqlite-cards.sh` | «Данные сайта», база SQLite | запросы карточек: `sqlite3 -readonly -safe`, предел строк и времени. ТОЛЬКО ЧТЕНИЕ |
@@ -99,7 +99,7 @@
 | `discovery.rs` | `discovery-prelude.sh`, `discovery.sh`, `cert-paths.sh` |
 | `certscan.rs` | `certscan.sh`, `certscan-read-pair.sh`, `cert-paths.sh` |
 | `servercheck.rs` | `server-check.sh` |
-| `containers.rs` | `containers.sh` |
+| `containers.rs` | `containers.sh` (зовут его и `projects.rs` — опрос «Проектов») |
 | `serverload.rs` | `services-failed.sh`, `container-stats.sh` |
 | `query/docker.rs` | `docker-inspect.sh` |
 | `query/sqlite.rs` | `sqlite-cards.sh` |
