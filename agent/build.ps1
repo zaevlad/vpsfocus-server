@@ -24,7 +24,7 @@
 [CmdletBinding()]
 param(
     [string] $Image = 'ghcr.io/zaevlad/vpsfocus-agent',
-    [string] $Tag = '0.28.0',
+    [string] $Tag = '0.29.0',
     [switch] $Load,
     [switch] $Push
 )
