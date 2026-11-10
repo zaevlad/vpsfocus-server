@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
-	"fmt"
 	"net"
 	"strconv"
 	"time"
@@ -174,13 +173,4 @@ func classify(err error) string {
 	}
 
 	return ErrTLSHandshakeBad
-}
-
-// Describe — короткое описание для письма. Текст здесь допустим: письмо
-// уходит человеку, а не в интерфейс, и переводить его некому.
-func (s TLSStatus) Describe() string {
-	if s.DaysLeft == nil {
-		return fmt.Sprintf("%s: сертификат проверить не удалось (%s)", s.Domain, s.Error)
-	}
-	return fmt.Sprintf("%s: сертификат истекает через %d дн.", s.Domain, *s.DaysLeft)
 }

@@ -112,8 +112,12 @@ func TestShrunkSizesInLetter(t *testing.T) {
 		5 * 1024 * 1024:   "5.0",
 		120 * 1024 * 1024: "120",
 	} {
-		if got := megabytes(bytes); got != want {
+		if got := megabytes(bytes, "."); got != want {
 			t.Errorf("megabytes(%d) = %q, ждали %q", bytes, got, want)
 		}
+	}
+	// Разделитель дроби — языка письма (трек AE): по-русски запятая.
+	if got := megabytes(400*1024, ","); got != "0,4" {
+		t.Errorf("по-русски %q, ждали 0,4", got)
 	}
 }

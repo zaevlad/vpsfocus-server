@@ -4,6 +4,7 @@ import (
 	"agent/internal/backup"
 	"agent/internal/checks"
 	"agent/internal/health"
+	"agent/internal/locale"
 	"agent/internal/probe"
 	"agent/internal/seo"
 )
@@ -66,11 +67,21 @@ type phrases struct {
 	details map[string]string
 }
 
-func dictionary(locale string) phrases {
-	if locale == "en" {
-		return english
-	}
-	return russian
+// dictionaries — словари отчёта по языкам из перечня `locale.Known`;
+// полноту сверяет тест (трек AE).
+var dictionaries = map[string]phrases{
+	locale.English:    english,
+	locale.Russian:    russian,
+	locale.Spanish:    spanish,
+	locale.German:     german,
+	locale.French:     french,
+	locale.Portuguese: portuguese,
+}
+
+// dictionary — словарь по правилу [locale.Parse]: пустое — русский,
+// незнакомое — английский.
+func dictionary(code string) phrases {
+	return dictionaries[locale.Parse(code)]
 }
 
 var russian = phrases{
@@ -212,7 +223,7 @@ var english = phrases{
 	mb:                "%d MB",
 	underOneMB:        "under 1 MB",
 	robotsTitle:       "Search and AI robots",
-	robotsHint:        "What this means and where such a rule usually sits is on the Agents and AI screen in the app. The robot's name can be faked.",
+	robotsHint:        "What this means and where such a rule usually sits is on the Bots & AI screen in the app. The robot's name can be faked.",
 	robotsWholeServer: "whole server",
 	robotRefused:      "%s is refused (code %d): %d of %d requests this week",
 	robotRobotsTxt:    ", including robots.txt",

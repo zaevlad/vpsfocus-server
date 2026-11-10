@@ -11,5 +11,5 @@ import "errors"
 // платформы не зависит, можно было проверить тестами на машине
 // разработчика.
 func (c *Collector) disk() (diskFigures, error) {
-	return diskFigures{}, errors.New("сведения о диске доступны только под Linux")
+	return diskFigures{}, errors.New("disk information is only available on Linux")
 }

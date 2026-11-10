@@ -290,8 +290,16 @@ func adviceItems(items []psiItem) []AdviceItem {
 var markdownLink = regexp.MustCompile(`\[([^\]]+)\]\([^)]*\)`)
 
 // Концовка «Подробнее…» / «Learn more…» — ссылка на документацию Google,
-// которую приложение открыть не может.
-var learnMore = regexp.MustCompile(`(?i)\s*(подробнее|узнайте больше|learn more|learn how)[^.]*\.?\s*$`)
+// которую приложение открыть не может. Испанские концовки сверены с
+// `shared/localization/locales/es.json` Lighthouse 12 (трек AE, 210),
+// немецкие — с `de.json` (217): «Weitere Informationen zu …»,
+// «Informationen dazu, wie …», «Hier findest du …», французские — с
+// `fr.json` (224): «En savoir plus sur …», «Découvrez comment …»,
+// португальские — с `pt.json` (бразильский, 231): «Saiba mais sobre …»,
+// «Aprenda a …», «Entenda por que …». Португальские — только с прописной,
+// с начала фразы: строчное «saiba mais» стоит в кавычках посреди совета
+// Joomla, а «entenda como» бывает концом обычной фразы.
+var learnMore = regexp.MustCompile(`(?i)\s*(подробнее|узнайте больше|learn more|learn how|obtén más información|consulta más información|consulta cómo|más información|weitere informationen|informationen (zu|zum|zur|dazu|über)|hier (findest du|erfährst du|erhältst du)|mehr erfahren|en savoir plus|découvrez (comment|pourquoi)|(?-i:S)aiba (mais|como|por que)|(?-i:A)prenda (a|como)|(?-i:E)ntenda (por que|como)|(?-i:D)escubra (como|por que))[^.]*\.?\s*$`)
 
 // cleanDescription — объяснение без разметки ссылок и без «подробнее».
 func cleanDescription(raw string) string {

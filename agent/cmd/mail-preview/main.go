@@ -1,4 +1,4 @@
-// mail-preview пишет письма агента на обоих языках в папку — смотреть
+// mail-preview пишет письма агента на всех языках `locale.Known` в папку — смотреть
 // оформление глазами (трек AC, спринт 179):
 //
 //	go run ./cmd/mail-preview -out <папка>
@@ -22,6 +22,7 @@ import (
 	"agent/internal/checks"
 	"agent/internal/digest"
 	"agent/internal/health"
+	"agent/internal/locale"
 	"agent/internal/mailhtml"
 )
 
@@ -65,7 +66,7 @@ func run(out string) error {
 		return os.WriteFile(filepath.Join(out, file+".html"), []byte(page), 0o644)
 	}
 
-	for _, locale := range []string{"ru", "en"} {
+	for _, locale := range locale.Known {
 		words := checks.WordsFor(locale)
 		source := fmt.Sprintf(words.MailSource, "web-1")
 		footer := "\n\n—\n" + fmt.Sprintf(words.MailFooter, "web-1")

@@ -150,7 +150,7 @@ func (c *Collector) Collect() (Sample, error) {
 	// Совсем пустой замер писать в базу незачем: это не «сервер молчит», а
 	// «мы не смогли посмотреть».
 	if sample.MemTotalMB == 0 && sample.DiskTotalMB == 0 {
-		return sample, fmt.Errorf("ни один показатель не прочитался: проверьте монтирование %s", c.procDir)
+		return sample, fmt.Errorf("no metric could be read: check the %s mount", c.procDir)
 	}
 
 	return sample, nil
@@ -166,12 +166,12 @@ func (c *Collector) cpuCounters() (busy, total uint64, err error) {
 
 	scanner := bufio.NewScanner(file)
 	if !scanner.Scan() {
-		return 0, 0, fmt.Errorf("/proc/stat пуст")
+		return 0, 0, fmt.Errorf("/proc/stat is empty")
 	}
 
 	fields := strings.Fields(scanner.Text())
 	if len(fields) < 5 || fields[0] != "cpu" {
-		return 0, 0, fmt.Errorf("/proc/stat: неожиданная первая строка")
+		return 0, 0, fmt.Errorf("/proc/stat: unexpected first line")
 	}
 
 	for index, raw := range fields[1:] {
@@ -215,7 +215,7 @@ func (c *Collector) memory() (totalMB, availableMB uint64, err error) {
 	}
 
 	if totalMB == 0 {
-		return 0, 0, fmt.Errorf("/proc/meminfo: MemTotal не найден")
+		return 0, 0, fmt.Errorf("/proc/meminfo: MemTotal not found")
 	}
 	return totalMB, availableMB, nil
 }

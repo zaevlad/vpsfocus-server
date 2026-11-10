@@ -435,6 +435,25 @@ func (s *Server) handleTest(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	// Канала нет в настройках сервера и адрес канала ведёт во внутреннюю
+	// сеть — тоже то, что человек исправляет сам, поэтому тоже кодом (трек
+	// AE, спринт 204): текст отказа по-английски и для экрана не годится.
+	// Статус прежний, 502: приложение старше этого кода разбирает отказ
+	// по-старому.
+	if errors.Is(err, notify.ErrNotConfigured) {
+		writeJSON(w, http.StatusBadGateway, map[string]string{
+			"error": err.Error(),
+			"code":  "channelNotConfigured",
+		})
+		return
+	}
+	if errors.Is(err, notify.ErrInternalAddress) {
+		writeJSON(w, http.StatusBadGateway, map[string]string{
+			"error": err.Error(),
+			"code":  "hookInternalAddress",
+		})
+		return
+	}
 	if err != nil {
 		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
 		return

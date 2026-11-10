@@ -34,7 +34,7 @@ const UserAgent = "vpsfocus-links"
 // По RFC 9309 это означает «не ходить»: сервер не сказал, что можно, и
 // решать за него мы не станем. Отдельная ошибка, а не общая «обход не
 // удался»: обход не сломался, он не состоялся — а для человека это разное.
-var ErrRobotsUnavailable = errors.New("robots.txt не отдался")
+var ErrRobotsUnavailable = errors.New("robots.txt was not served")
 
 // ErrRobotsForbidden — robots.txt запрещает нам даже главную страницу.
 //
@@ -42,7 +42,7 @@ var ErrRobotsUnavailable = errors.New("robots.txt не отдался")
 // бы пустой список страниц без единого признака беды, а экран показывал бы
 // зелёное «битых ссылок нет» по сайту, на который мы не заходили ни разу.
 // Молчаливый ноль хуже отказа.
-var ErrRobotsForbidden = errors.New("robots.txt запрещает обход")
+var ErrRobotsForbidden = errors.New("robots.txt forbids crawling")
 
 // Limits — как далеко можно уходить от главной страницы.
 //
@@ -91,10 +91,10 @@ const defaultMaxBytes = 2 << 20
 func Crawl(ctx context.Context, client *http.Client, startURL string, limits Limits) ([]string, error) {
 	start, err := url.Parse(startURL)
 	if err != nil {
-		return nil, fmt.Errorf("стартовый адрес: %w", err)
+		return nil, fmt.Errorf("start address: %w", err)
 	}
 	if start.Host == "" {
-		return nil, fmt.Errorf("стартовый адрес без хоста: %s", startURL)
+		return nil, fmt.Errorf("start address has no host: %s", startURL)
 	}
 
 	walker := &crawler{client: client, delay: limits.Delay, maxBytes: limits.MaxBytes}
@@ -325,7 +325,7 @@ func (c *crawler) fetchLinks(ctx context.Context, target *url.URL) ([]string, er
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("статус %d", resp.StatusCode)
+		return nil, fmt.Errorf("status %d", resp.StatusCode)
 	}
 	// Страница может отдаваться без расширения: ориентируемся на то,
 	// что сказал сервер, а не на адрес.
@@ -403,10 +403,10 @@ func HTTPClient(timeout time.Duration) *http.Client {
 			// Редиректы — норма жизни сайтов, но бесконечная цепочка
 			// означает петлю, а не навигацию.
 			if len(via) >= 5 {
-				return fmt.Errorf("слишком много перенаправлений")
+				return fmt.Errorf("too many redirects")
 			}
 			if len(via) > 0 && !sameSite(req.URL.Host, via[0].URL.Host) {
-				return fmt.Errorf("перенаправление уводит с сайта: %s", req.URL.Host)
+				return fmt.Errorf("redirect leads off the site: %s", req.URL.Host)
 			}
 			return nil
 		},

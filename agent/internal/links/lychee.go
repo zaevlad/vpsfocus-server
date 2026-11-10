@@ -187,7 +187,7 @@ var runLycheeFunc = runLychee
 func runLychee(ctx context.Context, opts Options, pages []string) (*lycheeOutput, error) {
 	list, err := os.CreateTemp("", "vpsfocus-pages-*.txt")
 	if err != nil {
-		return nil, fmt.Errorf("список страниц: %w", err)
+		return nil, fmt.Errorf("page list: %w", err)
 	}
 	defer os.Remove(list.Name())
 
@@ -235,7 +235,7 @@ func runLychee(ctx context.Context, opts Options, pages []string) (*lycheeOutput
 
 	output, err := parseLychee(stdout.String())
 	if err != nil {
-		return nil, fmt.Errorf("вывод lychee не разобрался: %w", err)
+		return nil, fmt.Errorf("could not parse lychee output: %w", err)
 	}
 	return output, nil
 }

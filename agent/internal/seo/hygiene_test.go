@@ -95,7 +95,7 @@ func TestHygieneUnavailableAfter(t *testing.T) {
 }
 
 func TestHygieneSoft404Title(t *testing.T) {
-	for _, title := range []string{"Страница не найдена", "404 — нет такой страницы", "Page Not Found | Shop"} {
+	for _, title := range []string{"Страница не найдена", "404 — нет такой страницы", "Page Not Found | Shop", "Página no encontrada", "NO SE ENCONTRÓ LA PÁGINA", "Seite nicht gefunden", "Erreur 404 - Page introuvable", "Page non trouvée – Ma boutique", "Oups, cette page n’existe pas", "Página não encontrada", "404 - Conteúdo não foi encontrado | Minha Loja"} {
 		page := goodPage("https://site.test/a")
 		page.Structure.Title = title
 		page = auditOne(page)
@@ -104,6 +104,18 @@ func TestHygieneSoft404Title(t *testing.T) {
 		if !ok || issue.Detail != title {
 			t.Errorf("%q: %s", title, codes(page))
 		}
+	}
+
+	// Карточка товара «нет в наличии» — не страница ошибки.
+	stock := goodPage("https://site.test/a")
+	stock.Structure.Title = "Zapatillas X: no se encuentra disponible"
+	if _, ok := found(auditOne(stock), IssueSoft404Title); ok {
+		t.Fatal("товар без наличия принят за страницу ошибки")
+	}
+	novel := goodPage("https://site.test/a")
+	novel.Structure.Title = "Le trésor introuvable : critique du roman"
+	if _, ok := found(auditOne(novel), IssueSoft404Title); ok {
+		t.Fatal("статья с «introuvable» принята за страницу ошибки")
 	}
 
 	// «404» внутри слова — не ошибка, а модель товара.
@@ -220,10 +232,13 @@ func TestHygieneURLTrackingAndRepeatsAndSearch(t *testing.T) {
 		t.Fatalf("повтор сегмента: %+v", issue)
 	}
 
-	for _, address := range []string{"https://site.test/?s=обувь", "https://site.test/search/?q=1"} {
+	for _, address := range []string{"https://site.test/?s=обувь", "https://site.test/search/?q=1", "https://site.test/b%C3%BAsqueda/?q=1", "https://site.test/tienda/buscar", "https://site.test/suche/?q=1", "https://site.test/recherche/?q=1", "https://site.test/busca/?q=1", "https://site.test/loja/pesquisar"} {
 		if _, ok := found(auditOne(goodPage(address)), IssueInternalSearchCrawled); !ok {
 			t.Errorf("%s: поиск по сайту не замечен", address)
 		}
+	}
+	if _, ok := found(auditOne(goodPage("https://site.test/pesquisa/")), IssueInternalSearchCrawled); ok {
+		t.Error("раздел «Pesquisa» (исследования) принят за поиск по сайту")
 	}
 	closed := goodPage("https://site.test/?s=обувь")
 	closed.Structure.Noindex = true

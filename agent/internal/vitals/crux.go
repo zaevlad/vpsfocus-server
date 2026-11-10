@@ -164,7 +164,7 @@ func cruxQuery(
 
 	var parsed cruxResponse
 	if err := json.Unmarshal(body, &parsed); err != nil {
-		return nil, fmt.Errorf("разбор ответа CrUX: %w", err)
+		return nil, fmt.Errorf("parsing CrUX response: %w", err)
 	}
 
 	field := &Field{

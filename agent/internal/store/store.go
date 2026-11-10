@@ -383,7 +383,7 @@ func Open(path string) (*Store, error) {
 	// на запросы приложения, и без WAL они бы ждали друг друга.
 	db, err := sql.Open("sqlite", path+"?_pragma=journal_mode(WAL)&_pragma=busy_timeout(5000)")
 	if err != nil {
-		return nil, fmt.Errorf("база агента: %w", err)
+		return nil, fmt.Errorf("agent database: %w", err)
 	}
 
 	// Одно соединение: SQLite всё равно сериализует запись, а пул только
@@ -392,7 +392,7 @@ func Open(path string) (*Store, error) {
 
 	if _, err := db.Exec(schema); err != nil {
 		db.Close()
-		return nil, fmt.Errorf("схема базы агента: %w", err)
+		return nil, fmt.Errorf("agent database schema: %w", err)
 	}
 
 	return &Store{db: db}, nil
@@ -602,14 +602,14 @@ type Suppression struct {
 func (s *Store) Suppressions(ctx context.Context, now time.Time) ([]Suppression, error) {
 	if _, err := s.db.ExecContext(ctx,
 		`delete from suppressions where until != 0 and until <= ?`, now.Unix()); err != nil {
-		return nil, fmt.Errorf("уборка приглушений: %w", err)
+		return nil, fmt.Errorf("pruning mutes: %w", err)
 	}
 
 	rows, err := s.db.QueryContext(ctx,
 		`select code, target, until, note, created_at from suppressions
 		 order by created_at desc`)
 	if err != nil {
-		return nil, fmt.Errorf("приглушения: %w", err)
+		return nil, fmt.Errorf("mutes: %w", err)
 	}
 	defer rows.Close()
 
@@ -620,7 +620,7 @@ func (s *Store) Suppressions(ctx context.Context, now time.Time) ([]Suppression,
 		var item Suppression
 		var until, created int64
 		if err := rows.Scan(&item.Code, &item.Target, &until, &item.Note, &created); err != nil {
-			return nil, fmt.Errorf("чтение приглушения: %w", err)
+			return nil, fmt.Errorf("reading mute: %w", err)
 		}
 		if until != 0 {
 			item.Until = time.Unix(until, 0).UTC()
@@ -642,7 +642,7 @@ func (s *Store) Suppress(ctx context.Context, code, target string, until time.Ti
 		 values (?, ?, ?, ?, ?)`,
 		code, target, deadline, note, time.Now().UTC().Unix())
 	if err != nil {
-		return fmt.Errorf("приглушение находки: %w", err)
+		return fmt.Errorf("muting finding: %w", err)
 	}
 	return nil
 }
@@ -652,7 +652,7 @@ func (s *Store) Unsuppress(ctx context.Context, code, target string) error {
 	_, err := s.db.ExecContext(ctx,
 		`delete from suppressions where code = ? and target = ?`, code, target)
 	if err != nil {
-		return fmt.Errorf("снятие приглушения: %w", err)
+		return fmt.Errorf("unmuting: %w", err)
 	}
 	return nil
 }
@@ -1078,12 +1078,12 @@ func (s *Store) MaintenanceWindow(ctx context.Context, now time.Time) (Maintenan
 		return Maintenance{}, false, nil
 	}
 	if err != nil {
-		return Maintenance{}, false, fmt.Errorf("окно обслуживания: %w", err)
+		return Maintenance{}, false, fmt.Errorf("maintenance window: %w", err)
 	}
 
 	if until <= now.Unix() {
 		if _, err := s.db.ExecContext(ctx, `delete from maintenance where id = 1`); err != nil {
-			return Maintenance{}, false, fmt.Errorf("уборка окна обслуживания: %w", err)
+			return Maintenance{}, false, fmt.Errorf("pruning maintenance window: %w", err)
 		}
 		return Maintenance{}, false, nil
 	}
@@ -1101,7 +1101,7 @@ func (s *Store) StartMaintenance(ctx context.Context, until time.Time, note stri
 		`insert or replace into maintenance (id, until, note, started) values (1, ?, ?, ?)`,
 		until.Unix(), note, time.Now().UTC().Unix())
 	if err != nil {
-		return fmt.Errorf("начало обслуживания: %w", err)
+		return fmt.Errorf("maintenance start: %w", err)
 	}
 	return nil
 }
@@ -1110,7 +1110,7 @@ func (s *Store) StartMaintenance(ctx context.Context, until time.Time, note stri
 func (s *Store) EndMaintenance(ctx context.Context) error {
 	_, err := s.db.ExecContext(ctx, `delete from maintenance where id = 1`)
 	if err != nil {
-		return fmt.Errorf("конец обслуживания: %w", err)
+		return fmt.Errorf("maintenance end: %w", err)
 	}
 	return nil
 }
@@ -1202,7 +1202,7 @@ const keepLinkReports = 30
 func (s *Store) SaveLinkReport(ctx context.Context, report links.Report) error {
 	startedAt, err := time.Parse(time.RFC3339, report.CheckedAt)
 	if err != nil {
-		return fmt.Errorf("отчёт %s: %w", report.Domain, err)
+		return fmt.Errorf("report %s: %w", report.Domain, err)
 	}
 
 	result, err := s.db.ExecContext(ctx,
@@ -1475,7 +1475,7 @@ func VitalsKey(domain, path, strategy string) string {
 func (s *Store) SaveVitalsReport(ctx context.Context, report vitals.Report) error {
 	startedAt, err := time.Parse(time.RFC3339, report.CheckedAt)
 	if err != nil {
-		return fmt.Errorf("замер %s: %w", report.URL, err)
+		return fmt.Errorf("sample %s: %w", report.URL, err)
 	}
 
 	// История в самой записи не хранится: она собирается при чтении из
@@ -1922,14 +1922,21 @@ func (s *Store) LogGroupsBetween(
 	limit int,
 ) ([]logs.Group, error) {
 	rows, err := s.db.QueryContext(ctx,
-		`select source, kind, status, level, host, method, path, signature,
+		// Служебный путь старых агентов — та же группа, что и новый
+		// (`logs.LegacyOverflowPath`).
+		`select source, kind, status, level, host, method,
+		        case when path = ? then ? else path end, signature,
 		        max(sample), sum(count), min(first_at), max(last_at)
 		 from log_events
 		 where bucket >= ? and bucket <= ?
-		 group by source, kind, status, level, host, method, path, signature
+		 group by source, kind, status, level, host, method,
+		          case when path = ? then ? else path end, signature
 		 order by sum(count) desc, max(last_at) desc
 		 limit ?`,
-		bucketOf(from), bucketOf(to), limit)
+		logs.LegacyOverflowPath, logs.OverflowPath,
+		bucketOf(from), bucketOf(to),
+		logs.LegacyOverflowPath, logs.OverflowPath,
+		limit)
 	if err != nil {
 		return nil, err
 	}
@@ -2154,7 +2161,7 @@ const keepSeoScans = 30
 func (s *Store) SaveSeoScan(ctx context.Context, scan seo.Scan, pages []seo.Page) error {
 	startedAt, err := time.Parse(time.RFC3339, scan.CheckedAt)
 	if err != nil {
-		return fmt.Errorf("обход %s: %w", scan.Domain, err)
+		return fmt.Errorf("crawl %s: %w", scan.Domain, err)
 	}
 
 	stats, err := json.Marshal(scan.Stats)
@@ -2475,7 +2482,7 @@ func (s *Store) SeoPages(
 		// Ошибка базы — это ошибка, а не «обхода не было». Пока они шли
 		// одной веткой, не ответившая база выглядела на экране как чистый
 		// сайт без единой находки: разные новости с одинаковым видом.
-		return nil, 0, fmt.Errorf("последний обход %s: %w", domain, err)
+		return nil, 0, fmt.Errorf("last crawl %s: %w", domain, err)
 	}
 	if !scanID.Valid {
 		// Состоявшегося обхода не было: пустой список, а не ошибка.

@@ -3,6 +3,7 @@ package seo
 import (
 	"net/url"
 	"regexp"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -43,9 +44,35 @@ var trackingParameters = map[string]bool{
 // считалась страницей ошибки.
 var standalone404 = regexp.MustCompile(`(^|[^\p{L}\p{N}])404([^\p{L}\p{N}]|$)`)
 
-// Слова страницы ошибки в заголовке.
-var notFoundPhrases = []string{
-	"not found", "не найдена", "не найден", "не существует",
+// Слова страницы ошибки в заголовке — по языкам сайтов клиентов. Язык
+// сайта не связан с языком интерфейса, поэтому сверяются все; новый язык —
+// строкой (трек AE).
+var notFoundPhrases = map[string][]string{
+	"en": {"not found"},
+	"ru": {"не найдена", "не найден", "не существует"},
+	// «no existe» и «no se encuentra» не берём: так кончаются заголовки статей
+	// («…el amor perfecto no existe») и товаров («…no se encuentra disponible»),
+	// а у страниц ошибки рядом стоит и «404».
+	"es": {"no encontrada", "no encontrado", "no se encontró"},
+	// «existiert nicht» не берём по той же причине, что «no existe».
+	"de": {"nicht gefunden"},
+	// Только с «page»: просто «introuvable» стоит и в заголовках статей и
+	// товаров («Le trésor introuvable», «produit introuvable en magasin»).
+	"fr": {"page introuvable", "page non trouvée", "page n'existe pas", "page n’existe pas"},
+	// «não existe» не берём по той же причине, что «no existe».
+	"pt": {"não encontrada", "não encontrado", "não foi encontrada", "não foi encontrado"},
+}
+
+// searchSegments — сегмент пути страницы поиска по сайту, по языкам.
+var searchSegments = map[string][]string{
+	"en": {"search"},
+	"ru": {"poisk", "поиск"},
+	"es": {"buscar", "busqueda", "búsqueda"},
+	"de": {"suche", "suchen"},
+	"fr": {"recherche", "rechercher"},
+	// «pesquisa» не берём: у вузов и институтов так называется раздел
+	// «Исследования», а поиск бразильских магазинов — «busca».
+	"pt": {"busca", "buscar", "pesquisar"},
 }
 
 // hygieneIssues — находки одной страницы. Зовётся из `auditPage` у
@@ -185,9 +212,11 @@ func notFoundHeading(structure *Structure) (string, bool) {
 		if standalone404.MatchString(lower) {
 			return heading, true
 		}
-		for _, phrase := range notFoundPhrases {
-			if strings.Contains(lower, phrase) {
-				return heading, true
+		for _, phrases := range notFoundPhrases {
+			for _, phrase := range phrases {
+				if strings.Contains(lower, phrase) {
+					return heading, true
+				}
 			}
 		}
 	}
@@ -247,15 +276,17 @@ func repeatedSegment(path string) string {
 	return ""
 }
 
-// isInternalSearch — страница поиска по сайту: сегмент `search` или
-// `poisk` в пути либо параметр `s` (так ищет WordPress).
+// isInternalSearch — страница поиска по сайту: сегмент из [searchSegments]
+// в пути либо параметр `s` (так ищет WordPress).
 func isInternalSearch(parsed *url.URL) bool {
 	if parsed.Query().Has("s") {
 		return true
 	}
 	for _, segment := range strings.Split(strings.ToLower(parsed.Path), "/") {
-		if segment == "search" || segment == "poisk" || segment == "поиск" {
-			return true
+		for _, words := range searchSegments {
+			if slices.Contains(words, segment) {
+				return true
+			}
 		}
 	}
 	return false

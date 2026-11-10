@@ -664,7 +664,7 @@ func copyEntry(archive *tar.Writer, name, path string, size int64, now time.Time
 	// Размер в заголовке tar обязан совпасть с числом записанных байт:
 	// разойдись они, архив открылся бы, а дамп внутри оказался бы обрезан.
 	if written != size {
-		return fmt.Errorf("дамп изменился при записи: %d вместо %d", written, size)
+		return fmt.Errorf("dump changed while being written: %d instead of %d", written, size)
 	}
 	return nil
 }
@@ -699,7 +699,7 @@ func verify(path string) (Checked, error) {
 
 	zip, err := gzip.NewReader(reader)
 	if err != nil {
-		return Checked{}, fmt.Errorf("архив не разжимается: %w", err)
+		return Checked{}, fmt.Errorf("archive does not decompress: %w", err)
 	}
 	defer zip.Close()
 
@@ -715,7 +715,7 @@ func verify(path string) (Checked, error) {
 			break
 		}
 		if err != nil {
-			return Checked{}, fmt.Errorf("архив не читается: %w", err)
+			return Checked{}, fmt.Errorf("archive cannot be read: %w", err)
 		}
 		if entry.Name != FileDump {
 			// Остальные записи дочитываем, чтобы дойти до конца потока: без
@@ -751,13 +751,13 @@ func verify(path string) (Checked, error) {
 	}
 
 	if !found {
-		return Checked{}, errors.New("в архиве нет дампа")
+		return Checked{}, errors.New("no dump in the archive")
 	}
 	if !headerSeen {
-		return Checked{}, errors.New("дамп не похож на дамп PostgreSQL")
+		return Checked{}, errors.New("dump does not look like a PostgreSQL dump")
 	}
 	if dumpBytes < minDumpBytes {
-		return Checked{}, fmt.Errorf("дамп в архиве пуст: %d байт", dumpBytes)
+		return Checked{}, fmt.Errorf("dump in the archive is empty: %d bytes", dumpBytes)
 	}
 
 	return Checked{

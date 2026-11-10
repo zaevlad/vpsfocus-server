@@ -10,5 +10,5 @@ import "errors"
 // нужна ровно затем, чтобы сборку и разбор архива можно было проверять
 // тестами на машине разработчика.
 func freeBytes(string) (uint64, error) {
-	return 0, errors.New("свободное место видно только под Linux")
+	return 0, errors.New("free space is only visible on Linux")
 }

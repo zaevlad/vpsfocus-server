@@ -207,7 +207,7 @@ func (d *DomainChecker) rdapBase(ctx context.Context, tld string) (string, error
 
 	base, ok := d.bootstrap.byTLD[tld]
 	if !ok {
-		return "", fmt.Errorf("зона %q не поддерживает rdap", tld)
+		return "", fmt.Errorf("zone %q does not support rdap", tld)
 	}
 	return base, nil
 }
@@ -226,7 +226,7 @@ func (d *DomainChecker) loadBootstrap(ctx context.Context) error {
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("реестр rdap: %s", response.Status)
+		return fmt.Errorf("rdap registry: %s", response.Status)
 	}
 
 	var payload struct {
@@ -316,7 +316,7 @@ func (d *DomainChecker) whoisServer(ctx context.Context, tld string) (string, er
 	}
 	server := findField(body, []string{"whois"})
 	if server == "" {
-		return "", fmt.Errorf("для зоны %q нет whois-сервера", tld)
+		return "", fmt.Errorf("no whois server for zone %q", tld)
 	}
 	return server, nil
 }

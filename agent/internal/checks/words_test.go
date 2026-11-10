@@ -7,44 +7,67 @@ import (
 	"testing"
 	"unicode"
 
+	"agent/internal/locale"
 	"agent/internal/metrics"
 )
 
 // Подстановка fmt: %d, %s, но не %% — это знак процента, а не аргумент.
 var verb = regexp.MustCompile(`%[^%]`)
 
-// Каждая фраза есть на обоих языках, и аргументов у пары поровну: строки
-// берут одни и те же значения в одном порядке, и лишний или потерянный %d
-// дал бы в письме «%!d(MISSING)».
-func TestWordsAgreeBetweenLanguages(t *testing.T) {
-	ru := reflect.ValueOf(WordsFor("ru"))
-	en := reflect.ValueOf(WordsFor("en"))
+// Словарь есть у каждого языка перечня `locale.Known` и только у них
+// (трек AE): язык, дописанный в перечень и забытый здесь, ушёл бы человеку
+// пустыми письмами.
+func TestEveryKnownLanguageHasWords(t *testing.T) {
+	for _, code := range locale.Known {
+		if _, ok := words[code]; !ok {
+			t.Errorf("языку %s нет словаря тревог", code)
+		}
+	}
+	if len(words) != len(locale.Known) {
+		t.Errorf("словарей %d, а языков в locale.Known %d", len(words), len(locale.Known))
+	}
+}
 
-	for i := range ru.NumField() {
-		name := ru.Type().Field(i).Name
-		r, e := ru.Field(i).String(), en.Field(i).String()
-		if r == "" || e == "" {
-			t.Errorf("%s: пустая фраза (ru %q, en %q)", name, r, e)
-			continue
-		}
-		if a, b := len(verb.FindAllString(strings.ReplaceAll(r, "%%", ""), -1)),
-			len(verb.FindAllString(strings.ReplaceAll(e, "%%", ""), -1)); a != b {
-			t.Errorf("%s: подстановок ru %d, en %d", name, a, b)
-		}
-		for _, letter := range e {
-			if unicode.Is(unicode.Cyrillic, letter) {
-				t.Errorf("%s: кириллица в английской фразе %q", name, e)
-				break
+// Каждая фраза есть на каждом языке, и аргументов у неё столько же, сколько
+// в английской: строки берут одни и те же значения в одном порядке, и лишний
+// или потерянный %d дал бы в письме «%!d(MISSING)».
+func TestWordsAgreeBetweenLanguages(t *testing.T) {
+	en := reflect.ValueOf(words[locale.English])
+	for code, dictionary := range words {
+		other := reflect.ValueOf(dictionary)
+		for i := range en.NumField() {
+			name := en.Type().Field(i).Name
+			o, e := other.Field(i).String(), en.Field(i).String()
+			if o == "" || e == "" {
+				t.Errorf("%s %s: пустая фраза (%q, en %q)", code, name, o, e)
+				continue
+			}
+			if a, b := len(verb.FindAllString(strings.ReplaceAll(o, "%%", ""), -1)),
+				len(verb.FindAllString(strings.ReplaceAll(e, "%%", ""), -1)); a != b {
+				t.Errorf("%s %s: подстановок %d, в английском %d", code, name, a, b)
+			}
+			if code == locale.Russian {
+				continue
+			}
+			for _, letter := range o {
+				if unicode.Is(unicode.Cyrillic, letter) {
+					t.Errorf("%s %s: кириллица во фразе %q", code, name, o)
+					break
+				}
 			}
 		}
 	}
 }
 
 // Язык по умолчанию — русский: сервер, на котором AGENT_LOCALE не задан,
-// пишет так же, как писал до перевода.
+// пишет так же, как писал до перевода. Незнакомый код — английский (трек AE):
+// язык выбран в приложении новее агента, и английский понятнее русского.
 func TestWordsDefaultToRussian(t *testing.T) {
-	if WordsFor("") != WordsFor("ru") || WordsFor("de") != WordsFor("ru") {
-		t.Error("незнакомый язык должен давать русский")
+	if WordsFor("") != WordsFor("ru") {
+		t.Error("пустой язык должен давать русский")
+	}
+	if WordsFor("ja") != WordsFor("en") {
+		t.Error("незнакомый язык должен давать английский")
 	}
 }
 

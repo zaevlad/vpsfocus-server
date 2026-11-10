@@ -1064,3 +1064,27 @@ func TestExpiredMaintenanceEndsItself(t *testing.T) {
 		t.Fatalf("окно вернулось: %v, %v", active, err)
 	}
 }
+
+// Служебный путь «всё сверх потолка» сменился (трек AE, спринт 204): строки,
+// записанные старым агентом, и новые — одна группа с общим счётом, а не две
+// строки «прочие адреса» на экране до конца срока хранения журнала.
+func TestLegacyOverflowPathIsTheSameGroup(t *testing.T) {
+	db := openTestStore(t)
+	at := time.Now().UTC().Add(-10 * time.Minute)
+
+	old := serverError(at, 404, logs.LegacyOverflowPath)
+	old.Count = 3
+	fresh := serverError(at.Add(time.Minute), 404, logs.OverflowPath)
+	fresh.Count = 2
+	if err := db.AddLogGroups(t.Context(), "/var/log/nginx/access.log", []logs.Counted{old, fresh}); err != nil {
+		t.Fatal(err)
+	}
+
+	groups, err := db.LogGroups(t.Context(), at.Add(-time.Hour), 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(groups) != 1 || groups[0].Path != logs.OverflowPath || groups[0].Count != 5 {
+		t.Fatalf("группы: %+v", groups)
+	}
+}

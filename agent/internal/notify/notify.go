@@ -148,9 +148,7 @@ func (n *Notifier) Channels() []string {
 type route struct {
 	name       string
 	configured bool
-	// Что сказать, когда проверяют ненастроенный канал.
-	absent string
-	send   func() error
+	send       func() error
 }
 
 // routes перечисляет все каналы, которые агент знает. Один список на
@@ -158,15 +156,15 @@ type route struct {
 // добавленный в одно место из трёх, молчал бы в двух других.
 func (n *Notifier) routes(ctx context.Context, kind string, look Look, subject, body string) []route {
 	return []route{
-		{ChannelSMTP, n.smtp.Configured(), "почта не настроена",
+		{ChannelSMTP, n.smtp.Configured(),
 			func() error { return n.sendMail(kind, look, subject, body) }},
-		{ChannelTelegram, n.telegram.Configured(), "telegram не настроен",
+		{ChannelTelegram, n.telegram.Configured(),
 			func() error { return n.sendTelegram(ctx, subject, body) }},
-		{ChannelSlack, n.slack != "", "slack не настроен",
+		{ChannelSlack, n.slack != "",
 			func() error { return n.sendSlack(ctx, subject, body) }},
-		{ChannelDiscord, n.discord != "", "discord не настроен",
+		{ChannelDiscord, n.discord != "",
 			func() error { return n.sendDiscord(ctx, subject, body) }},
-		{ChannelWebhook, n.webhook != "", "вебхук не настроен",
+		{ChannelWebhook, n.webhook != "",
 			func() error { return n.sendWebhook(ctx, kind, subject, body) }},
 	}
 }
@@ -213,7 +211,7 @@ func (n *Notifier) sendAll(ctx context.Context, kind string, look Look, subject,
 	}
 
 	if configured == 0 {
-		return fmt.Errorf("не настроен ни один канал уведомлений")
+		return fmt.Errorf("no notification channel is configured")
 	}
 	if len(failures) == configured {
 		return fmt.Errorf("%s", strings.Join(failures, "; "))
@@ -230,10 +228,15 @@ const (
 
 // ErrUnknownChannel — канала с таким именем нет. Отдельной ошибкой, потому
 // что это отказ запроса, а не отказ доставки.
-var ErrUnknownChannel = errors.New("неизвестный канал уведомлений")
+var ErrUnknownChannel = errors.New("unknown notification channel")
+
+// ErrNotConfigured — проверяют канал, которого в настройках этого сервера
+// нет. Отдельной ошибкой: приложение говорит человеку, что настройки не
+// доехали до сервера, кодом, а не разбором текста (трек AE, спринт 204).
+var ErrNotConfigured = errors.New("channel is not configured")
 
 // ErrMuted — уведомления с этого сервера выключены человеком.
-var ErrMuted = errors.New("уведомления с этого сервера выключены")
+var ErrMuted = errors.New("notifications from this server are turned off")
 
 // SendTo отправляет сообщение в один канал и отвечает, куда оно ушло.
 //
@@ -258,7 +261,7 @@ func (n *Notifier) SendTo(ctx context.Context, channel, subject, body string) ([
 			continue
 		}
 		if !known.configured {
-			return nil, errors.New(known.absent)
+			return nil, fmt.Errorf("%s: %w", channel, ErrNotConfigured)
 		}
 		if err := known.send(); err != nil {
 			return nil, fmt.Errorf("%s: %w", channel, err)
@@ -279,7 +282,7 @@ const (
 // ErrMailUnreachable — почтовый сервер не принял соединение: порт закрыт
 // хостером сервера, адрес неверный или почтовый сервер лежит. Отдельной
 // ошибкой: приложение говорит человеку, что делать, а не «отказ доставки».
-var ErrMailUnreachable = errors.New("почтовый сервер не отвечает")
+var ErrMailUnreachable = errors.New("mail server is not responding")
 
 // implicitTLS — порт, где TLS начинается с первого байта. 2465 — тот же 465
 // у сервисов рассылки (Resend), которым хостеры не закрывают порт.
@@ -435,7 +438,7 @@ func (n *Notifier) sendTelegram(ctx context.Context, subject, body string) error
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return fmt.Errorf("telegram ответил %s", response.Status)
+		return fmt.Errorf("telegram responded %s", response.Status)
 	}
 	return nil
 }
@@ -465,7 +468,7 @@ func hideToken(err error, token string) error {
 	}
 	message := err.Error()
 	if token != "" {
-		message = strings.ReplaceAll(message, token, "<токен>")
+		message = strings.ReplaceAll(message, token, "<token>")
 	}
 	return errors.New(message)
 }

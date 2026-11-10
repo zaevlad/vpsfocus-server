@@ -81,21 +81,21 @@ type Error struct {
 
 func (e *Error) Error() string {
 	if e.Code == "" {
-		return fmt.Sprintf("хранилище ответило %d", e.Status)
+		return fmt.Sprintf("storage responded %d", e.Status)
 	}
-	return fmt.Sprintf("хранилище ответило %d: %s", e.Status, e.Code)
+	return fmt.Sprintf("storage responded %d: %s", e.Status, e.Code)
 }
 
 // New собирает клиент и проверяет, что настройки вообще похожи на настройки.
 func New(cfg Config) (*Client, error) {
 	if strings.TrimSpace(cfg.Endpoint) == "" {
-		return nil, errors.New("адрес хранилища не задан")
+		return nil, errors.New("storage address is not set")
 	}
 	if strings.TrimSpace(cfg.Bucket) == "" {
-		return nil, errors.New("бакет не задан")
+		return nil, errors.New("bucket is not set")
 	}
 	if strings.TrimSpace(cfg.KeyID) == "" || strings.TrimSpace(cfg.Secret) == "" {
-		return nil, errors.New("ключ доступа не задан")
+		return nil, errors.New("access key is not set")
 	}
 
 	endpoint := strings.TrimSpace(cfg.Endpoint)
@@ -110,10 +110,10 @@ func New(cfg Config) (*Client, error) {
 
 	parsed, err := url.Parse(endpoint)
 	if err != nil {
-		return nil, fmt.Errorf("адрес хранилища: %w", err)
+		return nil, fmt.Errorf("storage address: %w", err)
 	}
 	if parsed.Host == "" {
-		return nil, errors.New("в адресе хранилища нет имени сервера")
+		return nil, errors.New("storage address has no host name")
 	}
 
 	if cfg.Region == "" {
@@ -310,7 +310,7 @@ func (c *Client) List(ctx context.Context, prefix string, limit int) ([]Object, 
 		err = xml.NewDecoder(io.LimitReader(response.Body, 8<<20)).Decode(&result)
 		drain(response)
 		if err != nil {
-			return nil, fmt.Errorf("список объектов: %w", err)
+			return nil, fmt.Errorf("object list: %w", err)
 		}
 
 		for _, item := range result.Contents {
@@ -391,7 +391,7 @@ func (c *Client) Delete(ctx context.Context, key string) error {
 // Срок короткий: в ссылке подпись, дающая доступ к аналитике клиента.
 func (c *Client) Presign(key string, ttl time.Duration) (string, error) {
 	if ttl <= 0 || ttl > 12*time.Hour {
-		return "", errors.New("срок ссылки вне допустимого")
+		return "", errors.New("link lifetime out of range")
 	}
 
 	now := time.Now().UTC()

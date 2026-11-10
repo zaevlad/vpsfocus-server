@@ -1,5 +1,7 @@
 package checks
 
+import "agent/internal/locale"
+
 // Words — тексты тревог на одном языке.
 //
 // До 2026-09-28 тревоги были только русскими: считалось, что «у агента
@@ -72,15 +74,28 @@ type Words struct {
 	MailBandOK      string
 	MailSource      string // имя сервера
 	MailFooter      string // имя сервера
+
+	// Десятичный разделитель — типографика языка (трек AE): «0,4 МБ» по-
+	// русски, «0.4 MB» по-английски. Число с дробью агент собирает сам
+	// (размер копии), и точка в русском письме — опечатка.
+	Decimal string
 }
 
-// WordsFor — тексты на языке `AGENT_LOCALE`; всё, кроме `en`, — русский,
-// как и у отчёта (`config.locale`).
-func WordsFor(locale string) Words {
-	if locale == "en" {
-		return english
-	}
-	return russian
+// words — словари по языкам из перечня `locale.Known`; полноту сверяет
+// тест (трек AE).
+var words = map[string]Words{
+	locale.English:    english,
+	locale.Russian:    russian,
+	locale.Spanish:    spanish,
+	locale.German:     german,
+	locale.French:     french,
+	locale.Portuguese: portuguese,
+}
+
+// WordsFor — тексты на языке `AGENT_LOCALE` по правилу [locale.Parse]:
+// пустое — русский, незнакомое — английский.
+func WordsFor(code string) Words {
+	return words[locale.Parse(code)]
 }
 
 var russian = Words{
@@ -170,6 +185,8 @@ var russian = Words{
 		"указанную в «Каналах уведомлений», а не через нас. Выключить уведомления " +
 		"с этого сервера: приложение vpsFocus → «Все серверы» → «Настройки» → " +
 		"«Уведомления», блок «Какие серверы присылают уведомления».",
+
+	Decimal: ",",
 }
 
 var english = Words{
@@ -258,4 +275,6 @@ var english = Words{
 		"mail account set in Notification channels, not through us. To turn off " +
 		"notifications from this server: vpsFocus app → All servers → Settings → " +
 		"Notifications, the “Which servers send notifications” block.",
+
+	Decimal: ".",
 }

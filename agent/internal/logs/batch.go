@@ -48,7 +48,7 @@ const DefaultNotFoundLimit = 200
 
 // Путь, под которым копится всё, что не поместилось в потолок. Врать про
 // количество нельзя: «прочее» честнее, чем недосчитанные ошибки.
-const OverflowPath = "{прочее}"
+const OverflowPath = "{other}"
 
 func NewBatch(limit int) *Batch {
 	if limit <= 0 {

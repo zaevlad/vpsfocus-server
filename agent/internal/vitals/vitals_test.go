@@ -452,4 +452,52 @@ func TestDescriptionLosesLinksAndLearnMore(t *testing.T) {
 	if got != "Use WebP images." {
 		t.Errorf("получили %q", got)
 	}
+	for _, raw := range []string{
+		"Usa imágenes WebP. [Más información](https://y).",
+		"Usa imágenes WebP. [Obtén más información sobre WebP](https://y).",
+		"Usa imágenes WebP. [Consulta cómo convertir imágenes](https://y).",
+	} {
+		if got := cleanDescription(raw); got != "Usa imágenes WebP." {
+			t.Errorf("%q: получили %q", raw, got)
+		}
+	}
+	// Концовки из de.json Lighthouse 12 (трек AE, 217).
+	for _, raw := range []string{
+		"Verwende WebP-Bilder. [Weitere Informationen.](https://y)",
+		"Verwende WebP-Bilder. [Weitere Informationen zu modernen Bildformaten](https://y).",
+		"Verwende WebP-Bilder. [Informationen dazu, wie du Bilder komprimierst](https://y).",
+		"Verwende WebP-Bilder. Hier findest du [weitere Informationen](https://y).",
+	} {
+		if got := cleanDescription(raw); got != "Verwende WebP-Bilder." {
+			t.Errorf("%q: получили %q", raw, got)
+		}
+	}
+	// Концовки из pt.json Lighthouse 12 (трек AE, 231).
+	for _, raw := range []string{
+		"Use imagens WebP. [Saiba mais](https://y).",
+		"Use imagens WebP. [Saiba mais sobre os formatos de imagem modernos](https://y).",
+		"Use imagens WebP. [Aprenda a compactar imagens](https://y).",
+		"Use imagens WebP. [Aprenda como o `aria-hidden` afeta o corpo do documento](https://y).",
+		"Use imagens WebP. [Entenda por que a maioria dos sites](https://y).",
+	} {
+		if got := cleanDescription(raw); got != "Use imagens WebP." {
+			t.Errorf("%q: получили %q", raw, got)
+		}
+	}
+	// Совет Joomla: «saiba mais» в кавычках посреди фразы — не концовка.
+	joomla := `Considere mostrar trechos (por exemplo, com um botão "saiba mais"), reduza o número de artigos.`
+	if got := cleanDescription(joomla); got != joomla {
+		t.Errorf("совет обрезан: %q", got)
+	}
+	// Концовки из fr.json Lighthouse 12 (трек AE, 224).
+	for _, raw := range []string{
+		"Utilisez des images WebP. [En savoir plus](https://y).",
+		"Utilisez des images WebP. [En savoir plus sur les formats d'image modernes](https://y).",
+		"Utilisez des images WebP. [Découvrez comment compresser les images](https://y).",
+		"Utilisez des images WebP. [Découvrez pourquoi la plupart des sites](https://y).",
+	} {
+		if got := cleanDescription(raw); got != "Utilisez des images WebP." {
+			t.Errorf("%q: получили %q", raw, got)
+		}
+	}
 }

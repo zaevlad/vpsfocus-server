@@ -437,7 +437,7 @@ func isTimeout(err error) bool {
 // человеку строку собирает интерфейс на его языке.
 func Describe(result Result) string {
 	if result.OK {
-		return fmt.Sprintf("%s: ок (%d, %d мс)", result.URL, result.Status, result.DurationMs)
+		return fmt.Sprintf("%s: ok (%d, %d ms)", result.URL, result.Status, result.DurationMs)
 	}
 	return fmt.Sprintf("%s: %s (%d)", result.URL, result.Code, result.Status)
 }

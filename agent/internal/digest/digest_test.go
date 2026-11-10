@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"agent/internal/health"
+	"agent/internal/locale"
 	"agent/internal/logs"
 )
 
@@ -58,7 +59,15 @@ func codes(t *testing.T) []string {
 func TestEveryCodeHasBothLanguages(t *testing.T) {
 	all := codes(t)
 
-	for name, words := range map[string]phrases{"ru": russian, "en": english} {
+	if len(dictionaries) != len(locale.Known) {
+		t.Errorf("словарей отчёта %d, а языков в locale.Known %d", len(dictionaries), len(locale.Known))
+	}
+	for _, name := range locale.Known {
+		words, ok := dictionaries[name]
+		if !ok {
+			t.Errorf("языку %s нет словаря отчёта", name)
+			continue
+		}
 		for _, code := range all {
 			if _, ok := words.reasons[code]; !ok {
 				t.Errorf("%s: поводу %s нет текста — он уедет человеку кодом", name, code)
@@ -201,14 +210,16 @@ func TestNumbersAreFilledIn(t *testing.T) {
 // Половина переведённой карты — это письмо, в котором половина строк
 // по-английски: беда та же, что с забытым поводом, и ловится так же.
 func TestDetailsHaveBothLanguages(t *testing.T) {
-	for code := range russian.details {
-		if _, ok := english.details[code]; !ok {
-			t.Errorf("уточнению %s нет английского текста", code)
+	for name, words := range dictionaries {
+		for code := range english.details {
+			if _, ok := words.details[code]; !ok {
+				t.Errorf("уточнению %s нет текста на %s", code, name)
+			}
 		}
-	}
-	for code := range english.details {
-		if _, ok := russian.details[code]; !ok {
-			t.Errorf("уточнению %s нет русского текста", code)
+		for code := range words.details {
+			if _, ok := english.details[code]; !ok {
+				t.Errorf("%s: уточнение %s есть, а в английском нет", name, code)
+			}
 		}
 	}
 }

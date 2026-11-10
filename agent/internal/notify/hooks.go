@@ -61,30 +61,30 @@ const HookURLMaxLen = 2048
 // базу, панель хостера или служебный адрес облака (169.254.169.254) сервера
 // клиента. Цена — свой ntfy на том же сервере подключается только по
 // внешнему имени.
-var ErrInternalAddress = errors.New("адрес ведёт на сам сервер или во внутреннюю сеть")
+var ErrInternalAddress = errors.New("address leads to the server itself or its internal network")
 
 // CheckHookURL говорит, годится ли адрес для канала. Текст ошибки адреса не
 // содержит: он уходит в лог агента на сервере клиента.
 func CheckHookURL(channel, raw string) error {
 	if len(raw) > HookURLMaxLen {
-		return errors.New("адрес слишком длинный")
+		return errors.New("address is too long")
 	}
 	if strings.ContainsAny(raw, HookURLForbidden) || strings.ContainsFunc(raw, isControl) {
-		return errors.New("в адресе недопустимые знаки")
+		return errors.New("address contains forbidden characters")
 	}
 
 	parsed, err := url.Parse(raw)
 	if err != nil {
-		return errors.New("адрес не разбирается")
+		return errors.New("address cannot be parsed")
 	}
 	// Только https: по http адрес-секрет и текст тревоги с доменами клиента
 	// ехали бы открытым текстом.
 	if parsed.Scheme != "https" {
-		return errors.New("адрес обязан начинаться с https://")
+		return errors.New("address must start with https://")
 	}
 	host := strings.ToLower(parsed.Hostname())
 	if host == "" {
-		return errors.New("в адресе нет имени сервера")
+		return errors.New("address has no host name")
 	}
 	// Имя проверяется при соединении — по адресу, в который оно
 	// разрешилось. Здесь отсекается только то, что видно без сети.
@@ -98,11 +98,11 @@ func CheckHookURL(channel, raw string) error {
 	switch channel {
 	case ChannelSlack:
 		if !contains(slackHosts, host) {
-			return errors.New("это не адрес входящего вебхука Slack")
+			return errors.New("not a Slack incoming webhook address")
 		}
 	case ChannelDiscord:
 		if !contains(discordHosts, host) || !strings.HasPrefix(parsed.Path, discordPathPrefix) {
-			return errors.New("это не адрес вебхука Discord")
+			return errors.New("not a Discord webhook address")
 		}
 	case ChannelWebhook:
 	default:
@@ -299,10 +299,10 @@ func (n *Notifier) postHook(ctx context.Context, address string, payload any) er
 	defer response.Body.Close()
 
 	if response.StatusCode >= 300 && response.StatusCode < 400 {
-		return fmt.Errorf("адрес перенаправляет (%s) — перенаправления не выполняются", response.Status)
+		return fmt.Errorf("address redirects (%s): redirects are not followed", response.Status)
 	}
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		return fmt.Errorf("адрес ответил %s", response.Status)
+		return fmt.Errorf("address responded %s", response.Status)
 	}
 	return nil
 }
@@ -322,10 +322,10 @@ func hideHook(err error, address string) error {
 	}
 	message := err.Error()
 	if address != "" {
-		message = strings.ReplaceAll(message, address, "<адрес>")
+		message = strings.ReplaceAll(message, address, "<address>")
 		if parsed, parseErr := url.Parse(address); parseErr == nil {
 			if secret := parsed.RequestURI(); len(secret) > 1 {
-				message = strings.ReplaceAll(message, secret, "<адрес>")
+				message = strings.ReplaceAll(message, secret, "<address>")
 			}
 		}
 	}

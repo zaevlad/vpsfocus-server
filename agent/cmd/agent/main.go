@@ -2662,12 +2662,10 @@ func (a *Agent) words() checks.Words {
 func (a *Agent) mailWords() notify.Mail {
 	words := a.words()
 	host := config.HostName(a.cfg.HostRoot)
-	lang := "ru"
-	if a.cfg.Locale == "en" {
-		lang = "en"
-	}
 	return notify.Mail{
-		Lang:   lang,
+		// Код языка уже разобран (`locale.Parse`) — им же размечается
+		// письмо (`<html lang>`).
+		Lang:   a.cfg.Locale,
 		Source: fmt.Sprintf(words.MailSource, host),
 		Footer: fmt.Sprintf(words.MailFooter, host),
 	}

@@ -89,7 +89,7 @@ func runPageSpeed(ctx context.Context, client *http.Client, opts Options, target
 
 	var parsed psiResponse
 	if err := json.Unmarshal(body, &parsed); err != nil {
-		return nil, fmt.Errorf("разбор ответа PSI: %w", err)
+		return nil, fmt.Errorf("parsing PSI response: %w", err)
 	}
 
 	result := parsed.LighthouseResult
@@ -107,7 +107,7 @@ func runPageSpeed(ctx context.Context, client *http.Client, opts Options, target
 		return nil, apiError{
 			code:    ErrRequestFailed,
 			status:  response.StatusCode,
-			message: "в ответе нет оценки производительности",
+			message: "response has no performance score",
 		}
 	}
 

@@ -22,6 +22,7 @@ import (
 
 	"agent/internal/backup"
 	"agent/internal/domains"
+	"agent/internal/locale"
 	"agent/internal/logs"
 	"agent/internal/probe"
 	"agent/internal/quiet"
@@ -554,7 +555,7 @@ func Load() (Config, error) {
 			// у человека есть день, чтобы что-то сделать.
 			Hour: envHour("DIGEST_HOUR", 10),
 		},
-		Locale: locale(os.Getenv("AGENT_LOCALE")),
+		Locale: locale.Parse(os.Getenv("AGENT_LOCALE")),
 		Vitals: Vitals{
 			APIKey: strings.TrimSpace(os.Getenv("VITALS_API_KEY")),
 			// Как и у ссылок, интервал приходит в часах с экрана
@@ -572,7 +573,7 @@ func Load() (Config, error) {
 	// публикует docker только на петлю хоста. Токен при этом обязателен:
 	// внутри docker-сети сосед по стеку до него дотянется.
 	if strings.TrimSpace(cfg.Token) == "" {
-		return Config{}, fmt.Errorf("AGENT_TOKEN не задан: без него API открыт всем в docker-сети")
+		return Config{}, fmt.Errorf("AGENT_TOKEN is not set: without it the API is open to everyone on the docker network")
 	}
 
 	return cfg, nil
@@ -586,12 +587,12 @@ func (c Config) Sites() ([]Site, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("список сайтов: %w", err)
+		return nil, fmt.Errorf("site list: %w", err)
 	}
 
 	var sites []Site
 	if err := json.Unmarshal(raw, &sites); err != nil {
-		return nil, fmt.Errorf("список сайтов: %w", err)
+		return nil, fmt.Errorf("site list: %w", err)
 	}
 
 	kept := sites[:0]
@@ -698,12 +699,12 @@ func (c Config) storedProjects() ([]Project, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("состав проектов: %w", err)
+		return nil, fmt.Errorf("project list: %w", err)
 	}
 
 	var projects []Project
 	if err := json.Unmarshal(raw, &projects); err != nil {
-		return nil, fmt.Errorf("состав проектов: %w", err)
+		return nil, fmt.Errorf("project list: %w", err)
 	}
 	return projects, nil
 }
@@ -722,7 +723,7 @@ func (c Config) Pages() (map[string][]string, error) {
 		return map[string][]string{}, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("список страниц: %w", err)
+		return nil, fmt.Errorf("page list: %w", err)
 	}
 
 	var entries []struct {
@@ -730,7 +731,7 @@ func (c Config) Pages() (map[string][]string, error) {
 		Paths  []string `json:"paths"`
 	}
 	if err := json.Unmarshal(raw, &entries); err != nil {
-		return nil, fmt.Errorf("список страниц: %w", err)
+		return nil, fmt.Errorf("page list: %w", err)
 	}
 
 	pages := make(map[string][]string, len(entries))
@@ -779,14 +780,14 @@ func (c Config) LogSources() ([]string, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("список логов: %w", err)
+		return nil, fmt.Errorf("log list: %w", err)
 	}
 
 	var entries []struct {
 		Path string `json:"path"`
 	}
 	if err := json.Unmarshal(raw, &entries); err != nil {
-		return nil, fmt.Errorf("список логов: %w", err)
+		return nil, fmt.Errorf("log list: %w", err)
 	}
 
 	var paths []string
@@ -817,12 +818,12 @@ func (c Config) ProbeProfiles() ([]probe.Profile, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return nil, fmt.Errorf("ключевые адреса: %w", err)
+		return nil, fmt.Errorf("key addresses: %w", err)
 	}
 
 	var profiles []probe.Profile
 	if err := json.Unmarshal(raw, &profiles); err != nil {
-		return nil, fmt.Errorf("ключевые адреса: %w", err)
+		return nil, fmt.Errorf("key addresses: %w", err)
 	}
 
 	perProject := map[string]int{}
@@ -952,17 +953,6 @@ func envHour(name string, fallback int) int {
 		return fallback
 	}
 	return hour
-}
-
-// locale — язык, на котором агент пишет человеку.
-//
-// Языка два, как и в интерфейсе. Русский по умолчанию: сервер, на котором
-// язык не задан, пишет так же, как писал до перевода тревог.
-func locale(raw string) string {
-	if strings.EqualFold(strings.TrimSpace(raw), "en") {
-		return "en"
-	}
-	return "ru"
 }
 
 // postgres разбирает адрес базы, который приезжает из docker-compose.

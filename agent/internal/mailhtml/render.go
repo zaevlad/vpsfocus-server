@@ -108,7 +108,7 @@ func Render(letter Letter) (string, error) {
 
 	var out bytes.Buffer
 	if err := page.Execute(&out, data); err != nil {
-		return "", fmt.Errorf("шаблон письма: %w", err)
+		return "", fmt.Errorf("mail template: %w", err)
 	}
 	return out.String(), nil
 }

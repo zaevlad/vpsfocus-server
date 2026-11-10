@@ -182,7 +182,7 @@ func (a *Agent) notifyShrunk(ctx context.Context) {
 			Kind:    checks.KindBackupShrunk,
 			Target:  "database",
 			Subject: words.BackupShrunkSubject,
-			Body:    fmt.Sprintf(words.BackupShrunkBody, megabytes(sizes[1]), megabytes(sizes[0])),
+			Body:    fmt.Sprintf(words.BackupShrunkBody, megabytes(sizes[1], words.Decimal), megabytes(sizes[0], words.Decimal)),
 			Step:    1,
 		}}, nil)
 		return
@@ -191,7 +191,7 @@ func (a *Agent) notifyShrunk(ctx context.Context) {
 		Kind:    checks.KindBackupShrunk,
 		Target:  "database",
 		Subject: words.BackupShrunkOKSubject,
-		Body:    fmt.Sprintf(words.BackupShrunkOKBody, megabytes(sizes[0])),
+		Body:    fmt.Sprintf(words.BackupShrunkOKBody, megabytes(sizes[0], words.Decimal)),
 	}})
 }
 
@@ -363,7 +363,7 @@ func (a *Agent) RunBackup() (any, error) {
 func (a *Agent) BackupLink(key string) (any, error) {
 	key = strings.TrimSpace(key)
 	if key == "" || !strings.HasSuffix(key, ".tar.gz") || strings.Contains(key, "..") {
-		return nil, errors.New("ключ копии не похож на ключ копии")
+		return nil, errors.New("not a backup key")
 	}
 	if !a.cfg.Backup.Configured() {
 		return nil, errors.New(backup.CodeNotConfigured)
@@ -382,12 +382,13 @@ func (a *Agent) BackupLink(key string) (any, error) {
 	}, nil
 }
 
-// megabytes — размер дампа для письма: «120» или «0.4», без нуля у копии
+// megabytes — размер дампа для письма: «120» или «0,4», без нуля у копии
 // меньше мегабайта — «стало 0 МБ» читалось бы как «копия пустая».
-func megabytes(bytes int64) string {
+// Разделитель дроби — из словаря языка.
+func megabytes(bytes int64, decimal string) string {
 	mb := float64(bytes) / (1024 * 1024)
 	if mb >= 10 {
 		return strconv.FormatFloat(mb, 'f', 0, 64)
 	}
-	return strconv.FormatFloat(mb, 'f', 1, 64)
+	return strings.Replace(strconv.FormatFloat(mb, 'f', 1, 64), ".", decimal, 1)
 }
