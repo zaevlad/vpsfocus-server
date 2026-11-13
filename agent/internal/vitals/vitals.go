@@ -155,6 +155,10 @@ type Lab struct {
 	Categories []Category `json:"categories,omitempty"`
 	// Что исправить.
 	Advice []Advice `json:"advice,omitempty"`
+	// Советы, которые не учитываются (трек AG, Р17): в `Advice` их нет.
+	// Отдельным списком — старая сборка приложения его не увидит. Только
+	// при чтении, в базу не пишется.
+	IgnoredAdvice []Advice `json:"ignoredAdvice,omitempty"`
 }
 
 // Field — то, что видели настоящие посетители за окно наблюдения CrUX.

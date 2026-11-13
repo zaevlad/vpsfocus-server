@@ -77,6 +77,28 @@ var portuguese = Words{
 	BackupShrunkOKSubject: "A cópia do banco de dados voltou ao tamanho habitual",
 	BackupShrunkOKBody:    "A última cópia das estatísticas tem %s MB, não menos da metade da anterior.",
 
+	OomSubject: "O servidor ficou sem memória, e o sistema parou um programa",
+	OomBody: "No último dia, o sistema parou programas por falta de memória: " +
+		"%d parada(s). Isso acontece quando falta memória para o servidor inteiro ou quando um programa " +
+		"atinge o limite de memória definido para ele. Nesses momentos o site pode piscar ou cair.\n\n%s\n\n" +
+		"O que fazer: abra “Saúde do servidor” no aplicativo — lá dá para ver quanta memória está em uso " +
+		"e quanto dela o próprio monitoramento da vpsFocus ocupa, e há uma tarefa para um assistente de IA. " +
+		"Costuma ajudar aumentar a memória no plano da hospedagem ou ativar o swap.",
+	OomNames:        "Logo depois, os programas que mais ocupavam memória eram: %s.",
+	OomNamesUnknown: "Daqui não dá para ver quais programas ocupavam a memória.",
+	OomProcess:      "%s (%d MB)",
+
+	RecordGoneSubject: "%s: o registro %s sumiu",
+	RecordGoneBody: "O domínio não tem mais um registro %s válido (%s): ele foi apagado ou agora há dois — os serviços de e-mail tratam isso como “sem registro”.\n\n" +
+		"Se este domínio envia e-mails — cadastros, pedidos, newsletters —, eles podem começar a cair no spam. Se você mudou os registros no registrador de propósito, não é preciso fazer nada. " +
+		"O que o domínio tem agora aparece na tela “Domínios e SSL” do aplicativo, junto com uma tarefa para um assistente de IA.",
+	RecordBackSubject:  "%s: o registro %s voltou",
+	RecordBackBody:     "O registro %s de %s voltou e pode ser lido.",
+	NameserversSubject: "%s: os servidores de nomes mudaram",
+	NameserversBody: "O domínio %s agora é atendido por outros servidores de nomes: antes — %s, agora — %s.\n\n" +
+		"Isso acontece quando o domínio é transferido para outro registrador ou conectado ao Cloudflare. Se não foi você, verifique o acesso ao painel do registrador: " +
+		"os servidores de nomes decidem para onde o domínio leva e para onde vão os e-mails. O resolvedor do servidor guarda os registros antigos, então a mudança aparece com atraso de até um ou dois dias.",
+
 	TestSubject: "Teste de notificações",
 	TestBody: "Esta é uma mensagem de teste do servidor %s.\n\n" +
 		"Se você a está lendo, as notificações sobre disco, certificados e " +

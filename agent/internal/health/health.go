@@ -68,6 +68,9 @@ const (
 	CodeInodesFull = "healthInodesFull"
 	// Памяти занято столько, что следующий всплеск уйдёт в swap.
 	CodeMemoryTight = "healthMemoryTight"
+	// За неделю система останавливала программы из-за нехватки памяти
+	// (трек AH, П6). Число — сколько раз.
+	CodeOomKilled = "healthOomKilled"
 	// Замеров нет вовсе: агент только поставили или он не пишет в базу.
 	CodeMetricsMissing = "healthMetricsMissing"
 	// Последний замер сильно старше, чем должен быть.
@@ -202,6 +205,7 @@ var levelByCode = map[string]Level{
 	CodeInodesFilling:  LevelAttention,
 	CodeInodesFull:     LevelProblem,
 	CodeMemoryTight:    LevelAttention,
+	CodeOomKilled:      LevelAttention,
 	CodeMetricsMissing: LevelAttention,
 	CodeMetricsStale:   LevelAttention,
 
@@ -340,6 +344,10 @@ type Input struct {
 	// Последний замер и пороги, при которых агент начинает беспокоить.
 	Sample           *metrics.Sample
 	DiskAlertPercent int
+	// Сколько раз за неделю система останавливала программы из-за нехватки
+	// памяти и знаем ли мы это вообще (VPS в контейнере — нет, Р58).
+	OomWeek  int
+	OomKnown bool
 	// Через сколько замер считается несвежим.
 	MetricsStaleAfter time.Duration
 
@@ -646,6 +654,12 @@ func serverState(in Input) ServerState {
 	// нельзя. А в своде она объясняет, почему сервер начал тормозить.
 	if mem := in.Sample.MemUsedPercent(); mem >= memoryTightPercent {
 		state.Reasons = append(state.Reasons, reason(CodeMemoryTight, "", nil, mem, ""))
+	}
+
+	// Остановки программ — факт, а не порог: одна за неделю уже повод
+	// посмотреть, почему серверу не хватает памяти. Не знаем — повода нет.
+	if in.OomKnown && in.OomWeek > 0 {
+		state.Reasons = append(state.Reasons, reason(CodeOomKilled, "", nil, in.OomWeek, ""))
 	}
 
 	state.Level = worst(state.Reasons)

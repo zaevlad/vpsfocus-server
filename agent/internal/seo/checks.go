@@ -150,6 +150,9 @@ var siteWideChecks = map[string]bool{
 	IssueSitemapBlockedByRobots: true,
 }
 
+// SiteWide — проверка о сайте целиком: страниц у её находок нет.
+func SiteWide(code string) bool { return siteWideChecks[code] }
+
 // Проверки входов на сайт (`canonical.go`).
 var entryChecks = []string{IssueCanonicalNoHTTPS, IssueCanonicalHostSplit, IssueCanonicalLoop}
 
@@ -175,9 +178,13 @@ type Check struct {
 	Pages int `json:"pages,omitempty"`
 	// Почему не удалось проверить. Только у `unknown`.
 	Reason string `json:"reason,omitempty"`
+	// На скольких страницах находка есть, но не учитывается (трек AG, Р6):
+	// они не входят ни в `Pages`, ни в исход проверки.
+	IgnoredPages int `json:"ignoredPages,omitempty"`
 }
 
-// CheckTally — счёт перечня. Сумма всех полей, кроме `Total`, равна `Total`.
+// CheckTally — счёт перечня. Сумма всех полей, кроме `Total` и `Ignored`,
+// равна `Total`.
 type CheckTally struct {
 	Total  int `json:"total"`
 	Passed int `json:"passed"`
@@ -186,6 +193,9 @@ type CheckTally struct {
 	Warning  int `json:"warning"`
 	Notice   int `json:"notice"`
 	Unknown  int `json:"unknown"`
+	// Сколько проверок не учитывается на всём сайте (трек AG, Р6). В
+	// `Total` они не входят: «47 из 52 · 4 не учитываются», а не «51 из 56».
+	Ignored int `json:"ignored,omitempty"`
 }
 
 // ChecksReport — перечень проверок одного обхода.
@@ -193,6 +203,11 @@ type ChecksReport struct {
 	Tally CheckTally `json:"tally"`
 	// Все проверки, в порядке групп.
 	Items []Check `json:"items"`
+	// Проверки, которые не учитываются на всём сайте, — с исходом, какой
+	// был бы без этого (трек AG, Р17). Отдельным списком, а не пометкой в
+	// `Items`: старая сборка приложения его не увидит и покажет
+	// согласованный перечень без них.
+	IgnoredChecks []Check `json:"ignoredChecks,omitempty"`
 }
 
 // Progress — что изменилось в перечне с прошлого обхода.

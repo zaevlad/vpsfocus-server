@@ -21,6 +21,7 @@ import (
 	"agent/internal/backup"
 	"agent/internal/checks"
 	"agent/internal/events"
+	"agent/internal/ignore"
 	"agent/internal/links"
 	"agent/internal/logs"
 	"agent/internal/metrics"
@@ -394,6 +395,14 @@ func Open(path string) (*Store, error) {
 		db.Close()
 		return nil, fmt.Errorf("agent database schema: %w", err)
 	}
+	if _, err := db.Exec(ignoreSchema); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("agent database schema (ignores): %w", err)
+	}
+	if _, err := db.Exec(memorySchema); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("agent database schema (memory): %w", err)
+	}
 
 	return &Store{db: db}, nil
 }
@@ -410,14 +419,26 @@ func (s *Store) SaveSample(ctx context.Context, sample metrics.Sample) error {
 		sample.At.Unix(), sample.CPUPercent, sample.MemTotalMB, sample.MemAvailableMB,
 		sample.DiskTotalMB, sample.DiskFreeMB, sample.Load1, sample.UptimeSeconds,
 	)
-	if err != nil || !sample.InodesKnown() {
+	if err != nil {
 		return err
 	}
-	_, err = s.db.ExecContext(ctx,
-		`insert or replace into inode_samples (at, inodes_total, inodes_free) values (?, ?, ?)`,
-		sample.At.Unix(), sample.InodesTotal, sample.InodesFree,
-	)
-	return err
+	if sample.InodesKnown() {
+		if _, err := s.db.ExecContext(ctx,
+			`insert or replace into inode_samples (at, inodes_total, inodes_free) values (?, ?, ?)`,
+			sample.At.Unix(), sample.InodesTotal, sample.InodesFree,
+		); err != nil {
+			return err
+		}
+	}
+	if sample.SwapTotalMB != nil && sample.SwapFreeMB != nil {
+		if _, err := s.db.ExecContext(ctx,
+			`insert or replace into swap_samples (at, swap_total_mb, swap_free_mb) values (?, ?, ?)`,
+			sample.At.Unix(), *sample.SwapTotalMB, *sample.SwapFreeMB,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Столбцы замера вместе с местами под файлы. Одна строка на все три
@@ -425,8 +446,10 @@ func (s *Store) SaveSample(ctx context.Context, sample metrics.Sample) error {
 // перед падением» — нет.
 const sampleColumns = `samples.at, cpu_percent, mem_total_mb, mem_available_mb,
 		        disk_total_mb, disk_free_mb, load1, uptime_seconds,
-		        coalesce(inode_samples.inodes_total, 0), coalesce(inode_samples.inodes_free, 0)
-		 from samples left join inode_samples on inode_samples.at = samples.at`
+		        coalesce(inode_samples.inodes_total, 0), coalesce(inode_samples.inodes_free, 0),
+		        swap_samples.swap_total_mb, swap_samples.swap_free_mb
+		 from samples left join inode_samples on inode_samples.at = samples.at
+		 left join swap_samples on swap_samples.at = samples.at`
 
 // Samples отдаёт замеры с указанного момента и до сейчас, от старых к новым.
 func (s *Store) Samples(ctx context.Context, since time.Time) ([]metrics.Sample, error) {
@@ -454,12 +477,14 @@ func (s *Store) SamplesBetween(ctx context.Context, from, to time.Time) ([]metri
 	for rows.Next() {
 		var sample metrics.Sample
 		var at int64
+		var swapTotal, swapFree sql.NullInt64
 		if err := rows.Scan(&at, &sample.CPUPercent, &sample.MemTotalMB, &sample.MemAvailableMB,
 			&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds,
-			&sample.InodesTotal, &sample.InodesFree); err != nil {
+			&sample.InodesTotal, &sample.InodesFree, &swapTotal, &swapFree); err != nil {
 			return nil, err
 		}
 		sample.At = time.Unix(at, 0).UTC()
+		withSwap(&sample, swapTotal, swapFree)
 		samples = append(samples, sample)
 	}
 	return samples, rows.Err()
@@ -481,13 +506,15 @@ func (s *Store) LatestSample(ctx context.Context) (metrics.Sample, bool, error) 
 func (s *Store) SampleBefore(ctx context.Context, at time.Time) (metrics.Sample, bool, error) {
 	var sample metrics.Sample
 	var unix int64
+	var swapTotal, swapFree sql.NullInt64
 	err := s.db.QueryRowContext(ctx,
 		`select `+sampleColumns+`
 		 where samples.at < ? order by samples.at desc limit 1`,
 		at.Unix(),
 	).Scan(&unix, &sample.CPUPercent, &sample.MemTotalMB, &sample.MemAvailableMB,
 		&sample.DiskTotalMB, &sample.DiskFreeMB, &sample.Load1, &sample.UptimeSeconds,
-		&sample.InodesTotal, &sample.InodesFree)
+		&sample.InodesTotal, &sample.InodesFree, &swapTotal, &swapFree)
+	withSwap(&sample, swapTotal, swapFree)
 
 	if errors.Is(err, sql.ErrNoRows) {
 		return metrics.Sample{}, false, nil
@@ -510,6 +537,9 @@ func (s *Store) Rotate(ctx context.Context, keep time.Duration) (int64, error) {
 		return 0, err
 	}
 	if _, err := s.db.ExecContext(ctx, `delete from inode_samples where at < ?`, cutoff); err != nil {
+		return 0, err
+	}
+	if err := s.rotateMemory(ctx, cutoff); err != nil {
 		return 0, err
 	}
 	return result.RowsAffected()
@@ -577,6 +607,42 @@ func (s *Store) ForgetChecks(ctx context.Context, kind string, keep map[string]b
 		if _, err := s.db.ExecContext(ctx,
 			`delete from alert_steps where kind = ? and target = ?`, kind, target); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+// ForgetAlerts убирает состояние и ступени тревог вида kind у целей, которых
+// нет в keep. Для тревог, у которых нет своей строки в checks (записи
+// домена: снимок лежит под видом dns, а тревоги — spf, dmarc, nameservers).
+func (s *Store) ForgetAlerts(ctx context.Context, kind string, keep map[string]bool) error {
+	rows, err := s.db.QueryContext(ctx, `select target from alerts where kind = ?
+		union select target from alert_steps where kind = ?`, kind, kind)
+	if err != nil {
+		return err
+	}
+	var targets []string
+	for rows.Next() {
+		var target string
+		if err := rows.Scan(&target); err != nil {
+			rows.Close()
+			return err
+		}
+		targets = append(targets, target)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	for _, target := range targets {
+		if keep[target] {
+			continue
+		}
+		for _, table := range []string{"alerts", "alert_steps"} {
+			if _, err := s.db.ExecContext(ctx,
+				`delete from `+table+` where kind = ? and target = ?`, kind, target); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -1260,7 +1326,11 @@ func (s *Store) rotateLinkReports(ctx context.Context, domain string) error {
 
 // LinkReports отдаёт последний отчёт по каждому живому сайту с деталями
 // и короткой историей прошлых кругов.
-func (s *Store) LinkReports(ctx context.Context, alive map[string]bool) ([]links.Report, error) {
+//
+// Неучтённое (трек AG) вычитается здесь, при чтении (Р18), — и из
+// последнего отчёта, и из истории (Р19): иначе сегодняшнее «не учитывать»
+// нарисовало бы падение 8 → 0, будто ссылки исправили.
+func (s *Store) LinkReports(ctx context.Context, alive map[string]bool, list ignore.List) ([]links.Report, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`select r.id, r.domain, r.started_at, r.duration_s, r.pages,
 		        r.total_links, r.broken, r.run_error
@@ -1308,8 +1378,10 @@ func (s *Store) LinkReports(ctx context.Context, alive map[string]bool) ([]links
 			return nil, err
 		}
 		kept[i].row.Failures = failures
+		kept[i].row = ignore.Links(kept[i].row, list)
 
-		history, err := s.linkHistory(ctx, kept[i].row.Domain, keepLinkReports-1)
+		history, err := s.linkHistory(ctx, kept[i].row.Domain, keepLinkReports-1,
+			list.For(kept[i].row.Domain, ignore.KindLink))
 		if err != nil {
 			return nil, err
 		}
@@ -1374,27 +1446,48 @@ func (s *Store) linkFailures(ctx context.Context, reportID int64) ([]links.Failu
 
 // linkHistory — сводки прошлых кругов сайта, от старых к новым, кроме
 // последнего: он и так показан целиком.
-func (s *Store) linkHistory(ctx context.Context, domain string, limit int) ([]links.HistoryPoint, error) {
+//
+// С записями «не учитывать» число битых каждого круга считается заново по
+// его же строкам `link_failures` (они хранятся у всех кругов истории).
+func (s *Store) linkHistory(ctx context.Context, domain string, limit int, entries ignore.List) ([]links.HistoryPoint, error) {
 	rows, err := s.db.QueryContext(ctx,
-		`select started_at, broken, total_links from link_reports
+		`select id, started_at, broken, total_links from link_reports
 		 where domain = ? order by started_at desc, id desc limit ?`, domain, limit+1)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var points []links.HistoryPoint
+	var (
+		points []links.HistoryPoint
+		ids    []int64
+	)
 	for rows.Next() {
-		var startedAt int64
+		var id, startedAt int64
 		var point links.HistoryPoint
-		if err := rows.Scan(&startedAt, &point.Broken, &point.TotalLinks); err != nil {
+		if err := rows.Scan(&id, &startedAt, &point.Broken, &point.TotalLinks); err != nil {
+			rows.Close()
 			return nil, err
 		}
 		point.CheckedAt = time.Unix(startedAt, 0).UTC().Format(time.RFC3339)
 		points = append(points, point)
+		ids = append(ids, id)
 	}
 	if err := rows.Err(); err != nil {
+		rows.Close()
 		return nil, err
+	}
+	// Курсор закрывается до следующих запросов: соединение к базе одно.
+	rows.Close()
+
+	if len(entries) > 0 {
+		for index := range points {
+			failures, err := s.linkFailures(ctx, ids[index])
+			if err != nil {
+				return nil, err
+			}
+			kept, _ := ignore.SplitFailures(failures, entries)
+			points[index].Broken = len(kept)
+		}
 	}
 
 	// Строки пришли от новых к старым; самая свежая в начале списка —
@@ -1512,7 +1605,22 @@ func (s *Store) SaveVitalsReport(ctx context.Context, report vitals.Report) erro
 //
 // Живое — тройка «домен, путь, устройство»: страницу убрали из списка или
 // выключили настольные замеры, и показывать вчерашние цифры больше незачем.
-func (s *Store) VitalsReports(ctx context.Context, alive map[string]bool) ([]vitals.Report, error) {
+//
+// Советы отдаются так, как их видит экран (`ShownAdvice`): неучтённые
+// (трек AG) — отдельно, остальных — не больше двенадцати на категорию.
+// Пустой `list` — только обрезка.
+func (s *Store) VitalsReports(ctx context.Context, alive map[string]bool, list ignore.List) ([]vitals.Report, error) {
+	return s.vitalsReports(ctx, alive, list, false)
+}
+
+// RawVitalsReports — последние замеры как сохранены: все советы, без
+// вычитания и без истории. Нужно, чтобы сказать, сколько покрывает запись
+// «не учитывать» (трек AG, Р9).
+func (s *Store) RawVitalsReports(ctx context.Context, alive map[string]bool) ([]vitals.Report, error) {
+	return s.vitalsReports(ctx, alive, nil, true)
+}
+
+func (s *Store) vitalsReports(ctx context.Context, alive map[string]bool, list ignore.List, raw bool) ([]vitals.Report, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`select domain, path, strategy, payload from vitals_reports
 		 where id in (
@@ -1549,9 +1657,16 @@ func (s *Store) VitalsReports(ctx context.Context, alive map[string]bool) ([]vit
 		return nil, err
 	}
 
+	// Курсор закрывается до чтения истории: соединение к базе одно.
+	rows.Close()
+
 	result := make([]vitals.Report, 0, len(order))
 	for _, id := range order {
-		report := latest[id]
+		if raw {
+			result = append(result, latest[id])
+			continue
+		}
+		report := latest[id].ShownAdvice(ignore.Advice(list, id.domain))
 		history, err := s.vitalsHistory(ctx, id.domain, id.path, id.strategy, keepVitalsReports-1)
 		if err != nil {
 			return nil, err
@@ -2209,6 +2324,11 @@ func (s *Store) SaveSeoScan(ctx context.Context, scan seo.Scan, pages []seo.Page
 			return err
 		}
 	}
+	// Находки по страницам — коротким списком, который живёт дольше
+	// снимков (Р34): по нему история пересчитывается без неучтённого.
+	if err := saveSeoFindings(ctx, tx, scanID, pages); err != nil {
+		return err
+	}
 
 	if err := tx.Commit(); err != nil {
 		return err
@@ -2268,13 +2388,18 @@ func (s *Store) rotateSeoScans(ctx context.Context, domain string) error {
 		return err
 	}
 
-	_, err := s.db.ExecContext(ctx,
-		`delete from seo_pages where scan_id not in (select id from seo_scans)`)
-	return err
+	if _, err := s.db.ExecContext(ctx,
+		`delete from seo_pages where scan_id not in (select id from seo_scans)`); err != nil {
+		return err
+	}
+	return s.forgetOrphanSeoFindings(ctx)
 }
 
 // SeoScans отдаёт последний обход по каждому живому сайту с историей.
-func (s *Store) SeoScans(ctx context.Context, alive map[string]bool) ([]seo.Scan, error) {
+//
+// Неучтённое (трек AG) вычитается при чтении (Р18): из сводки и перечня
+// показанного обхода, из истории (Р19) и из «что изменилось» (Р7).
+func (s *Store) SeoScans(ctx context.Context, alive map[string]bool, list ignore.List) ([]seo.Scan, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`select id, domain, started_at, duration_s, stats, run_error
 		 from seo_scans
@@ -2329,14 +2454,39 @@ func (s *Store) SeoScans(ctx context.Context, alive map[string]bool) ([]seo.Scan
 		return nil, err
 	}
 
+	rows.Close()
+
 	for index := range scans {
-		history, previous, err := s.seoHistory(ctx, scans[index].Domain, shown[index], keepSeoScans)
+		skip := ignore.Seo(list, scans[index].Domain)
+		if !skip.Empty() {
+			pages, ok, err := s.seoScanFindings(ctx, shown[index])
+			if err != nil {
+				return nil, err
+			}
+			if !ok {
+				pages = nil
+			}
+			// Не вышло (страниц показанного обхода нет — только у
+			// неудачной попытки) — сводка остаётся как есть: в ней и так
+			// нечего вычитать.
+			if filtered, applied := scans[index].Stats.Without(pages, skip); applied {
+				scans[index].Stats = filtered
+			}
+		}
+
+		history, previous, err := s.seoHistory(ctx, scans[index].Domain, shown[index], keepSeoScans, skip)
 		if err != nil {
 			return nil, err
 		}
 		scans[index].History = history
 		if previous != nil {
-			scans[index].Progress = seo.CompareChecks(scans[index].Stats.Checks, previous.checks, previous.at)
+			progress := seo.CompareChecks(scans[index].Stats.Checks, previous.checks, previous.at)
+			if !previous.filtered {
+				// Прошлый обход не пересчитан по сегодняшнему списку:
+				// проверки, которых касаются записи, сравнивать нельзя (Р7).
+				progress = progress.Without(ignore.SeoCodes(list, scans[index].Domain))
+			}
+			scans[index].Progress = progress
 		}
 
 		failedAt, failedError, err := s.lastFailedAttempt(ctx, scans[index])
@@ -2392,6 +2542,7 @@ func (s *Store) seoHistory(
 	domain string,
 	shownID int64,
 	limit int,
+	skip seo.Skip,
 ) ([]seo.HistoryPoint, *seoPrevious, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`select id, started_at, stats from seo_scans
@@ -2401,35 +2552,67 @@ func (s *Store) seoHistory(
 	if err != nil {
 		return nil, nil, err
 	}
-	defer rows.Close()
+
+	type pastScan struct {
+		id        int64
+		startedAt int64
+		stats     seo.Stats
+	}
+	var past []pastScan
+	for rows.Next() {
+		var (
+			item pastScan
+			raw  string
+		)
+		if err := rows.Scan(&item.id, &item.startedAt, &raw); err != nil {
+			rows.Close()
+			return nil, nil, err
+		}
+		if err := json.Unmarshal([]byte(raw), &item.stats); err != nil {
+			rows.Close()
+			return nil, nil, err
+		}
+		item.stats.EnsureChecks()
+		past = append(past, item)
+	}
+	if err := rows.Err(); err != nil {
+		rows.Close()
+		return nil, nil, err
+	}
+	// Курсор закрывается до чтения находок: соединение к базе одно.
+	rows.Close()
 
 	var (
 		points   []seo.HistoryPoint
 		previous *seoPrevious
 	)
-	for rows.Next() {
-		var (
-			scanID    int64
-			startedAt int64
-			raw       string
-		)
-		if err := rows.Scan(&scanID, &startedAt, &raw); err != nil {
-			return nil, nil, err
+	for _, item := range past {
+		stats, filtered := item.stats, true
+		// Неудачной попытке вычитать нечего: страниц и находок у неё нет.
+		if !skip.Empty() && item.stats.Pages > 0 {
+			pages, ok, err := s.seoScanFindings(ctx, item.id)
+			if err != nil {
+				return nil, nil, err
+			}
+			if !ok {
+				pages = nil
+			}
+			if recounted, applied := item.stats.Without(pages, skip); applied {
+				stats = recounted
+			} else {
+				filtered = false
+			}
 		}
-		var stats seo.Stats
-		if err := json.Unmarshal([]byte(raw), &stats); err != nil {
-			return nil, nil, err
-		}
-		stats.EnsureChecks()
 
 		point := seo.HistoryPoint{
-			CheckedAt: time.Unix(startedAt, 0).UTC().Format(time.RFC3339),
-			Pages:     stats.Pages,
-			Fetched:   stats.Fetched,
-			Failed:    stats.Failed,
-			Critical:  stats.Issues.Critical,
-			Warning:   stats.Issues.Warning,
-			Notice:    stats.Issues.Notice,
+			CheckedAt:  time.Unix(item.startedAt, 0).UTC().Format(time.RFC3339),
+			Pages:      stats.Pages,
+			Fetched:    stats.Fetched,
+			Failed:     stats.Failed,
+			Critical:   stats.Issues.Critical,
+			Warning:    stats.Issues.Warning,
+			Notice:     stats.Issues.Notice,
+			Unfiltered: !filtered,
 		}
 		if stats.Checks != nil {
 			tally := stats.Checks.Tally
@@ -2438,14 +2621,11 @@ func (s *Store) seoHistory(
 			// показанного. Попытка после него (неудачная: иначе показана
 			// была бы она) прошлым обходом не является, даже если успела
 			// собрать страницы до обрыва.
-			if previous == nil && scanID < shownID {
-				previous = &seoPrevious{at: point.CheckedAt, checks: stats.Checks}
+			if previous == nil && item.id < shownID {
+				previous = &seoPrevious{at: point.CheckedAt, checks: stats.Checks, filtered: filtered}
 			}
 		}
 		points = append(points, point)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, nil, err
 	}
 
 	// Читали от новых к старым, показываем наоборот.
@@ -2459,6 +2639,8 @@ func (s *Store) seoHistory(
 type seoPrevious struct {
 	at     string
 	checks *seo.ChecksReport
+	// Пересчитан ли по сегодняшнему списку «не учитывать».
+	filtered bool
 }
 
 // SeoPages отдаёт страницы последнего обхода сайта: окно и общее число.
@@ -2468,11 +2650,16 @@ type seoPrevious struct {
 // «все страницы»; заданные отбирают — по уровню «этот и тяжелее» и по
 // конкретной находке. Total считается по тому же условию: «показано 20 из
 // 500», когда критичных двадцать, — это неверный ответ.
+//
+// Неучтённые находки страницы (трек AG) уходят в её `IgnoredIssues`, и отбор
+// по уровню и по находке идёт по учтённым — тем же счётом, что у перечня.
+// Тогда отбор и окно — в Go: колонка `worst` знает только сырые находки.
 func (s *Store) SeoPages(
 	ctx context.Context,
 	domain string,
 	severity, code string,
 	limit, offset int,
+	skip seo.Skip,
 ) ([]seo.Page, int, error) {
 	var scanID sql.NullInt64
 	err := s.db.QueryRowContext(ctx,
@@ -2487,6 +2674,10 @@ func (s *Store) SeoPages(
 	if !scanID.Valid {
 		// Состоявшегося обхода не было: пустой список, а не ошибка.
 		return []seo.Page{}, 0, nil
+	}
+
+	if !skip.Empty() {
+		return s.seoPagesSkipping(ctx, scanID.Int64, severity, code, limit, offset, skip)
 	}
 
 	// Уровни перечисляются явно, а не сравниваются строками: «critical
@@ -2645,9 +2836,11 @@ func (s *Store) ForgetSeoScans(ctx context.Context, alive map[string]bool) error
 	}
 
 	// Осиротевшие снимки страниц: их владельцев уже нет.
-	_, err = s.db.ExecContext(ctx,
-		`delete from seo_pages where scan_id not in (select id from seo_scans)`)
-	return err
+	if _, err = s.db.ExecContext(ctx,
+		`delete from seo_pages where scan_id not in (select id from seo_scans)`); err != nil {
+		return err
+	}
+	return s.forgetOrphanSeoFindings(ctx)
 }
 
 // LatestSeoAt — когда обходили в прошлый раз.

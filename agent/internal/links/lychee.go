@@ -28,6 +28,12 @@ type Report struct {
 	// Сколько уникальных ссылок оказалось битыми.
 	Broken   int       `json:"broken"`
 	Failures []Failure `json:"failures"`
+	// Неучтённые битые ссылки (трек AG, Р17): в `Broken` и `Failures` их
+	// нет. Отдельным списком, а не пометкой в `Failures`, — старая сборка
+	// приложения его не увидит и покажет согласованную картину без них.
+	// Заполняются при чтении, в базу не пишутся.
+	Ignored         int       `json:"ignored"`
+	IgnoredFailures []Failure `json:"ignoredFailures"`
 	// Почему круг не состоялся. Пусто — всё получилось.
 	Error string `json:"error,omitempty"`
 

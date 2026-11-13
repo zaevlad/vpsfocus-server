@@ -41,6 +41,7 @@ var german = phrases{
 		health.CodeInodesFilling:  "das Dateilimit der Festplatte ist zu {count} % belegt: Es gibt Platz, aber bald lassen sich keine neuen Dateien mehr anlegen",
 		health.CodeInodesFull:     "das Dateilimit der Festplatte ist zu {count} % belegt — gleich lassen sich keine neuen Dateien mehr anlegen",
 		health.CodeMemoryTight:    "der Arbeitsspeicher ist zu {count} % belegt",
+		health.CodeOomKilled:      "wegen Speichermangels beendete Programme in dieser Woche: {count}",
 		health.CodeMetricsMissing: "es gibt überhaupt keine Messungen, die Überwachung ist womöglich nicht gestartet",
 		health.CodeMetricsStale:   "die letzte Messung ist {count} Minuten alt — die Überwachung scheint angehalten zu haben",
 		health.CodeNoChannels:     "es ist kein Benachrichtigungskanal eingerichtet",

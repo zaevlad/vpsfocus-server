@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"agent/internal/ignore"
 	"agent/internal/notify"
 )
 
@@ -86,6 +87,16 @@ type Data interface {
 	// исправилось.
 	SeoDiff(domain string) (any, error)
 	RunSeo(domain string) (any, error)
+	// «Не учитывать» (трек AG): записи с тем, сколько каждая покрывает
+	// сейчас, постановка и снятие. Отказы — ошибками пакета ignore, код
+	// отдаётся приложению (`ignoreInvalid`, `ignoreUnknownSite`,
+	// `ignoreLimit`).
+	Ignores() (any, error)
+	AddIgnore(entry ignore.Entry) (any, error)
+	// Сколько запись покрыла бы сейчас — без записи: окошко называет охват
+	// числом до подтверждения, а правило совпадения живёт одной копией здесь.
+	PreviewIgnore(entry ignore.Entry) (any, error)
+	RemoveIgnore(entry ignore.Entry) (any, error)
 }
 
 type Server struct {
@@ -114,6 +125,9 @@ func (s *Server) Handler() http.Handler {
 
 	mux.Handle("POST /suppressions", s.authorized(s.handleSuppress))
 	mux.Handle("DELETE /suppressions", s.authorized(s.handleUnsuppress))
+	mux.Handle("GET /ignores", s.authorized(s.handleIgnores))
+	mux.Handle("POST /ignores", s.authorized(s.handleAddIgnore))
+	mux.Handle("DELETE /ignores", s.authorized(s.handleRemoveIgnore))
 	mux.Handle("POST /maintenance", s.authorized(s.handleStartMaintenance))
 	mux.Handle("DELETE /maintenance", s.authorized(s.handleEndMaintenance))
 
@@ -275,6 +289,60 @@ func answer(w http.ResponseWriter, payload any, err error) {
 		return
 	}
 	writeJSON(w, http.StatusOK, payload)
+}
+
+// handleIgnores отдаёт записи «не учитывать».
+func (s *Server) handleIgnores(w http.ResponseWriter, r *http.Request) {
+	state, err := s.data.Ignores()
+	answer(w, state, err)
+}
+
+// decodeIgnore читает запись «не учитывать» — с тем же пределом размера,
+// что остальные тела.
+func decodeIgnore(w http.ResponseWriter, r *http.Request) (ignore.Entry, bool) {
+	var entry ignore.Entry
+	if err := json.NewDecoder(io.LimitReader(r.Body, 8<<10)).Decode(&entry); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": ignore.CodeInvalid})
+		return ignore.Entry{}, false
+	}
+	return entry, true
+}
+
+func (s *Server) handleAddIgnore(w http.ResponseWriter, r *http.Request) {
+	entry, ok := decodeIgnore(w, r)
+	if !ok {
+		return
+	}
+	add := s.data.AddIgnore
+	if r.URL.Query().Get("preview") == "1" {
+		add = s.data.PreviewIgnore
+	}
+	payload, err := add(entry)
+	answerIgnore(w, payload, err)
+}
+
+func (s *Server) handleRemoveIgnore(w http.ResponseWriter, r *http.Request) {
+	entry, ok := decodeIgnore(w, r)
+	if !ok {
+		return
+	}
+	payload, err := s.data.RemoveIgnore(entry)
+	answerIgnore(w, payload, err)
+}
+
+// answerIgnore — ответ с кодом отказа вместо текста: что человек исправляет
+// сам, приложение переводит по коду.
+func answerIgnore(w http.ResponseWriter, payload any, err error) {
+	switch {
+	case errors.Is(err, ignore.ErrInvalid):
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": ignore.CodeInvalid, "detail": err.Error()})
+	case errors.Is(err, ignore.ErrUnknownSite):
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": ignore.CodeUnknownSite})
+	case errors.Is(err, ignore.ErrLimit):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": ignore.CodeLimit})
+	default:
+		answer(w, payload, err)
+	}
 }
 
 // handleProbes отдаёт состояние ключевых адресов и стека.

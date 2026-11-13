@@ -63,6 +63,21 @@ type Words struct {
 	BackupShrunkOKSubject string
 	BackupShrunkOKBody    string // МБ (строка)
 
+	// Остановки программ ядром из-за нехватки памяти (трек AH, Р15).
+	OomSubject      string
+	OomBody         string // остановок, строка про имена (OomNames или OomNamesUnknown)
+	OomNames        string // список OomProcess через запятую
+	OomNamesUnknown string
+	OomProcess      string // имя, МБ
+
+	// Записи домена (трек AH, спринт 267, Р17).
+	RecordGoneSubject  string // домен, SPF или DMARC
+	RecordGoneBody     string // SPF или DMARC, домен
+	RecordBackSubject  string // домен, SPF или DMARC
+	RecordBackBody     string // SPF или DMARC, домен
+	NameserversSubject string // домен
+	NameserversBody    string // домен, было, стало
+
 	TestSubject string
 	TestBody    string // имя сервера
 
@@ -172,6 +187,28 @@ var russian = Words{
 	BackupShrunkOKSubject: "Копия базы снова обычного размера",
 	BackupShrunkOKBody:    "Очередная копия аналитики — %s МБ, не меньше половины прошлой.",
 
+	OomSubject: "Серверу не хватило памяти, и система остановила программу",
+	OomBody: "За последние сутки система останавливала программы из-за нехватки памяти: " +
+		"остановок — %d. Так бывает, когда памяти не хватило всему серверу или пределу, " +
+		"заданному самой программе. Сайт в такие минуты может моргнуть или упасть.\n\n%s\n\n" +
+		"Что делать: откройте «Здоровье сервера» в приложении — там видно, сколько памяти " +
+		"занято и сколько из неё берёт сам мониторинг vpsFocus, и есть задание для " +
+		"ИИ-помощника. Обычно помогает добавить памяти на тарифе хостера или включить подкачку.",
+	OomNames:        "Больше всего памяти сразу после этого занимали: %s.",
+	OomNamesUnknown: "Какие программы занимали память, отсюда не видно.",
+	OomProcess:      "%s (%d МБ)",
+
+	RecordGoneSubject: "%s: пропала запись %s",
+	RecordGoneBody: "У домена больше нет рабочей записи %s (%s): её удалили, или записей стало две — почтовые службы считают это тем же, что «записи нет».\n\n" +
+		"Если с домена уходят письма — регистрация, заказы, рассылки, — они могут начать попадать в спам. Если вы меняли записи у регистратора сами и так задумано, ничего делать не нужно. " +
+		"Что сейчас записано у домена, видно на экране «Домены и SSL» в приложении; там же — задание для ИИ-помощника.",
+	RecordBackSubject:  "%s: запись %s снова на месте",
+	RecordBackBody:     "Запись %s у домена %s снова есть и читается.",
+	NameserversSubject: "%s: сменились серверы имён",
+	NameserversBody: "Домен %s теперь обслуживают другие серверы имён: было — %s, стало — %s.\n\n" +
+		"Так бывает, когда домен переносят к другому регистратору или подключают к Cloudflare. Если вы этого не делали, проверьте доступ к панели регистратора: " +
+		"серверы имён решают, куда ведёт домен и куда приходит почта. Резолвер сервера помнит старые записи, поэтому смену видно с задержкой до суток-двух.",
+
 	TestSubject: "Проверка уведомлений",
 	TestBody: "Это проверочное сообщение с сервера %s.\n\n" +
 		"Если вы его читаете, уведомления о диске, сертификатах и доменах " +
@@ -261,6 +298,28 @@ var english = Words{
 		"is on the Backups screen in the app.",
 	BackupShrunkOKSubject: "The database backup is its usual size again",
 	BackupShrunkOKBody:    "The latest analytics backup is %s MB, no less than half of the previous one.",
+
+	OomSubject: "The server ran out of memory, and the system stopped a program",
+	OomBody: "Over the last day the system stopped programs because memory ran out: " +
+		"%d stop(s). This happens when the whole server runs out of memory, or when a program " +
+		"hits a memory limit set for it. The website may blink or go down at such moments.\n\n%s\n\n" +
+		"What to do: open “Server health” in the app — it shows how much memory is used and how " +
+		"much of it the vpsFocus monitoring itself takes, and has a task for an AI assistant. " +
+		"Adding memory on your hosting plan or turning on swap usually helps.",
+	OomNames:        "Right after that, the programs using the most memory were: %s.",
+	OomNamesUnknown: "Which programs were using the memory can’t be seen from here.",
+	OomProcess:      "%s (%d MB)",
+
+	RecordGoneSubject: "%s: the %s record is gone",
+	RecordGoneBody: "The domain no longer has a working %s record (%s): it was deleted, or there are now two of them — mail services treat that the same as “no record”.\n\n" +
+		"If email is sent from this domain — sign-ups, orders, newsletters — it may start landing in spam. If you changed the records at your registrar yourself and meant to, there is nothing to do. " +
+		"What the domain has now is shown on the “Domains & SSL” screen in the app, together with a task for an AI assistant.",
+	RecordBackSubject:  "%s: the %s record is back",
+	RecordBackBody:     "The %s record of %s is there again and can be read.",
+	NameserversSubject: "%s: the name servers changed",
+	NameserversBody: "The domain %s is now served by other name servers: before — %s, now — %s.\n\n" +
+		"This happens when a domain moves to another registrar or is connected to Cloudflare. If you didn’t do this, check access to your registrar’s panel: " +
+		"the name servers decide where the domain leads and where its mail goes. The server’s resolver remembers old records, so the change shows up with a delay of up to a day or two.",
 
 	TestSubject: "Notification test",
 	TestBody: "This is a test message from server %s.\n\n" +

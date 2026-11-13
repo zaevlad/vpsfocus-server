@@ -93,7 +93,7 @@ func TestOneSiteScanKeepsTheOthers(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	scans, err := agent.db.SeoScans(t.Context(), map[string]bool{"a.test": true, "b.test": true})
+	scans, err := agent.db.SeoScans(t.Context(), map[string]bool{"a.test": true, "b.test": true}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

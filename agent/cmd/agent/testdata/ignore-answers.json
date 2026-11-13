@@ -1,0 +1,674 @@
+{
+  "ignores": {
+    "ignores": [
+      {
+        "kind": "advice",
+        "domain": "a.test",
+        "what": "unused-javascript",
+        "match": "exact",
+        "scope": "site",
+        "createdAt": "2026-11-12T12:00:00Z",
+        "covers": 1
+      },
+      {
+        "kind": "seo",
+        "domain": "a.test",
+        "what": "robotsMissing",
+        "match": "exact",
+        "scope": "site",
+        "createdAt": "2026-11-12T12:00:00Z",
+        "covers": 0
+      },
+      {
+        "kind": "seo",
+        "domain": "a.test",
+        "what": "noindex",
+        "match": "exact",
+        "scope": "prefix",
+        "at": "/account",
+        "createdAt": "2026-11-12T12:00:00Z",
+        "covers": 1
+      },
+      {
+        "kind": "link",
+        "domain": "a.test",
+        "what": "https://claude.ai/",
+        "match": "prefix",
+        "response": "403",
+        "scope": "site",
+        "note": "робота не пускают",
+        "createdAt": "2026-11-12T12:00:00Z",
+        "covers": 6
+      }
+    ],
+    "limit": 1000
+  },
+  "links": {
+    "running": false,
+    "reports": [
+      {
+        "domain": "a.test",
+        "checkedAt": "2026-11-12T10:00:00Z",
+        "durationSeconds": 0,
+        "pages": 30,
+        "totalLinks": 400,
+        "broken": 2,
+        "failures": [
+          {
+            "url": "https://gone.test/",
+            "kind": "httpStatus",
+            "code": 404,
+            "sources": [
+              "https://a.test/"
+            ]
+          },
+          {
+            "url": "https://slow.test/",
+            "kind": "timeout",
+            "sources": [
+              "https://a.test/blog"
+            ]
+          }
+        ],
+        "ignored": 6,
+        "ignoredFailures": [
+          {
+            "url": "https://claude.ai/new/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/"
+            ]
+          },
+          {
+            "url": "https://claude.ai/new/de/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/de/"
+            ]
+          },
+          {
+            "url": "https://claude.ai/new/es/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/es/"
+            ]
+          },
+          {
+            "url": "https://claude.ai/new/fr/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/fr/"
+            ]
+          },
+          {
+            "url": "https://claude.ai/new/pt/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/pt/"
+            ]
+          },
+          {
+            "url": "https://claude.ai/new/ru/",
+            "kind": "httpStatus",
+            "code": 403,
+            "sources": [
+              "https://a.test/ru/"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "running": false,
+    "enabled": false,
+    "scans": [
+      {
+        "domain": "a.test",
+        "checkedAt": "2026-11-12T10:00:00Z",
+        "durationSeconds": 0,
+        "stats": {
+          "pages": 2,
+          "fetched": 2,
+          "failed": 0,
+          "redirected": 0,
+          "duplicates": 0,
+          "noindex": 0,
+          "blockedByRobots": 0,
+          "fromSitemap": 0,
+          "queued": 0,
+          "delayMs": 0,
+          "issues": {
+            "critical": 0,
+            "warning": 1,
+            "notice": 0,
+            "pages": 1,
+            "byCode": [
+              {
+                "code": "titleLong",
+                "severity": "warning",
+                "pages": 1
+              }
+            ]
+          },
+          "canonical": {
+            "canonical": "https://a.test/",
+            "entries": null
+          },
+          "site": {
+            "robots": "found",
+            "bots": null,
+            "sitemap": {
+              "declared": false,
+              "found": true,
+              "addresses": 0,
+              "complete": true,
+              "blockedByRobots": 0
+            }
+          },
+          "checks": {
+            "tally": {
+              "total": 55,
+              "passed": 54,
+              "critical": 0,
+              "warning": 1,
+              "notice": 0,
+              "unknown": 0,
+              "ignored": 1
+            },
+            "items": [
+              {
+                "code": "searchEnginesBlocked",
+                "group": "access",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "aiSearchBlocked",
+                "group": "access",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "aiTrainingBlocked",
+                "group": "access",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "canonicalNoHTTPS",
+                "group": "access",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "canonicalHostSplit",
+                "group": "access",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "canonicalLoop",
+                "group": "access",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "titleMissing",
+                "group": "titles",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "titleShort",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "titleLong",
+                "group": "titles",
+                "severity": "warning",
+                "state": "failed",
+                "pages": 1
+              },
+              {
+                "code": "titleDuplicate",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "descriptionMissing",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "descriptionShort",
+                "group": "titles",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "descriptionLong",
+                "group": "titles",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "descriptionDuplicate",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "h1Missing",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "h1Multiple",
+                "group": "titles",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "h1Duplicate",
+                "group": "titles",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "h1Long",
+                "group": "titles",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "headingOrder",
+                "group": "titles",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "duplicateContent",
+                "group": "content",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "thinContent",
+                "group": "content",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "soft404Title",
+                "group": "content",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "imagesWithoutAlt",
+                "group": "content",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "langMissing",
+                "group": "content",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "viewportMissing",
+                "group": "content",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "openGraphIncomplete",
+                "group": "content",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "noindex",
+                "group": "indexing",
+                "severity": "warning",
+                "state": "passed",
+                "ignoredPages": 1
+              },
+              {
+                "code": "canonicalMissing",
+                "group": "indexing",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "canonicalOther",
+                "group": "indexing",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "canonicalOffsite",
+                "group": "indexing",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "noindexWithCanonical",
+                "group": "indexing",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "unavailableAfterPassed",
+                "group": "indexing",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "robotsNosnippet",
+                "group": "indexing",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "robotsNoimageindex",
+                "group": "indexing",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapMissing",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapUnavailable",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapBlockedByRobots",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapBroken",
+                "group": "sitemap",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapRedirect",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapNoindex",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "sitemapCanonicalised",
+                "group": "sitemap",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "notInSitemap",
+                "group": "sitemap",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "pageUnavailable",
+                "group": "delivery",
+                "severity": "critical",
+                "state": "passed"
+              },
+              {
+                "code": "redirectChain",
+                "group": "delivery",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "redirected",
+                "group": "delivery",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "redirectOffsite",
+                "group": "delivery",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "slowResponse",
+                "group": "delivery",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "deadEnd",
+                "group": "delivery",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "tooManyLinks",
+                "group": "delivery",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "urlCaseDuplicate",
+                "group": "addresses",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "urlSlashDuplicate",
+                "group": "addresses",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "urlRepeatingSegment",
+                "group": "addresses",
+                "severity": "warning",
+                "state": "passed"
+              },
+              {
+                "code": "urlShape",
+                "group": "addresses",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "urlTracking",
+                "group": "addresses",
+                "severity": "notice",
+                "state": "passed"
+              },
+              {
+                "code": "internalSearchCrawled",
+                "group": "addresses",
+                "severity": "notice",
+                "state": "passed"
+              }
+            ],
+            "ignoredChecks": [
+              {
+                "code": "robotsMissing",
+                "group": "access",
+                "severity": "notice",
+                "state": "passed"
+              }
+            ]
+          }
+        },
+        "history": [
+          {
+            "checkedAt": "2026-11-11T10:00:00Z",
+            "pages": 2,
+            "fetched": 2,
+            "failed": 0,
+            "critical": 0,
+            "warning": 1,
+            "notice": 0,
+            "checks": {
+              "total": 55,
+              "passed": 54,
+              "critical": 0,
+              "warning": 1,
+              "notice": 0,
+              "unknown": 0,
+              "ignored": 1
+            }
+          }
+        ],
+        "progress": {
+          "previousAt": "2026-11-11T10:00:00Z",
+          "fixed": [],
+          "appeared": []
+        }
+      }
+    ],
+    "sites": [
+      {
+        "domain": "a.test",
+        "name": "a.test"
+      },
+      {
+        "domain": "b.test",
+        "name": "b.test"
+      }
+    ]
+  },
+  "seoPages": {
+    "domain": "a.test",
+    "total": 2,
+    "offset": 0,
+    "pages": [
+      {
+        "url": "https://a.test/",
+        "status": 200,
+        "depth": 0,
+        "bytes": 0,
+        "loadMs": 0,
+        "issues": [
+          {
+            "code": "titleLong",
+            "severity": "warning"
+          }
+        ]
+      },
+      {
+        "url": "https://a.test/account/",
+        "status": 200,
+        "depth": 0,
+        "bytes": 0,
+        "loadMs": 0,
+        "ignoredIssues": [
+          {
+            "code": "noindex",
+            "severity": "warning"
+          }
+        ]
+      }
+    ]
+  },
+  "vitals": {
+    "running": false,
+    "keyConfigured": false,
+    "strategies": [
+      "mobile"
+    ],
+    "intervalHours": 0,
+    "maxPages": 5,
+    "quota": {
+      "day": "TODAY",
+      "used": 0,
+      "limit": 0
+    },
+    "pages": [
+      {
+        "domain": "a.test",
+        "name": "a.test",
+        "paths": []
+      },
+      {
+        "domain": "b.test",
+        "name": "b.test",
+        "paths": []
+      }
+    ],
+    "reports": [
+      {
+        "domain": "a.test",
+        "path": "/",
+        "url": "https://a.test/",
+        "strategy": "mobile",
+        "checkedAt": "2026-11-12T10:00:00Z",
+        "lab": {
+          "score": 61,
+          "scoreRating": "",
+          "lcp": {
+            "value": 0,
+            "rating": ""
+          },
+          "cls": {
+            "value": 0,
+            "rating": ""
+          },
+          "tbt": {
+            "value": 0,
+            "rating": ""
+          },
+          "fcp": {
+            "value": 0,
+            "rating": ""
+          },
+          "speedIndex": {
+            "value": 0,
+            "rating": ""
+          },
+          "advice": [
+            {
+              "id": "color-contrast",
+              "category": "accessibility",
+              "title": "Contrast",
+              "score": 0
+            }
+          ],
+          "ignoredAdvice": [
+            {
+              "id": "unused-javascript",
+              "category": "performance",
+              "title": "Unused JavaScript",
+              "score": 0
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

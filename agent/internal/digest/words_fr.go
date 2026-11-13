@@ -41,6 +41,7 @@ var french = phrases{
 		health.CodeInodesFilling:  "la limite de fichiers du disque est utilisée à {count} % : il reste de l'espace libre, mais la création de nouveaux fichiers va bientôt échouer",
 		health.CodeInodesFull:     "la limite de fichiers du disque est utilisée à {count} % : les nouveaux fichiers ne pourront bientôt plus être créés",
 		health.CodeMemoryTight:    "la mémoire est utilisée à {count} %",
+		health.CodeOomKilled:      "programmes arrêtés faute de mémoire cette semaine : {count}",
 		health.CodeMetricsMissing: "aucune mesure, la surveillance n'a peut-être pas démarré",
 		health.CodeMetricsStale:   "la dernière mesure date de {count} minutes : la surveillance semble s'être arrêtée",
 		health.CodeNoChannels:     "aucun canal de notification n'est configuré",

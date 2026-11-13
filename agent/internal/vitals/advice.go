@@ -66,13 +66,21 @@ type Resource struct {
 // Пороги времени до интерактивности — Lighthouse для мобильных.
 const ttiGood, ttiPoor = 3800.0, 7300.0
 
-// Сколько советов хранить на категорию и сколько мест на совет. Отчёт
-// ложится в базу агента на сервере клиента вместе с историей замеров.
+// Сколько советов хранить и показывать на категорию и сколько мест на
+// совет. Отчёт ложится в базу агента на сервере клиента вместе с историей
+// замеров.
+//
+// Хранится больше, чем показывается (трек AG, Р35): неучтённый совет не
+// должен занимать место в «что исправить», и вместо него поднимается
+// следующий. Обрежь отчёт до двенадцати при разборе — и тринадцатого в
+// сохранённом отчёте просто не было бы. Показ режет `ShownAdvice` при
+// чтении.
 const (
-	advicePerCategory = 12
-	itemsPerAdvice    = 5
-	labelMax          = 200
-	descriptionMax    = 400
+	adviceStoredPerCategory = 30
+	AdviceShownPerCategory  = 12
+	itemsPerAdvice          = 5
+	labelMax                = 200
+	descriptionMax          = 400
 )
 
 // Порядок категорий на экране и в запросе к PSI.
@@ -223,7 +231,7 @@ func advice(rawCategories map[string]psiCategory, audits map[string]psiAudit) []
 			return a.advice.Score < b.advice.Score
 		})
 		for index, item := range found {
-			if index == advicePerCategory {
+			if index == adviceStoredPerCategory {
 				break
 			}
 			out = append(out, item.advice)
@@ -333,4 +341,38 @@ func resources(summary []psiItem) (list []Resource, totalBytes int64, requests i
 	}
 	sort.SliceStable(list, func(i, j int) bool { return list[i].Bytes > list[j].Bytes })
 	return list, totalBytes, requests
+}
+
+// ShownAdvice — отчёт таким, каким его видит экран: неучтённые советы
+// (трек AG) — в `IgnoredAdvice`, из остальных — не больше
+// AdviceShownPerCategory на категорию, в прежнем порядке.
+//
+// `skip` — не учитывать ли совет `id` на странице `page`; nil — неучтённых
+// нет. Оценки категорий не трогаются (Р24): это числа Google, и «не
+// учитывать» их не дорисовывает.
+func (r Report) ShownAdvice(skip func(id, page string) bool) Report {
+	if r.Lab == nil || (len(r.Lab.Advice) == 0 && r.Lab.IgnoredAdvice == nil) {
+		return r
+	}
+	page := r.URL
+	if page == "" {
+		page = r.Path
+	}
+
+	lab := *r.Lab
+	lab.Advice, lab.IgnoredAdvice = nil, nil
+	shown := map[string]int{}
+	for _, item := range r.Lab.Advice {
+		if skip != nil && skip(item.ID, page) {
+			lab.IgnoredAdvice = append(lab.IgnoredAdvice, item)
+			continue
+		}
+		if shown[item.Category] == AdviceShownPerCategory {
+			continue
+		}
+		shown[item.Category]++
+		lab.Advice = append(lab.Advice, item)
+	}
+	r.Lab = &lab
+	return r
 }

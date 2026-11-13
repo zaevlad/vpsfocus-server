@@ -52,7 +52,7 @@ func TestExpiredLoopContextStillSavesReport(t *testing.T) {
 		t.Fatalf("запись итога круга: %v", err)
 	}
 
-	stored, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true})
+	stored, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение отчётов: %v", err)
 	}

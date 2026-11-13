@@ -2,6 +2,8 @@ package vitals
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -499,5 +501,79 @@ func TestDescriptionLosesLinksAndLearnMore(t *testing.T) {
 		if got := cleanDescription(raw); got != "Utilisez des images WebP." {
 			t.Errorf("%q: получили %q", raw, got)
 		}
+	}
+}
+
+// Неучтённый совет (трек AG) — в IgnoredAdvice, а оценки категорий Google
+// байт в байт прежние (Р24). На сохранённом ответе PageSpeed.
+func TestShownAdviceKeepsScores(t *testing.T) {
+	lab := liveLab(t)
+	report := Report{Domain: "getgliph.com", Path: "/", URL: "https://getgliph.com/", Strategy: "mobile", Lab: lab}
+
+	before, err := json.Marshal(struct {
+		Score      int
+		Categories []Category
+	}{lab.Score, lab.Categories})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	shown := report.ShownAdvice(func(id, page string) bool { return id == "unused-javascript" })
+	after, _ := json.Marshal(struct {
+		Score      int
+		Categories []Category
+	}{shown.Lab.Score, shown.Lab.Categories})
+	if string(before) != string(after) {
+		t.Fatalf("оценки изменились:\n%s\n%s", before, after)
+	}
+	if len(shown.Lab.IgnoredAdvice) != 1 || shown.Lab.IgnoredAdvice[0].ID != "unused-javascript" {
+		t.Fatalf("неучтённые: %+v", shown.Lab.IgnoredAdvice)
+	}
+	for _, item := range shown.Lab.Advice {
+		if item.ID == "unused-javascript" {
+			t.Fatal("неучтённый совет остался в «что исправить»")
+		}
+	}
+	// Остальные на месте: показано не меньше, чем без записи, минус один.
+	if plain := report.ShownAdvice(nil); len(shown.Lab.Advice) < len(plain.Lab.Advice)-1 {
+		t.Fatalf("советов %d, без записи %d", len(shown.Lab.Advice), len(plain.Lab.Advice))
+	}
+	// Исходный отчёт не тронут: вычитается копия.
+	if len(report.Lab.IgnoredAdvice) != 0 || report.Lab.Advice[0].ID != "unused-javascript" {
+		t.Fatal("ShownAdvice испортил исходный отчёт")
+	}
+}
+
+// Хранится до 30 советов на категорию, показывается 12 — уже без
+// неучтённых: вместо неучтённого поднимается тринадцатый (Р35).
+func TestShownAdviceRefillsAfterIgnored(t *testing.T) {
+	var advice []Advice
+	for index := 1; index <= 14; index++ {
+		advice = append(advice, Advice{ID: fmt.Sprintf("audit-%02d", index), Category: "performance"})
+	}
+	advice = append(advice, Advice{ID: "color-contrast", Category: "accessibility"})
+	report := Report{Path: "/", Lab: &Lab{Advice: advice}}
+
+	plain := report.ShownAdvice(nil)
+	if len(plain.Lab.Advice) != AdviceShownPerCategory+1 || plain.Lab.IgnoredAdvice != nil {
+		t.Fatalf("без записей: %d советов", len(plain.Lab.Advice))
+	}
+
+	shown := report.ShownAdvice(func(id, page string) bool { return id == "audit-01" })
+	var ids []string
+	for _, item := range shown.Lab.Advice {
+		ids = append(ids, item.ID)
+	}
+	got := strings.Join(ids, " ")
+	if !strings.Contains(got, "audit-13") || strings.Contains(got, "audit-14") || strings.Contains(got, "audit-01") ||
+		!strings.Contains(got, "color-contrast") || len(ids) != AdviceShownPerCategory+1 {
+		t.Fatalf("показаны: %s", got)
+	}
+}
+
+// Разбор хранит больше двенадцати советов на категорию.
+func TestAdviceStoresMoreThanShown(t *testing.T) {
+	if adviceStoredPerCategory <= AdviceShownPerCategory {
+		t.Fatalf("хранится %d, показывается %d — неучтённому не на что смениться", adviceStoredPerCategory, AdviceShownPerCategory)
 	}
 }

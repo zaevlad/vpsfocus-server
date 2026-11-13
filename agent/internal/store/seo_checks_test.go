@@ -50,7 +50,7 @@ func TestSeoChecksReachHistoryAndProgress(t *testing.T) {
 		t.Fatalf("запись: %v", err)
 	}
 
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil || len(scans) != 1 {
 		t.Fatalf("чтение обходов: %v, %d", err, len(scans))
 	}

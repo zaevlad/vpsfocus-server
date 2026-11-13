@@ -3,6 +3,7 @@ package metrics
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -102,13 +103,37 @@ func TestPercentagesSurviveZeroTotals(t *testing.T) {
 	}
 }
 
-// Совсем пустой /proc — это не «сервер идеально чист», а неверно
+// Ни /proc, ни корня сервера — это не «сервер идеально чист», а неверно
 // смонтированный контейнер. Такой замер писать в базу нельзя.
+//
+// Подменяются оба каталога. Пока подменялся только /proc, тест проходил
+// лишь там, где диск не читается вовсе (Windows, macOS — `disk_other.go`), а
+// на Linux настоящий временный каталог давал диск, замер выходил
+// половинчатым, и ошибки по правилу `Collect` законно не было.
 func TestMissingProcIsAnError(t *testing.T) {
-	collector := NewCollector(filepath.Join(t.TempDir(), "нет-такого"), t.TempDir())
+	missing := filepath.Join(t.TempDir(), "нет-такого")
+	collector := NewCollector(missing, missing)
 
 	if _, err := collector.Collect(); err == nil {
-		t.Error("отсутствие /proc должно быть ошибкой")
+		t.Error("замер, в котором не прочиталось ничего, должен быть ошибкой")
+	}
+}
+
+// Без /proc, но с корнем сервера замер половинчатый, а не ошибка: «половина
+// картины полезнее пустоты». Память — ноль, и экран показывает её как «нет
+// данных», а не как свободную. Только Linux: диск читается только там.
+func TestMissingProcKeepsDisk(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("диск читается только на Linux")
+	}
+	collector := NewCollector(filepath.Join(t.TempDir(), "нет-такого"), t.TempDir())
+
+	sample, err := collector.Collect()
+	if err != nil {
+		t.Fatalf("половинчатый замер не должен быть ошибкой: %v", err)
+	}
+	if sample.MemTotalMB != 0 || sample.DiskTotalMB == 0 {
+		t.Errorf("память %d МБ, диск %d МБ: ожидались ноль и не ноль", sample.MemTotalMB, sample.DiskTotalMB)
 	}
 }
 

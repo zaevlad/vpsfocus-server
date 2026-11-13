@@ -35,7 +35,7 @@ func TestSeoFailedScansDoNotEvictTheGoodOne(t *testing.T) {
 		}
 	}
 
-	stored, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0)
+	stored, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0, seo.Skip{})
 	if err != nil {
 		t.Fatalf("чтение страниц: %v", err)
 	}
@@ -59,7 +59,7 @@ func TestSeoFailedScansDoNotEvictTheGoodOne(t *testing.T) {
 	// А экран показывает удачный обход и рядом — что последняя попытка
 	// провалилась и когда. Молчать об этом нельзя: человек принял бы
 	// позавчерашний снимок за сегодняшний.
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение обходов: %v", err)
 	}
@@ -93,7 +93,7 @@ func TestSeoFirstScanFailedIsShownWithReason(t *testing.T) {
 		t.Fatalf("запись обхода: %v", err)
 	}
 
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение обходов: %v", err)
 	}

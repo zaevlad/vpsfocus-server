@@ -77,6 +77,28 @@ var french = Words{
 	BackupShrunkOKSubject: "La copie de la base de données a retrouvé sa taille habituelle",
 	BackupShrunkOKBody:    "La dernière copie des statistiques fait %s Mo, pas moins de la moitié de la précédente.",
 
+	OomSubject: "Le serveur a manqué de mémoire, et le système a arrêté un programme",
+	OomBody: "Au cours du dernier jour, le système a arrêté des programmes faute de mémoire : " +
+		"%d arrêt(s). Cela arrive quand tout le serveur manque de mémoire, ou quand un programme " +
+		"atteint la limite de mémoire qui lui est fixée. Le site peut alors clignoter ou tomber.\n\n%s\n\n" +
+		"Que faire : ouvrez « État du serveur » dans l’application — vous y voyez la mémoire utilisée " +
+		"et la part qu’en prend la surveillance vpsFocus elle-même, ainsi qu’une tâche pour un assistant IA. " +
+		"Ajouter de la mémoire dans l’offre de l’hébergeur ou activer le swap aide en général.",
+	OomNames:        "Juste après, les programmes qui utilisaient le plus de mémoire étaient : %s.",
+	OomNamesUnknown: "D’ici, on ne voit pas quels programmes utilisaient la mémoire.",
+	OomProcess:      "%s (%d Mo)",
+
+	RecordGoneSubject: "%s : l’enregistrement %s a disparu",
+	RecordGoneBody: "Le domaine n’a plus d’enregistrement %s valide (%s) : il a été supprimé, ou il y en a désormais deux — les services de messagerie traitent cela comme « aucun enregistrement ».\n\n" +
+		"Si des e-mails partent de ce domaine — inscriptions, commandes, lettres d’information —, ils risquent d’arriver en spam. Si vous avez modifié les enregistrements chez le registraire volontairement, il n’y a rien à faire. " +
+		"Ce que le domaine contient maintenant est affiché dans l’écran « Domaines et SSL » de l’application, avec une tâche pour un assistant IA.",
+	RecordBackSubject:  "%s : l’enregistrement %s est revenu",
+	RecordBackBody:     "L’enregistrement %s de %s est de nouveau présent et lisible.",
+	NameserversSubject: "%s : les serveurs de noms ont changé",
+	NameserversBody: "Le domaine %s est désormais servi par d’autres serveurs de noms : avant — %s, maintenant — %s.\n\n" +
+		"Cela arrive quand un domaine change de registraire ou est connecté à Cloudflare. Si ce n’est pas vous, vérifiez l’accès au panneau de votre registraire : " +
+		"les serveurs de noms décident où mène le domaine et où arrive son courrier. Le résolveur du serveur garde les anciens enregistrements en mémoire, le changement apparaît donc avec un retard d’un ou deux jours.",
+
 	TestSubject: "Test des notifications",
 	TestBody: "Ceci est un message de test du serveur %s.\n\n" +
 		"Si vous le lisez, les notifications sur le disque, les certificats et " +

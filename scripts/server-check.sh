@@ -62,10 +62,15 @@ has timeout && LIMIT="timeout 20"
 # ── Система ───────────────────────────────────────────────────────────────
 
 os_pretty=""
+os_id=""
+os_version=""
 if [ -r "$ROOT/etc/os-release" ]; then
     # shellcheck disable=SC1090,SC1091
     . "$ROOT/etc/os-release" 2>/dev/null || true
     os_pretty="${PRETTY_NAME:-}"
+    # Для срока поддержки системы (трек AH): вид PRETTY_NAME у систем разный.
+    os_id="${ID:-}"
+    os_version="${VERSION_ID:-}"
 fi
 [ -n "$os_pretty" ] || os_pretty="$(uname -s 2>/dev/null) $(uname -r 2>/dev/null)"
 
@@ -439,6 +444,8 @@ fi
 
 printf '{'
 str "osPretty" "$os_pretty"
+str "osId" "$os_id"
+str "osVersion" "$os_version"
 bol "privileged" "$privileged"
 str "sshPassword" "$ssh_password"
 str "sshRoot" "$ssh_root"

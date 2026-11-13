@@ -60,7 +60,7 @@ func TestLinkReportRoundtrip(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	reports, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true, "other.test": true})
+	reports, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true, "other.test": true}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,7 +100,7 @@ func TestLinkFailuresRegroupByURL(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	reports, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true})
+	reports, err := db.LinkReports(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,7 +123,7 @@ func TestLinkReportsOfDeletedSiteAreInvisibleAndForgotten(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	reports, err := db.LinkReports(t.Context(), map[string]bool{"alive.test": true})
+	reports, err := db.LinkReports(t.Context(), map[string]bool{"alive.test": true}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -201,7 +201,7 @@ func TestVitalsReportRoundtrip(t *testing.T) {
 		}
 	}
 
-	reports, err := db.VitalsReports(t.Context(), alive)
+	reports, err := db.VitalsReports(t.Context(), alive, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func TestVitalsReportsOfRemovedPageAreForgotten(t *testing.T) {
 
 	alive := map[string]bool{VitalsKey("site.test", "/", vitals.StrategyMobile): true}
 
-	reports, err := db.VitalsReports(t.Context(), alive)
+	reports, err := db.VitalsReports(t.Context(), alive, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -582,7 +582,7 @@ func TestSeoScanRoundtrip(t *testing.T) {
 		t.Fatalf("запись обхода: %v", err)
 	}
 
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение обходов: %v", err)
 	}
@@ -593,7 +593,7 @@ func TestSeoScanRoundtrip(t *testing.T) {
 		t.Fatalf("сводка не восстановилась: %+v", scans[0].Stats)
 	}
 
-	stored, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0)
+	stored, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0, seo.Skip{})
 	if err != nil {
 		t.Fatalf("чтение страниц: %v", err)
 	}
@@ -618,7 +618,7 @@ func TestSeoPagesWindow(t *testing.T) {
 		t.Fatalf("запись обхода: %v", err)
 	}
 
-	window, total, err := db.SeoPages(t.Context(), "site.test", "", "", 2, 2)
+	window, total, err := db.SeoPages(t.Context(), "site.test", "", "", 2, 2, seo.Skip{})
 	if err != nil {
 		t.Fatalf("чтение окна: %v", err)
 	}
@@ -664,7 +664,7 @@ func TestSeoPageSnapshotsRotateButHistoryStays(t *testing.T) {
 		t.Fatalf("снимков страниц осталось %d, ожидалось %d", pageRows, keepSeoPageSets)
 	}
 
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение: %v", err)
 	}
@@ -691,7 +691,7 @@ func TestSeoScansOfDeletedSiteAreInvisibleAndForgotten(t *testing.T) {
 
 	alive := map[string]bool{"live.test": true}
 
-	scans, err := db.SeoScans(t.Context(), alive)
+	scans, err := db.SeoScans(t.Context(), alive, nil)
 	if err != nil {
 		t.Fatalf("чтение: %v", err)
 	}
@@ -768,7 +768,7 @@ func TestSeoIssuesSurviveAndReachHistory(t *testing.T) {
 		}
 	}
 
-	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true})
+	scans, err := db.SeoScans(t.Context(), map[string]bool{"site.test": true}, nil)
 	if err != nil {
 		t.Fatalf("чтение: %v", err)
 	}
@@ -782,7 +782,7 @@ func TestSeoIssuesSurviveAndReachHistory(t *testing.T) {
 		t.Fatalf("история без чисел находок: %+v", scans[0].History[0])
 	}
 
-	pages, _, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0)
+	pages, _, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0, seo.Skip{})
 	if err != nil {
 		t.Fatalf("чтение страниц: %v", err)
 	}
@@ -808,12 +808,12 @@ func TestSeoPagesFilterBySeverity(t *testing.T) {
 		t.Fatalf("запись обхода: %v", err)
 	}
 
-	all, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0)
+	all, total, err := db.SeoPages(t.Context(), "site.test", "", "", 10, 0, seo.Skip{})
 	if err != nil || len(all) != 3 || total != 3 {
 		t.Fatalf("без отбора: %d из %d, err=%v", len(all), total, err)
 	}
 
-	worst, total, err := db.SeoPages(t.Context(), "site.test", seo.SeverityCritical, "", 10, 0)
+	worst, total, err := db.SeoPages(t.Context(), "site.test", seo.SeverityCritical, "", 10, 0, seo.Skip{})
 	if err != nil {
 		t.Fatalf("отбор: %v", err)
 	}
@@ -826,7 +826,7 @@ func TestSeoPagesFilterBySeverity(t *testing.T) {
 		t.Fatalf("всего при отборе: %d", total)
 	}
 
-	loose, total, err := db.SeoPages(t.Context(), "site.test", seo.SeverityNotice, "", 10, 0)
+	loose, total, err := db.SeoPages(t.Context(), "site.test", seo.SeverityNotice, "", 10, 0, seo.Skip{})
 	if err != nil || len(loose) != 2 || total != 2 {
 		t.Fatalf("уровень «и хуже» не сработал: %d из %d, err=%v", len(loose), total, err)
 	}
@@ -854,7 +854,7 @@ func TestSeoPagesFilterByCode(t *testing.T) {
 		t.Fatalf("запись обхода: %v", err)
 	}
 
-	pages, total, err := db.SeoPages(t.Context(), "site.test", "", seo.IssueTitleMissing, 10, 0)
+	pages, total, err := db.SeoPages(t.Context(), "site.test", "", seo.IssueTitleMissing, 10, 0, seo.Skip{})
 	if err != nil {
 		t.Fatalf("отбор: %v", err)
 	}
@@ -863,7 +863,7 @@ func TestSeoPagesFilterByCode(t *testing.T) {
 	}
 
 	// Незнакомый код отбора не делает: он не из нашего интерфейса.
-	all, total, err := db.SeoPages(t.Context(), "site.test", "", "чужая строка", 10, 0)
+	all, total, err := db.SeoPages(t.Context(), "site.test", "", "чужая строка", 10, 0, seo.Skip{})
 	if err != nil || len(all) != 2 || total != 2 {
 		t.Fatalf("незнакомый код отфильтровал: %d из %d, err=%v", len(all), total, err)
 	}

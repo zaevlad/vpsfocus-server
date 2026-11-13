@@ -41,6 +41,7 @@ var portuguese = phrases{
 		health.CodeInodesFilling:  "o limite de arquivos do disco está {count}% usado: há espaço livre, mas em breve novos arquivos não poderão ser criados",
 		health.CodeInodesFull:     "o limite de arquivos do disco está {count}% usado: novos arquivos logo deixarão de ser criados",
 		health.CodeMemoryTight:    "a memória está {count}% em uso",
+		health.CodeOomKilled:      "programas parados por falta de memória nesta semana: {count}",
 		health.CodeMetricsMissing: "não há nenhuma medição, o monitoramento pode não ter iniciado",
 		health.CodeMetricsStale:   "a última medição tem {count} minutos: o monitoramento parece ter parado",
 		health.CodeNoChannels:     "nenhum canal de notificação está configurado",

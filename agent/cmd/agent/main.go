@@ -40,9 +40,11 @@ import (
 	"agent/internal/checks"
 	"agent/internal/config"
 	"agent/internal/digest"
+	"agent/internal/dnsrec"
 	"agent/internal/events"
 	"agent/internal/health"
 	"agent/internal/httpapi"
+	"agent/internal/ignore"
 	"agent/internal/links"
 	"agent/internal/logs"
 	"agent/internal/mailhtml"
@@ -187,6 +189,8 @@ type Agent struct {
 	// Пустые — настоящий notifier и настоящие часы.
 	sendVia alertSender
 	clock   func() time.Time
+	// Подмена резолвера для тестов записей домена. Пусто — системный.
+	resolver dnsrec.Resolver
 
 	// Контекст, который гасится по SIGINT/SIGTERM. Циклы получают его
 	// параметром явно, но круг ссылок стартует и из HTTP-обработчика — ему
@@ -385,10 +389,16 @@ func (a *Agent) sampleLoop(ctx context.Context) {
 			// Время работы сервера стало меньше, чем было, — значит его
 			// перезагрузили. Проверка стоит после записи замера: отметка
 			// без замера рядом с ней объясняет ровно ничего.
-			if knownUptime && sample.UptimeSeconds < previousUptime {
+			rebooted := knownUptime && sample.UptimeSeconds < previousUptime
+			if rebooted {
 				a.note(events.KindServerRebooted, "", "")
 			}
 			previousUptime, knownUptime = sample.UptimeSeconds, true
+			// Остановки программ из-за нехватки памяти (трек AH): после
+			// записи замера — рядом с событием должен лежать замер.
+			now := time.Now()
+			a.watchOom(ctx, a.collector, rebooted, now)
+			a.notifyOom(ctx, a.oomKnown(), now)
 			a.notifyDisk(ctx, sample)
 			a.notifyShrunk(ctx)
 
@@ -478,6 +488,9 @@ type Result struct {
 	// умеет. Указатель — чтобы старый ответ, пересобранный приложением, не
 	// выдал себя за «выключены».
 	QuietHours *QuietState `json:"quietHours"`
+	// Записи доменов: SPF, DMARC, серверы имён, почта, адреса сайтов (трек
+	// AH, агент с 267). Поле есть всегда; его нет — агент старый.
+	DNS []dnsrec.Snapshot `json:"dns"`
 }
 
 // QuietState — тихие часы для экрана.
@@ -578,6 +591,12 @@ func (a *Agent) runChecks(ctx context.Context) (Result, error) {
 	}
 
 	firing, resolved := checks.Evaluate(a.cfg.Alerts, a.words(), metrics.Sample{}, result.Domains, result.Certs)
+
+	// Записи домена — тем же кругом и тем же письмом-разносчиком (трек AH).
+	snapshots, dnsFiring, dnsResolved := a.checkDNS(ctx, sites)
+	result.DNS = snapshots
+	firing = append(firing, dnsFiring...)
+	resolved = append(resolved, dnsResolved...)
 	a.dispatch(ctx, firing, resolved)
 
 	return result, nil
@@ -673,6 +692,24 @@ func (a *Agent) dispatch(ctx context.Context, firing, resolved []checks.Alert) {
 	}
 
 	for _, alert := range resolved {
+		// Отбой без письма (Р62): тревога о событии гаснет, когда событие
+		// ушло из окна, — молча и в любой час. Иначе следующее событие
+		// не было бы свежим, а «всё снова хорошо» о том, что само прошло,
+		// человеку не нужно.
+		if alert.QuietResolve {
+			state, err := a.db.AlertState(ctx, alert.Kind, alert.Target)
+			if err != nil || !state.Firing {
+				continue
+			}
+			if err := a.db.SaveAlertState(ctx, alert.Kind, alert.Target,
+				store.AlertState{Firing: false, LastSent: state.LastSent}); err != nil {
+				log.Printf("запись состояния тревоги: %v", err)
+			}
+			if err := a.db.ForgetAlertStep(ctx, alert.Kind, alert.Target); err != nil {
+				log.Printf("сброс ступени напоминания: %v", err)
+			}
+			continue
+		}
 		if hushed && !alert.Urgent {
 			continue
 		}
@@ -866,13 +903,17 @@ type Snapshot struct {
 	// отсюда, а не держит свою копию (агент 0.26.0).
 	InodesAlertPercent int `json:"inodesAlertPercent"`
 	InodesFullPercent  int `json:"inodesFullPercent"`
+	// Остановки программ из-за нехватки памяти (трек AH, агент с 265).
+	// Нет поля — агент старый, и экран просит обновить мониторинг.
+	Memory *MemoryInfo `json:"memory,omitempty"`
 }
 
 func (a *Agent) Snapshot(hours int) (any, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	history, err := a.db.Samples(ctx, time.Now().Add(-time.Duration(hours)*time.Hour))
+	since := time.Now().Add(-time.Duration(hours) * time.Hour)
+	history, err := a.db.Samples(ctx, since)
 	if err != nil {
 		return nil, err
 	}
@@ -889,6 +930,7 @@ func (a *Agent) Snapshot(hours int) (any, error) {
 		DiskAlertPercent:   a.cfg.Alerts.DiskPercent,
 		InodesAlertPercent: checks.InodesAlertPercent,
 		InodesFullPercent:  checks.InodesFullPercent,
+		Memory:             a.memoryInfo(ctx, since),
 	}
 	if len(history) > 0 {
 		snapshot.Current = &history[len(history)-1]
@@ -905,6 +947,7 @@ func (a *Agent) Checks() (any, error) {
 		NotifyMuted: a.notifier.Muted(),
 		Domains:     []checks.DomainStatus{},
 		Certs:       []checks.TLSStatus{},
+		DNS:         a.dnsSnapshots(ctx),
 	}
 	a.thresholds(&result)
 
@@ -1029,6 +1072,7 @@ func (a *Agent) snapshot(ctx context.Context) (health.Snapshot, error) {
 	} else if ok {
 		in.Sample = &sample
 	}
+	in.OomWeek, in.OomKnown = a.oomWeek(ctx, now)
 
 	// Приглушения и обслуживание читаются вместе со всем остальным: свод
 	// обязан быть одним ответом, а не экраном, который сначала показывает
@@ -1077,17 +1121,20 @@ func (a *Agent) snapshot(ctx context.Context) (health.Snapshot, error) {
 			alive[domain] = true
 		}
 	}
-	if reports, err := a.db.LinkReports(ctx, alive); err != nil {
+	// Неучтённое (трек AG) вычитается здесь же, при чтении: свод, показатели
+	// и отчёт письмом считаются уже без него и сходятся с экранами сами.
+	ignored := a.ignoreList(ctx)
+	if reports, err := a.db.LinkReports(ctx, alive, ignored); err != nil {
 		log.Printf("свод: битые ссылки: %v", err)
 	} else {
 		in.Links = reports
 	}
-	if scans, err := a.db.SeoScans(ctx, alive); err != nil {
+	if scans, err := a.db.SeoScans(ctx, alive, ignored); err != nil {
 		log.Printf("свод: обход сайтов: %v", err)
 	} else {
 		in.Seo = scans
 	}
-	if reports, err := a.db.VitalsReports(ctx, alive); err != nil {
+	if reports, err := a.db.VitalsReports(ctx, alive, ignored); err != nil {
 		log.Printf("свод: замеры производительности: %v", err)
 	} else {
 		in.Vitals = reports
@@ -1468,6 +1515,7 @@ func (a *Agent) Links() (any, error) {
 	defer cancel()
 
 	sites, err := a.cfg.Sites()
+	a.forgetIgnores(ctx, sites, err)
 	if err != nil {
 		return nil, err
 	}
@@ -1476,7 +1524,7 @@ func (a *Agent) Links() (any, error) {
 		alive[site.Domain] = true
 	}
 
-	reports, err := a.db.LinkReports(ctx, alive)
+	reports, err := a.db.LinkReports(ctx, alive, a.ignoreList(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -1739,6 +1787,20 @@ type VitalsState struct {
 	Reports       []vitals.Report `json:"reports"`
 }
 
+// vitalsAlive — какие замеры живые: тройки «домен, путь, устройство» по
+// сегодняшнему списку страниц.
+func (a *Agent) vitalsAlive(sites []config.Site, extra map[string][]string) map[string]bool {
+	alive := map[string]bool{}
+	for _, site := range sites {
+		for _, path := range a.vitalsPages(site.Domain, extra) {
+			for _, strategy := range a.cfg.Vitals.Strategies {
+				alive[store.VitalsKey(site.Domain, path, strategy)] = true
+			}
+		}
+	}
+	return alive
+}
+
 func (a *Agent) Vitals() (any, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
@@ -1753,15 +1815,10 @@ func (a *Agent) Vitals() (any, error) {
 		extra = map[string][]string{}
 	}
 
-	alive := map[string]bool{}
+	alive := a.vitalsAlive(sites, extra)
 	pages := make([]VitalsPage, 0, len(sites))
 	for _, site := range sites {
 		paths := a.vitalsPages(site.Domain, extra)
-		for _, path := range paths {
-			for _, strategy := range a.cfg.Vitals.Strategies {
-				alive[store.VitalsKey(site.Domain, path, strategy)] = true
-			}
-		}
 		// Главная в списке страниц не показывается: она меряется всегда, и
 		// убрать её нельзя — строка, которую нельзя удалить, только
 		// путает.
@@ -1778,7 +1835,7 @@ func (a *Agent) Vitals() (any, error) {
 		return nil, err
 	}
 
-	reports, err := a.db.VitalsReports(ctx, alive)
+	reports, err := a.db.VitalsReports(ctx, alive, a.ignoreList(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -2548,6 +2605,7 @@ func (a *Agent) Seo() (any, error) {
 	defer cancel()
 
 	sites, err := a.cfg.Sites()
+	a.forgetIgnores(ctx, sites, err)
 	if err != nil {
 		return nil, err
 	}
@@ -2556,7 +2614,7 @@ func (a *Agent) Seo() (any, error) {
 		alive[site.Domain] = true
 	}
 
-	scans, err := a.db.SeoScans(ctx, alive)
+	scans, err := a.db.SeoScans(ctx, alive, a.ignoreList(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -2595,7 +2653,8 @@ func (a *Agent) SeoPages(domain, severity, code string, offset int) (any, error)
 		offset = 0
 	}
 
-	pages, total, err := a.db.SeoPages(ctx, domain, severity, code, seoPagesLimit, offset)
+	skip := ignore.Seo(a.ignoreList(ctx), domain)
+	pages, total, err := a.db.SeoPages(ctx, domain, severity, code, seoPagesLimit, offset, skip)
 	if err != nil {
 		return nil, err
 	}
@@ -2629,7 +2688,10 @@ func (a *Agent) SeoDiff(domain string) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	return seo.Compare(domain, current, previous), nil
+	// Обе стороны — без неучтённого, одним сегодняшним списком (Р7):
+	// «перестали учитывать» не выглядит «исправлено».
+	skip := ignore.Seo(a.ignoreList(ctx), domain)
+	return seo.Compare(domain, current.Without(skip), previous.Without(skip)), nil
 }
 
 // Код отказа: сайта с таким доменом у агента нет.

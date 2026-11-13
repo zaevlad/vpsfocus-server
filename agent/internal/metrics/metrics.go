@@ -38,6 +38,12 @@ type Sample struct {
 	InodesTotal uint64 `json:"inodesTotal,omitempty"`
 	InodesFree  uint64 `json:"inodesFree,omitempty"`
 
+	// Подкачка (трек AH, Р61). Указатели, а не числа: ноль здесь — ответ
+	// («подкачки нет»), а «не знаем» (VPS в контейнере, Р58, или замер
+	// старого агента) — пусто.
+	SwapTotalMB *uint64 `json:"swapTotalMb,omitempty"`
+	SwapFreeMB  *uint64 `json:"swapFreeMb,omitempty"`
+
 	Load1 float64 `json:"load1"`
 
 	// Аптайм сервера в секундах.
@@ -111,10 +117,14 @@ type Collector struct {
 	lastBusy  uint64
 	lastTotal uint64
 	seeded    bool
+
+	// VPS сам в контейнере (Р58, Р59): счётчик остановок и подкачка там —
+	// хоста, и мы их «не знаем». Решается один раз при запуске.
+	containerized bool
 }
 
 func NewCollector(procDir, rootDir string) *Collector {
-	return &Collector{procDir: procDir, rootDir: rootDir}
+	return &Collector{procDir: procDir, rootDir: rootDir, containerized: Containerized(procDir, rootDir)}
 }
 
 // Collect снимает замер. Ошибка отдельного показателя не отменяет остальные:
@@ -132,9 +142,13 @@ func (c *Collector) Collect() (Sample, error) {
 		c.lastBusy, c.lastTotal, c.seeded = busy, total, true
 	}
 
-	if total, available, err := c.memory(); err == nil {
-		sample.MemTotalMB = total
-		sample.MemAvailableMB = available
+	if memory, err := c.memory(); err == nil {
+		sample.MemTotalMB = memory.totalMB
+		sample.MemAvailableMB = memory.availableMB
+		if memory.swapKnown && !c.containerized {
+			total, free := memory.swapTotalMB, memory.swapFreeMB
+			sample.SwapTotalMB, sample.SwapFreeMB = &total, &free
+		}
 	}
 
 	if disk, err := c.disk(); err == nil {
@@ -189,10 +203,18 @@ func (c *Collector) cpuCounters() (busy, total uint64, err error) {
 	return busy, total, nil
 }
 
-func (c *Collector) memory() (totalMB, availableMB uint64, err error) {
+// memoryFigures — то, что известно из meminfo.
+type memoryFigures struct {
+	totalMB, availableMB    uint64
+	swapTotalMB, swapFreeMB uint64
+	swapKnown               bool
+}
+
+func (c *Collector) memory() (memoryFigures, error) {
+	var out memoryFigures
 	file, err := os.Open(c.procDir + "/meminfo")
 	if err != nil {
-		return 0, 0, err
+		return out, err
 	}
 	defer file.Close()
 
@@ -208,16 +230,21 @@ func (c *Collector) memory() (totalMB, availableMB uint64, err error) {
 		}
 		switch fields[0] {
 		case "MemTotal:":
-			totalMB = value / 1024
+			out.totalMB = value / 1024
 		case "MemAvailable:":
-			availableMB = value / 1024
+			out.availableMB = value / 1024
+		case "SwapTotal:":
+			out.swapTotalMB = value / 1024
+			out.swapKnown = true
+		case "SwapFree:":
+			out.swapFreeMB = value / 1024
 		}
 	}
 
-	if totalMB == 0 {
-		return 0, 0, fmt.Errorf("/proc/meminfo: MemTotal not found")
+	if out.totalMB == 0 {
+		return memoryFigures{}, fmt.Errorf("/proc/meminfo: MemTotal not found")
 	}
-	return totalMB, availableMB, nil
+	return out, nil
 }
 
 func (c *Collector) loadAverage() float64 {

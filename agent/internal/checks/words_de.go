@@ -77,6 +77,28 @@ var german = Words{
 	BackupShrunkOKSubject: "Die Kopie der Datenbank hat wieder ihre übliche Größe",
 	BackupShrunkOKBody:    "Die letzte Kopie der Statistik umfasst %s MB, nicht weniger als die Hälfte der vorigen.",
 
+	OomSubject: "Dem Server ist der Arbeitsspeicher ausgegangen, und das System hat ein Programm beendet",
+	OomBody: "Am letzten Tag hat das System Programme wegen Speichermangels beendet: " +
+		"%d Mal. Das passiert, wenn dem ganzen Server der Arbeitsspeicher ausgeht oder ein Programm " +
+		"an das für es gesetzte Speicherlimit stößt. Die Website kann in solchen Momenten kurz ausfallen.\n\n%s\n\n" +
+		"Was tun: Öffnen Sie in der App „Serverzustand“ — dort sehen Sie, wie viel Speicher belegt ist " +
+		"und wie viel davon das Monitoring von vpsFocus selbst braucht, und finden eine Aufgabe für " +
+		"einen KI-Assistenten. Meist hilft mehr Arbeitsspeicher im Tarif des Hosters oder eine Auslagerung (Swap).",
+	OomNames:        "Direkt danach belegten diese Programme den meisten Speicher: %s.",
+	OomNamesUnknown: "Welche Programme den Speicher belegt haben, ist von hier aus nicht zu sehen.",
+	OomProcess:      "%s (%d MB)",
+
+	RecordGoneSubject: "%s: der %s-Eintrag ist verschwunden",
+	RecordGoneBody: "Die Domain hat keinen gültigen %s-Eintrag mehr (%s): Er wurde gelöscht, oder es gibt jetzt zwei davon — Maildienste behandeln das wie „kein Eintrag“.\n\n" +
+		"Werden von dieser Domain E-Mails verschickt — Registrierungen, Bestellungen, Newsletter —, können sie im Spam landen. Haben Sie die Einträge beim Registrar bewusst geändert, ist nichts zu tun. " +
+		"Was die Domain jetzt hat, zeigt der Bildschirm „Domains und SSL“ in der App, zusammen mit einer Aufgabe für einen KI-Assistenten.",
+	RecordBackSubject:  "%s: der %s-Eintrag ist wieder da",
+	RecordBackBody:     "Der %s-Eintrag von %s ist wieder vorhanden und lesbar.",
+	NameserversSubject: "%s: die Nameserver haben sich geändert",
+	NameserversBody: "Die Domain %s wird jetzt von anderen Nameservern bedient: vorher — %s, jetzt — %s.\n\n" +
+		"Das passiert, wenn eine Domain zu einem anderen Registrar umzieht oder an Cloudflare angebunden wird. Haben Sie das nicht getan, prüfen Sie den Zugang zum Panel Ihres Registrars: " +
+		"Die Nameserver entscheiden, wohin die Domain führt und wohin ihre E-Mails gehen. Der Resolver des Servers merkt sich alte Einträge, daher wird die Änderung mit bis zu ein, zwei Tagen Verzögerung sichtbar.",
+
 	TestSubject: "Test der Benachrichtigungen",
 	TestBody: "Das ist eine Testnachricht vom Server %s.\n\n" +
 		"Wenn Sie sie lesen, kommen Benachrichtigungen über Festplatte, Zertifikate " +

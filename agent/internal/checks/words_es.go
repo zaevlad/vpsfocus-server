@@ -77,6 +77,28 @@ var spanish = Words{
 	BackupShrunkOKSubject: "La copia de la base de datos vuelve a tener su tamaño habitual",
 	BackupShrunkOKBody:    "La última copia de la analítica ocupa %s MB, no menos de la mitad que la anterior.",
 
+	OomSubject: "El servidor se quedó sin memoria y el sistema detuvo un programa",
+	OomBody: "En el último día el sistema detuvo programas por falta de memoria: " +
+		"%d parada(s). Pasa cuando se queda sin memoria todo el servidor o cuando un programa " +
+		"llega al límite de memoria que tiene asignado. En esos momentos el sitio puede parpadear o caerse.\n\n%s\n\n" +
+		"Qué hacer: abra «Estado del servidor» en la aplicación: ahí se ve cuánta memoria está en uso " +
+		"y cuánta ocupa el propio monitoreo de vpsFocus, y hay una tarea para un asistente de IA. " +
+		"Suele ayudar ampliar la memoria en el plan del proveedor o activar la memoria de intercambio (swap).",
+	OomNames:        "Justo después, los programas que más memoria ocupaban eran: %s.",
+	OomNamesUnknown: "Desde aquí no se ve qué programas ocupaban la memoria.",
+	OomProcess:      "%s (%d MB)",
+
+	RecordGoneSubject: "%s: desapareció el registro %s",
+	RecordGoneBody: "El dominio ya no tiene un registro %s válido (%s): lo borraron o ahora hay dos, y los servicios de correo lo tratan igual que «no hay registro».\n\n" +
+		"Si desde este dominio se envían correos (registros, pedidos, boletines), pueden empezar a llegar a spam. Si cambió los registros en el registrador a propósito, no hace falta hacer nada. " +
+		"Lo que tiene ahora el dominio se ve en la pantalla «Dominios y SSL» de la aplicación, junto con una tarea para un asistente de IA.",
+	RecordBackSubject:  "%s: el registro %s volvió",
+	RecordBackBody:     "El registro %s de %s vuelve a estar y se puede leer.",
+	NameserversSubject: "%s: cambiaron los servidores de nombres",
+	NameserversBody: "El dominio %s ahora lo atienden otros servidores de nombres: antes, %s; ahora, %s.\n\n" +
+		"Pasa cuando el dominio se traslada a otro registrador o se conecta a Cloudflare. Si usted no lo hizo, revise el acceso al panel del registrador: " +
+		"los servidores de nombres deciden adónde lleva el dominio y adónde llega su correo. El resolvedor del servidor recuerda los registros antiguos, así que el cambio se ve con un retraso de hasta uno o dos días.",
+
 	TestSubject: "Prueba de notificaciones",
 	TestBody: "Este es un mensaje de prueba del servidor %s.\n\n" +
 		"Si lo estás leyendo, las notificaciones sobre el disco, los certificados " +

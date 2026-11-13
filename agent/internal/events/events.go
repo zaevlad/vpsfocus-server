@@ -103,4 +103,20 @@ const (
 	// что смотрят. В `Detail` неудачи лежит код беды.
 	KindBackupDone   = "eventBackupDone"
 	KindBackupFailed = "eventBackupFailed"
+
+	// Серверу не хватило памяти, и система остановила программу (трек AH,
+	// спринт 265): вырос счётчик ядра `oom_kill`. В `Detail` — на сколько
+	// вырос, числом: между двумя замерами остановок бывает несколько.
+	KindOomKill = "eventOomKill"
+
+	// Записи домена (трек AH, спринт 267). Цель — домен (у адреса — сайт),
+	// в `Detail` — часть: spf, dmarc, ns, mx, address.
+	//
+	// «Изменилась» — строкой в ленте без письма (Р17); «пропала» — запись
+	// SPF или DMARC была и её нет дольше 6 часов, с письмом; «вернулась» —
+	// после «пропала». Смена серверов имён — «изменилась» с частью ns и
+	// письмом.
+	KindDNSChanged    = "eventDnsChanged"
+	KindDNSRecordGone = "eventDnsRecordGone"
+	KindDNSRecordBack = "eventDnsRecordBack"
 )
