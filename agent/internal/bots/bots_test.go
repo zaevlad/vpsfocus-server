@@ -10,12 +10,14 @@ func TestClassifyNamesKnownRobots(t *testing.T) {
 		"Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; ChatGPT-User/1.0; +https://openai.com/bot": "ChatGPT-User",
 		"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)":                                  "Googlebot",
 		"Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)":                                   "Bingbot",
-		"Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)":                                        Other,
+		"Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)":                                        "Ahrefs",
 		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36":                   "",
 		"Mozilla/5.0 (Linux; Android 12; Cubot Note 20) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36":         "",
 		"Mozilla/5.0 (Linux; Android 10; CUBOT_X30 Build/QP1A) Chrome/120":                                          "",
-		"Mozilla/5.0 (compatible; MJ12bot/v1.4.8; http://mj12bot.com/)":                                             Other,
-		"Mozilla/5.0 (compatible; SeznamBot/4.0; +https://o-seznam.cz/napoveda/vyhledavani/en/seznambot-crawler/)":  Other,
+		"Mozilla/5.0 (compatible; MJ12bot/v1.4.8; http://mj12bot.com/)":                                             "Majestic",
+		"Mozilla/5.0 (compatible; SeznamBot/4.0; +https://o-seznam.cz/napoveda/vyhledavani/en/seznambot-crawler/)":  "SeznamBot",
+		// Нет в списке, но назвался роботом — «прочие».
+		"Mozilla/5.0 (compatible; Zzyzxbot/1.0; +https://example.com/bot)": Other,
 		"-": "",
 		"":  "",
 	}

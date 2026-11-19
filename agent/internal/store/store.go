@@ -222,6 +222,61 @@ create table if not exists robot_violations (
     primary key (day, host, name)
 );
 
+-- Исходы проверки имени робота по адресу (трек AI, Р7): сутки, сайт,
+-- имя — и три числа. Адреса нет: он сверяется в памяти и забывается.
+create table if not exists robot_checks (
+    day        integer not null,
+    host       text    not null default '',
+    name       text    not null,
+    verified   integer not null,
+    unverified integer not null,
+    unknown    integer not null,
+    primary key (day, host, name)
+);
+
+-- Отказы и заходы в закрытое тем, кто назвался роботом с чужого адреса
+-- (Р9, Р24, Р25). Прежние robot_refusals и robot_violations пишутся как
+-- раньше, а эти вычитаются из них при чтении.
+create table if not exists robot_refusal_impostors (
+    day        integer not null,
+    host       text    not null default '',
+    name       text    not null,
+    status     integer not null,
+    robots_txt integer not null,
+    count      integer not null,
+    primary key (day, host, name, status, robots_txt)
+);
+
+create table if not exists robot_violation_impostors (
+    day   integer not null,
+    host  text    not null,
+    name  text    not null,
+    count integer not null,
+    primary key (day, host, name)
+);
+
+-- Страницы, которые открывали роботы ИИ по просьбе людей (трек AI, Р11):
+-- сутки, сайт, имя, путь без строки запроса (номера — {n}), код ответа и
+-- число. Пути людей сюда не пишутся. @other — страницы сверх потолка.
+create table if not exists robot_pages (
+    day    integer not null,
+    host   text    not null default '',
+    name   text    not null,
+    path   text    not null,
+    status integer not null,
+    count  integer not null,
+    primary key (day, host, name, path, status)
+);
+
+-- Списки роботов, по которым агент считал (трек AI, Р21): день сборки
+-- вшитого списка и когда агент начал считать по нему. Смена списка двигает
+-- доли «люди / роботы» без всякой причины на сайте — графики ставят на этой
+-- дате отметку и не сравнивают через неё.
+create table if not exists robot_lists (
+    built   text    primary key,
+    seen_at integer not null
+);
+
 -- Текст robots.txt сайта из последнего обхода SEO (Р31): по нему заходы
 -- роботов из логов сверяются с правилами. Пустой текст — файла на сайте
 -- нет. Сайт из списка ушёл — строка уходит вместе со снимками обхода.
@@ -1927,13 +1982,28 @@ func (s *Store) AddRobotCounts(ctx context.Context, counts []logs.RobotCount) er
 
 // AddRobotRefusals прибавляет отказы роботам за проход к накопленным.
 func (s *Store) AddRobotRefusals(ctx context.Context, refusals []logs.RobotRefusal) error {
+	return s.addRefusals(ctx, "robot_refusals", refusals)
+}
+
+// AddImpostorRefusals — отказы тем, кто назвался роботом с чужого адреса.
+func (s *Store) AddImpostorRefusals(ctx context.Context, refusals []logs.RobotRefusal) error {
+	return s.addRefusals(ctx, "robot_refusal_impostors", refusals)
+}
+
+// ImpostorRefusals — их суточные отказы с указанного момента.
+func (s *Store) ImpostorRefusals(ctx context.Context, since time.Time) ([]logs.RobotRefusal, error) {
+	return s.refusals(ctx, "robot_refusal_impostors", since)
+}
+
+// table — одно из двух имён таблиц отказов из кода, не данные снаружи.
+func (s *Store) addRefusals(ctx context.Context, table string, refusals []logs.RobotRefusal) error {
 	for _, item := range refusals {
 		robotsTxt := 0
 		if item.RobotsTxt {
 			robotsTxt = 1
 		}
 		if _, err := s.db.ExecContext(ctx,
-			`insert into robot_refusals (day, host, name, status, robots_txt, count)
+			`insert into `+table+` (day, host, name, status, robots_txt, count)
 			 values (?, ?, ?, ?, ?, ?)
 			 on conflict do update set count = count + excluded.count`,
 			item.Day, item.Host, item.Name, item.Status, robotsTxt, item.Count,
@@ -1946,9 +2016,13 @@ func (s *Store) AddRobotRefusals(ctx context.Context, refusals []logs.RobotRefus
 
 // RobotRefusals — суточные отказы роботам с указанного момента.
 func (s *Store) RobotRefusals(ctx context.Context, since time.Time) ([]logs.RobotRefusal, error) {
+	return s.refusals(ctx, "robot_refusals", since)
+}
+
+func (s *Store) refusals(ctx context.Context, table string, since time.Time) ([]logs.RobotRefusal, error) {
 	rows, err := s.db.QueryContext(ctx,
 		`select day, host, name, status, robots_txt, count
-		 from robot_refusals where day >= ?`,
+		 from `+table+` where day >= ?`,
 		since.Unix()-since.Unix()%86_400)
 	if err != nil {
 		return nil, err
@@ -1966,6 +2040,139 @@ func (s *Store) RobotRefusals(ctx context.Context, since time.Time) ([]logs.Robo
 		out = append(out, item)
 	}
 	return out, rows.Err()
+}
+
+// AddRobotChecks прибавляет исходы проверки адресов за проход.
+func (s *Store) AddRobotChecks(ctx context.Context, checks []logs.RobotCheck) error {
+	for _, item := range checks {
+		if _, err := s.db.ExecContext(ctx,
+			`insert into robot_checks (day, host, name, verified, unverified, unknown)
+			 values (?, ?, ?, ?, ?, ?)
+			 on conflict do update set
+			     verified = verified + excluded.verified,
+			     unverified = unverified + excluded.unverified,
+			     unknown = unknown + excluded.unknown`,
+			item.Day, item.Host, item.Name, item.Verified, item.Unverified, item.Unknown,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RobotChecks — суточные исходы проверки с указанного момента.
+func (s *Store) RobotChecks(ctx context.Context, since time.Time) ([]logs.RobotCheck, error) {
+	return s.robotChecks(ctx,
+		`select day, host, name, verified, unverified, unknown from robot_checks where day >= ?`, since)
+}
+
+// RobotCheckSummary — исходы за период, сложенные по сайту и имени (Day — 0).
+func (s *Store) RobotCheckSummary(ctx context.Context, since time.Time) ([]logs.RobotCheck, error) {
+	return s.robotChecks(ctx,
+		`select 0, host, name, sum(verified), sum(unverified), sum(unknown)
+		 from robot_checks where day >= ? group by host, name`, since)
+}
+
+func (s *Store) robotChecks(ctx context.Context, query string, since time.Time) ([]logs.RobotCheck, error) {
+	rows, err := s.db.QueryContext(ctx, query, since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []logs.RobotCheck{}
+	for rows.Next() {
+		var item logs.RobotCheck
+		if err := rows.Scan(&item.Day, &item.Host, &item.Name, &item.Verified, &item.Unverified, &item.Unknown); err != nil {
+			return nil, err
+		}
+		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// ChecksSince — первые сутки, за которые есть проверка адресов (Р23): до
+// них экран пишет «проверяется с …», а не «0 настоящих». Нет — нулевое
+// время.
+func (s *Store) ChecksSince(ctx context.Context) (time.Time, error) {
+	var day sql.NullInt64
+	if err := s.db.QueryRowContext(ctx, `select min(day) from robot_checks`).Scan(&day); err != nil {
+		return time.Time{}, err
+	}
+	if !day.Valid {
+		return time.Time{}, nil
+	}
+	return time.Unix(day.Int64, 0).UTC(), nil
+}
+
+// AddRobotPages прибавляет страницы роботов ИИ за проход.
+//
+// Потолок путей (logs.PagesPerRobotDay) держится здесь, на сутки целиком:
+// проход видит только минуту лога, и без этого робот, обходящий тысячи
+// адресов, добавлял бы по 50 новых строк каждую минуту. Новый путь сверх
+// потолка уходит в строку logs.OtherPath.
+func (s *Store) AddRobotPages(ctx context.Context, pages []logs.RobotPage) error {
+	for _, item := range pages {
+		if item.Path != logs.OtherPath {
+			var known, paths int
+			if err := s.db.QueryRowContext(ctx,
+				`select
+				     (select count(*) from robot_pages where day = ? and host = ? and name = ? and path = ?),
+				     (select count(distinct path) from robot_pages where day = ? and host = ? and name = ? and path <> ?)`,
+				item.Day, item.Host, item.Name, item.Path, item.Day, item.Host, item.Name, logs.OtherPath,
+			).Scan(&known, &paths); err != nil {
+				return err
+			}
+			if known == 0 && paths >= logs.PagesPerRobotDay {
+				item.Path, item.Status = logs.OtherPath, 0
+			}
+		}
+		if _, err := s.db.ExecContext(ctx,
+			`insert into robot_pages (day, host, name, path, status, count)
+			 values (?, ?, ?, ?, ?, ?)
+			 on conflict do update set count = count + excluded.count`,
+			item.Day, item.Host, item.Name, item.Path, item.Status, item.Count,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RobotPages — страницы за период, сложенные по сайту, имени, пути и коду
+// (Day — 0).
+func (s *Store) RobotPages(ctx context.Context, since time.Time) ([]logs.RobotPage, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select host, name, path, status, sum(count) from robot_pages where day >= ?
+		 group by host, name, path, status`,
+		since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []logs.RobotPage{}
+	for rows.Next() {
+		var item logs.RobotPage
+		if err := rows.Scan(&item.Host, &item.Name, &item.Path, &item.Status, &item.Count); err != nil {
+			return nil, err
+		}
+		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// NoteRobotList запоминает, что агент считает по списку роботов built, и
+// отдаёт, с какого момента (первый раз — сейчас).
+func (s *Store) NoteRobotList(ctx context.Context, built string, now time.Time) (time.Time, error) {
+	if _, err := s.db.ExecContext(ctx,
+		`insert into robot_lists (built, seen_at) values (?, ?) on conflict do nothing`,
+		built, now.Unix()); err != nil {
+		return time.Time{}, err
+	}
+	var seen int64
+	if err := s.db.QueryRowContext(ctx, `select seen_at from robot_lists where built = ?`, built).Scan(&seen); err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(seen, 0).UTC(), nil
 }
 
 // RobotDays — суточные счётчики роботов (со служебными строками) с
@@ -2215,6 +2422,11 @@ func (s *Store) RotateLogEvents(ctx context.Context, days int) (int64, error) {
 	}
 	if _, err := s.db.ExecContext(ctx, `delete from robot_violations where day < ?`, cutoff); err != nil {
 		return 0, err
+	}
+	for _, table := range []string{"robot_checks", "robot_refusal_impostors", "robot_violation_impostors", "robot_pages"} {
+		if _, err := s.db.ExecContext(ctx, `delete from `+table+` where day < ?`, cutoff); err != nil {
+			return 0, err
+		}
 	}
 	return result.RowsAffected()
 }
@@ -2898,6 +3110,43 @@ func (s *Store) SiteTraffic(ctx context.Context, since time.Time) ([]logs.SiteTr
 			return nil, err
 		}
 		out = append(out, item)
+	}
+	return out, rows.Err()
+}
+
+// AddImpostorViolations — заходы в закрытое тех, кто назвался роботом с
+// чужого адреса.
+func (s *Store) AddImpostorViolations(ctx context.Context, items []logs.RobotViolation) error {
+	for _, item := range items {
+		if _, err := s.db.ExecContext(ctx,
+			`insert into robot_violation_impostors (day, host, name, count)
+			 values (?, ?, ?, ?)
+			 on conflict do update set count = count + excluded.count`,
+			item.Day, item.Host, item.Name, item.Count,
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ImpostorViolations — их заходы за период, по сайту и имени.
+func (s *Store) ImpostorViolations(ctx context.Context, since time.Time) (map[[2]string]int, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`select host, name, sum(count) from robot_violation_impostors where day >= ? group by host, name`,
+		since.Unix()-since.Unix()%86_400)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[[2]string]int{}
+	for rows.Next() {
+		var host, name string
+		var count int
+		if err := rows.Scan(&host, &name, &count); err != nil {
+			return nil, err
+		}
+		out[[2]string{host, name}] = count
 	}
 	return out, rows.Err()
 }

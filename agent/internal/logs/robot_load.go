@@ -12,8 +12,9 @@ import (
 // Р22–Р24, Р31).
 //
 // Как и у остальных счётчиков роботов, хранятся только числа «сутки, сайт,
-// вид» — ни строк лога, ни адресов посетителей. Подделку имени не ловим и
-// не обещаем: «назвался GPTBot» — всё, что видно по логу.
+// вид» — ни строк лога, ни адресов посетителей. Нагрузка считает всех, в
+// том числе назвавшихся чужим именем (Р9): нагрузка есть нагрузка. Заходы
+// в закрытое самозванцев вычитаются при чтении (Р24).
 
 // Виды в счётчике нагрузки: роли из `bots`, «прочие роботы» и «все запросы».
 const (
@@ -60,7 +61,9 @@ func bound(name string) bool {
 	return ok && kind != bots.AIUser
 }
 
-// trafficKind — вид строки для счётчика нагрузки; пусто — человек.
+// trafficKind — вид строки для счётчика нагрузки; пусто — человек. Роль —
+// из всего списка (трек AI): скрипты, SEO-сервисы, наши обходы (`self`) —
+// своими видами, а не «прочими» и не людьми (П5, П6).
 func trafficKind(robot string) string {
 	if robot == "" {
 		return ""
@@ -68,7 +71,7 @@ func trafficKind(robot string) string {
 	if robot == bots.Other {
 		return TrafficOther
 	}
-	if kind, ok := botKind(robot); ok {
+	if kind, ok := bots.KindOf(robot); ok {
 		return kind
 	}
 	return TrafficOther
@@ -100,7 +103,7 @@ func (r *Robots) addTraffic(event Event, kind string) {
 	}
 }
 
-func (r *Robots) checkRules(event Event) {
+func (r *Robots) checkRules(event Event, outcome string) {
 	if r.policy == nil || event.Host == "" || !bound(event.Robot) {
 		return
 	}
@@ -109,6 +112,15 @@ func (r *Robots) checkRules(event Event) {
 		return
 	}
 	key := violationKey{dayOf(event.At), event.Host, event.Robot}
+	// Самозванец в закрытом разделе не обвиняет настоящего (Р24): его заход
+	// считается и отдельно, чтобы вычесться при чтении.
+	if outcome == bots.Unverified {
+		if item, ok := r.impostorViolations[key]; ok {
+			item.Count++
+		} else {
+			r.impostorViolations[key] = &RobotViolation{Day: key.day, Host: key.host, Name: key.name, Count: 1}
+		}
+	}
 	if item, ok := r.violations[key]; ok {
 		item.Count++
 		return

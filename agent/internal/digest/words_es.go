@@ -30,7 +30,7 @@ var spanish = phrases{
 	mb:                "%d MB",
 	underOneMB:        "menos de 1 MB",
 	robotsTitle:       "Bots de buscadores e IA",
-	robotsHint:        "Qué significa y dónde suele estar una regla así se explica en la pantalla «Bots e IA» de la aplicación. El nombre del bot se puede falsificar.",
+	robotsHint:        "Qué significa y dónde suele estar una regla así se explica en la pantalla «Bots e IA» de la aplicación. Si el dueño del bot publica sus direcciones, no se cuentan las solicitudes con su nombre desde otras direcciones.",
 	robotsWholeServer: "todo el servidor",
 	robotRefused:      "%s es rechazado (código %d): %d de %d solicitudes esta semana",
 	robotRobotsTxt:    ", incluido robots.txt",

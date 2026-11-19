@@ -30,7 +30,7 @@ var french = phrases{
 	mb:                "%d Mo",
 	underOneMB:        "moins de 1 Mo",
 	robotsTitle:       "Robots de recherche et d'IA",
-	robotsHint:        "Ce que cela signifie et où se trouve généralement une telle règle : sur l'écran « Robots et IA » de l'application. Le nom du robot peut être usurpé.",
+	robotsHint:        "Ce que cela signifie et où se trouve généralement une telle règle : sur l'écran « Robots et IA » de l'application. Quand le propriétaire du robot publie ses adresses, les requêtes sous son nom venant d'autres adresses ne sont pas comptées.",
 	robotsWholeServer: "tout le serveur",
 	robotRefused:      "%s est refusé (code %d) : %d requêtes sur %d cette semaine",
 	robotRobotsTxt:    ", y compris robots.txt",

@@ -29,6 +29,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -1980,6 +1981,11 @@ func (a *Agent) scanLogs(ctx context.Context) {
 	}
 	rules := logs.NewRobotsFiles(bodies)
 
+	// С какого момента считаем по этому списку роботов (Р21).
+	if _, err := a.db.NoteRobotList(ctx, bots.ListDate(), time.Now()); err != nil {
+		log.Printf("список роботов: %v", err)
+	}
+
 	for _, source := range sources {
 		if ctx.Err() != nil {
 			return
@@ -2023,6 +2029,27 @@ func (a *Agent) scanLogs(ctx context.Context) {
 		if violations := robots.Violations(); len(violations) > 0 {
 			if err := a.db.AddRobotViolations(ctx, violations); err != nil {
 				log.Printf("запись заходов в закрытое: %v", err)
+			}
+		}
+		// Исходы проверки адресов и самозванцы (трек AI, Р7, Р24, Р25).
+		if pages := robots.Pages(); len(pages) > 0 {
+			if err := a.db.AddRobotPages(ctx, pages); err != nil {
+				log.Printf("запись страниц роботов ИИ: %v", err)
+			}
+		}
+		if checks := robots.Checks(); len(checks) > 0 {
+			if err := a.db.AddRobotChecks(ctx, checks); err != nil {
+				log.Printf("запись проверки адресов роботов: %v", err)
+			}
+		}
+		if refusals := robots.ImpostorRefusals(); len(refusals) > 0 {
+			if err := a.db.AddImpostorRefusals(ctx, refusals); err != nil {
+				log.Printf("запись отказов самозванцам: %v", err)
+			}
+		}
+		if violations := robots.ImpostorViolations(); len(violations) > 0 {
+			if err := a.db.AddImpostorViolations(ctx, violations); err != nil {
+				log.Printf("запись заходов самозванцев: %v", err)
 			}
 		}
 		if err := a.db.SaveLogPosition(ctx, source.Path, position, failure); err != nil {
@@ -2138,6 +2165,61 @@ type RobotVisit struct {
 	LastAt string `json:"lastAt"`
 }
 
+// RobotSeen — робот списка, приходивший на сайт за период.
+type RobotSeen struct {
+	Name string `json:"name"`
+	Role string `json:"role"`
+	// Все запросы под этим именем, вместе с назвавшимися с чужого адреса.
+	Count  int    `json:"count"`
+	LastAt string `json:"lastAt"`
+	// Исходы проверки по адресу за период (трек AI, Р43): на экране число
+	// без самозванцев — Count минус Unverified. Нет — за период проверки не
+	// было (сутки до нового агента), и экран пишет «проверяется с …» (Р23).
+	Check *RobotCheckCounts `json:"check,omitempty"`
+	// Можно ли этого робота проверить по адресу вообще (Р53).
+	Checkable bool `json:"checkable"`
+}
+
+// RobotCheckCounts — «настоящий», «назвался так с чужого адреса», «не
+// проверить».
+type RobotCheckCounts struct {
+	Verified   int `json:"verified"`
+	Unverified int `json:"unverified"`
+	Unknown    int `json:"unknown"`
+}
+
+// RobotPageSeen — страница, которую открывали ИИ по просьбе людей.
+type RobotPageSeen struct {
+	// Как у ошибок: без строки запроса, номера — {n}, идентификаторы — {id}
+	// (экран рисует их «…», Р61).
+	Path   string `json:"path"`
+	Status int    `json:"status"`
+	// opened, redirected, notFound, failed (Р37).
+	Outcome string   `json:"outcome"`
+	Count   int      `json:"count"`
+	Names   []string `json:"names"`
+}
+
+// Сколько страниц ИИ отдавать на сайт (Р38).
+const robotPagesShown = 50
+
+// RobotAddresses — почему адреса роботов не проверились (Р8, Р44): из
+// строк роботов, которых можно проверить, — сколько с частного адреса
+// (веб-сервер в Docker), с адреса Cloudflare (сайт за прокси) и без адреса.
+type RobotAddresses struct {
+	Checkable int `json:"checkable"`
+	Private   int `json:"private"`
+	Proxy     int `json:"proxy"`
+	None      int `json:"none"`
+}
+
+// RobotImpostor — сколько раз за неделю отказали тому, кто назвался
+// роботом с чужого адреса (Р9): не беда, а работа защиты.
+type RobotImpostor struct {
+	Name  string `json:"name"`
+	Count int    `json:"count"`
+}
+
 // RobotHost — роботы одного сайта. Пустой домен — сервер целиком: формат
 // лога домена не пишет, и отнести визит к сайту нечем.
 type RobotHost struct {
@@ -2146,9 +2228,26 @@ type RobotHost struct {
 	// живом сайте — формат лога роботов не называет: «не знаем».
 	Lines   int `json:"lines"`
 	NoAgent int `json:"noAgent"`
-	// Роботы из списка — по имени; прочие назвавшиеся роботами — числом.
+	// Прежние 14 роботов — по имени; прочие назвавшиеся роботами — числом.
+	// Остальные роботы списка (трек AI) сложены в Other: старое приложение
+	// иначе вывело бы сотни имён простынёй (Р17). Наши обходы (`self`)
+	// сюда не входят — раньше они считались людьми.
 	Visits []RobotVisit `json:"visits"`
 	Other  int          `json:"other"`
+	// Все роботы списка, пришедшие за период, с ролью (трек AI). У агентов
+	// до 0.31.0 поля нет.
+	Robots []RobotSeen `json:"robots"`
+	// Почему адреса не проверились; nil — проверяемых роботов не было.
+	Addresses *RobotAddresses `json:"addresses,omitempty"`
+	// Отказы самозванцам за семь дней — без вывода (Р9).
+	ImpostorRefusals []RobotImpostor `json:"impostorRefusals"`
+	// Что читали ИИ по просьбе людей за период (Р11, Р38): не больше
+	// robotPagesShown страниц, сначала «не нашёл»; остальные — числом.
+	Pages []RobotPageSeen `json:"pages"`
+	// Страниц сверх показанных и заходов на страницы сверх суточного
+	// потолка агента (@other).
+	PagesMore  int `json:"pagesMore"`
+	PagesOther int `json:"pagesOther"`
 	// Обращения к адресам, которые перебирают сканеры, и ответы 200 на
 	// адреса с секретом (`.env`, `.git`).
 	Scans   int `json:"scans"`
@@ -2177,8 +2276,11 @@ type RobotTraffic struct {
 	// формат размера не пишет, доля трафика «не знаем».
 	Bytes      int64 `json:"bytes"`
 	BytesKnown bool  `json:"bytesKnown"`
-	// По видам роботов: роль из bots или other.
+	// По видам роботов: прежние четыре роли или other — новые роли сложены
+	// в other для старого приложения (Р17).
 	Kinds []RobotKindTraffic `json:"kinds"`
+	// По всем ролям списка (трек AI), в том числе `self` — наши обходы.
+	Roles []RobotKindTraffic `json:"roles"`
 }
 
 // RobotKindTraffic — запросы и байты одного вида роботов.
@@ -2191,10 +2293,12 @@ type RobotKindTraffic struct {
 // RobotTrespass — робот ходил в закрытое robots.txt: сколько раз за
 // период и пример адреса без параметров.
 type RobotTrespass struct {
-	Name    string `json:"name"`
-	Kind    string `json:"kind"`
-	Count   int    `json:"count"`
-	Example string `json:"example"`
+	Name string `json:"name"`
+	Kind string `json:"kind"`
+	// Без назвавшихся с чужого адреса (Р24) — их число отдельно.
+	Count     int    `json:"count"`
+	Example   string `json:"example"`
+	Impostors int    `json:"impostors,omitempty"`
 }
 
 // RobotsState — ответ `GET /robots`.
@@ -2214,6 +2318,17 @@ type RobotsState struct {
 	// GPTBot может кто угодно. Флаг есть, чтобы экран это сказал, и по нему
 	// же приложение узнаёт агента с нагрузкой и robots.txt (0.27.0).
 	NamesUnverified bool `json:"namesUnverified"`
+	// День сборки вшитого списка роботов (трек AI, Р1): «список роботов от
+	// <даты>». Пусто у агентов до 0.31.0.
+	ListDate string `json:"listDate"`
+	// С какого момента агент считает по этому списку (Р21): графики ставят
+	// отметку и не сравнивают через неё.
+	ListSince string `json:"listSince,omitempty"`
+	// Имена сверяются с адресами владельцев (трек AI). NamesUnverified
+	// остаётся true: по нему старое приложение узнаёт агента с нагрузкой.
+	NamesChecked bool `json:"namesChecked"`
+	// С каких суток есть проверка адресов (Р23); пусто — ещё ни одной.
+	ChecksSince string `json:"checksSince,omitempty"`
 }
 
 // robotVerdicts — кому отказывают и кто пропал, по сайтам.
@@ -2227,6 +2342,16 @@ func (a *Agent) robotVerdicts(ctx context.Context) ([]logs.RobotVerdict, bool, e
 	if err != nil {
 		return nil, false, err
 	}
+	// Назвавшиеся роботом с чужого адреса в вывод не идут (Р9, Р35).
+	checks, err := a.db.RobotChecks(ctx, since)
+	if err != nil {
+		return nil, false, err
+	}
+	impostors, err := a.db.ImpostorRefusals(ctx, since)
+	if err != nil {
+		return nil, false, err
+	}
+	days, refusals = logs.WithoutImpostors(days, refusals, checks, impostors)
 	verdicts, goneKnown := logs.AssessRobots(time.Now(), a.cfg.Logs.RetentionDays, days, refusals)
 	return verdicts, goneKnown, nil
 }
@@ -2243,6 +2368,10 @@ func (a *Agent) Robots(days int) (any, error) {
 	if err != nil {
 		return nil, err
 	}
+	checks, err := a.db.RobotCheckSummary(ctx, since)
+	if err != nil {
+		return nil, err
+	}
 
 	verdicts, goneKnown, err := a.robotVerdicts(ctx)
 	if err != nil {
@@ -2254,8 +2383,9 @@ func (a *Agent) Robots(days int) (any, error) {
 	hostOf := func(name string) *RobotHost {
 		host, ok := byHost[name]
 		if !ok {
-			host = &RobotHost{Host: name, Visits: []RobotVisit{}, Verdicts: []logs.RobotVerdict{},
-				Violations: []RobotTrespass{}}
+			host = &RobotHost{Host: name, Visits: []RobotVisit{}, Robots: []RobotSeen{},
+				Verdicts: []logs.RobotVerdict{}, Violations: []RobotTrespass{}, ImpostorRefusals: []RobotImpostor{},
+				Pages: []RobotPageSeen{}}
 			byHost[name] = host
 			order = append(order, name)
 		}
@@ -2272,12 +2402,39 @@ func (a *Agent) Robots(days int) (any, error) {
 			host.Scans = count.Count
 		case logs.MetaExposed:
 			host.Exposed = count.Count
+		case logs.MetaAddrCheckable, logs.MetaAddrPrivate, logs.MetaAddrProxy, logs.MetaAddrNone:
+			if host.Addresses == nil {
+				host.Addresses = &RobotAddresses{}
+			}
+			switch count.Name {
+			case logs.MetaAddrCheckable:
+				host.Addresses.Checkable = count.Count
+			case logs.MetaAddrPrivate:
+				host.Addresses.Private = count.Count
+			case logs.MetaAddrProxy:
+				host.Addresses.Proxy = count.Count
+			default:
+				host.Addresses.None = count.Count
+			}
 		case bots.Other:
-			host.Other = count.Count
+			host.Other += count.Count
 		default:
-			host.Visits = append(host.Visits, RobotVisit{
-				Name: count.Name, Count: count.Count, LastAt: count.LastAt.Format(time.RFC3339),
-			})
+			role, known := bots.KindOf(count.Name)
+			if !known {
+				// Имя из старого списка, которого в новом нет: для старого
+				// приложения — «прочие», как и было бы.
+				host.Other += count.Count
+				continue
+			}
+			lastAt := count.LastAt.Format(time.RFC3339)
+			host.Robots = append(host.Robots, RobotSeen{Name: count.Name, Role: role, Count: count.Count, LastAt: lastAt,
+				Check: checkOf(checks, count.Host, count.Name), Checkable: bots.Checkable(count.Name)})
+			switch {
+			case bots.Legacy(count.Name):
+				host.Visits = append(host.Visits, RobotVisit{Name: count.Name, Count: count.Count, LastAt: lastAt})
+			case role != bots.Self:
+				host.Other += count.Count
+			}
 		}
 	}
 
@@ -2289,6 +2446,12 @@ func (a *Agent) Robots(days int) (any, error) {
 	}
 
 	if err := a.robotLoad(ctx, since, hostOf); err != nil {
+		return nil, err
+	}
+	if err := a.robotImpostors(ctx, hostOf); err != nil {
+		return nil, err
+	}
+	if err := a.robotPages(ctx, since, hostOf); err != nil {
 		return nil, err
 	}
 
@@ -2305,8 +2468,16 @@ func (a *Agent) Robots(days int) (any, error) {
 			sources++
 		}
 	}
-	return RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources, GoneKnown: goneKnown,
-		NamesUnverified: true}, nil
+	state := RobotsState{Days: days, Bots: bots.List, Hosts: hosts, Sources: sources, GoneKnown: goneKnown,
+		NamesUnverified: true, ListDate: bots.ListDate()}
+	if since, err := a.db.NoteRobotList(ctx, state.ListDate, time.Now()); err == nil {
+		state.ListSince = since.Format(time.RFC3339)
+	}
+	state.NamesChecked = true
+	if first, err := a.db.ChecksSince(ctx); err == nil && !first.IsZero() {
+		state.ChecksSince = first.Format("2006-01-02")
+	}
+	return state, nil
 }
 
 func (a *Agent) Logs(hours int) (any, error) {
@@ -2769,7 +2940,7 @@ func (a *Agent) robotLoad(ctx context.Context, since time.Time, hostOf func(stri
 	for _, item := range traffic {
 		host := hostOf(item.Host)
 		if host.Traffic == nil {
-			host.Traffic = &RobotTraffic{Kinds: []RobotKindTraffic{}}
+			host.Traffic = &RobotTraffic{Kinds: []RobotKindTraffic{}, Roles: []RobotKindTraffic{}}
 		}
 		if item.Kind == logs.TrafficAll {
 			host.Traffic.Requests = item.Requests
@@ -2777,24 +2948,149 @@ func (a *Agent) robotLoad(ctx context.Context, since time.Time, hostOf func(stri
 			host.Traffic.BytesKnown = item.Sized > 0
 			continue
 		}
-		host.Traffic.Kinds = append(host.Traffic.Kinds, RobotKindTraffic{
+		host.Traffic.Roles = append(host.Traffic.Roles, RobotKindTraffic{
 			Kind: item.Kind, Requests: item.Requests, Bytes: item.Bytes,
 		})
+		host.Traffic.Kinds = foldKind(host.Traffic.Kinds, item)
 	}
 
 	violations, err := a.db.RobotViolations(ctx, since)
 	if err != nil {
 		return err
 	}
+	fake, err := a.db.ImpostorViolations(ctx, since)
+	if err != nil {
+		return err
+	}
 	for _, item := range violations {
+		impostors := fake[[2]string{item.Host, item.Name}]
+		// Все заходы — самозванцев: настоящий робот в закрытое не ходил
+		// (Р24), и строки нет.
+		if item.Count-impostors <= 0 {
+			continue
+		}
 		host := hostOf(item.Host)
 		kind, _ := bots.KindOf(item.Name)
 		host.Violations = append(host.Violations, RobotTrespass{
-			Name: item.Name, Kind: kind, Count: item.Count, Example: item.Example,
+			Name: item.Name, Kind: kind, Count: item.Count - impostors, Example: item.Example, Impostors: impostors,
 		})
 	}
 
 	return nil
+}
+
+// checkOf — исходы проверки робота на сайте за период; nil — не было.
+func checkOf(checks []logs.RobotCheck, host, name string) *RobotCheckCounts {
+	for _, item := range checks {
+		if item.Host == host && item.Name == name {
+			return &RobotCheckCounts{Verified: item.Verified, Unverified: item.Unverified, Unknown: item.Unknown}
+		}
+	}
+	return nil
+}
+
+// robotPages — что читали ИИ по просьбе людей: страница с кодом — одна
+// строка с числом и именами роботов. Сначала «не нашёл» (главная находка
+// блока, Р42), потом по числу заходов, потом по пути.
+func (a *Agent) robotPages(ctx context.Context, since time.Time, hostOf func(string) *RobotHost) error {
+	rows, err := a.db.RobotPages(ctx, since)
+	if err != nil {
+		return err
+	}
+	type key struct {
+		host, path string
+		status     int
+	}
+	pages := map[key]*RobotPageSeen{}
+	byHost := map[string][]*RobotPageSeen{}
+	for _, row := range rows {
+		if row.Path == logs.OtherPath {
+			hostOf(row.Host).PagesOther += row.Count
+			continue
+		}
+		k := key{row.Host, row.Path, row.Status}
+		page, ok := pages[k]
+		if !ok {
+			page = &RobotPageSeen{Path: row.Path, Status: row.Status, Outcome: logs.PageOutcome(row.Status), Names: []string{}}
+			pages[k] = page
+			byHost[row.Host] = append(byHost[row.Host], page)
+		}
+		page.Count += row.Count
+		page.Names = append(page.Names, row.Name)
+	}
+	for name, list := range byHost {
+		sort.Slice(list, func(i, j int) bool {
+			a, b := list[i], list[j]
+			if (a.Outcome == logs.PageNotFound) != (b.Outcome == logs.PageNotFound) {
+				return a.Outcome == logs.PageNotFound
+			}
+			if a.Count != b.Count {
+				return a.Count > b.Count
+			}
+			if a.Path != b.Path {
+				return a.Path < b.Path
+			}
+			return a.Status < b.Status
+		})
+		host := hostOf(name)
+		for i, page := range list {
+			if i >= robotPagesShown {
+				host.PagesMore = len(list) - robotPagesShown
+				break
+			}
+			sort.Strings(page.Names)
+			host.Pages = append(host.Pages, *page)
+		}
+	}
+	return nil
+}
+
+// robotImpostors — отказы самозванцам за семь дней, как и вывод (Р9).
+func (a *Agent) robotImpostors(ctx context.Context, hostOf func(string) *RobotHost) error {
+	impostors, err := a.db.ImpostorRefusals(ctx, time.Now().UTC().AddDate(0, 0, -7))
+	if err != nil {
+		return err
+	}
+	sum := map[[2]string]int{}
+	order := [][2]string{}
+	for _, item := range impostors {
+		key := [2]string{item.Host, item.Name}
+		if _, ok := sum[key]; !ok {
+			order = append(order, key)
+		}
+		sum[key] += item.Count
+	}
+	sort.Slice(order, func(i, j int) bool {
+		if order[i][0] != order[j][0] {
+			return order[i][0] < order[j][0]
+		}
+		return order[i][1] < order[j][1]
+	})
+	for _, key := range order {
+		host := hostOf(key[0])
+		host.ImpostorRefusals = append(host.ImpostorRefusals, RobotImpostor{Name: key[1], Count: sum[key]})
+	}
+	return nil
+}
+
+// Роли, которые знает старое приложение (Р17): остальные в прежнем поле
+// нагрузки складываются в other.
+var oldTrafficKinds = map[string]bool{bots.SearchEngine: true, bots.AISearch: true, bots.AITraining: true,
+	bots.AIUser: true, logs.TrafficOther: true}
+
+func foldKind(kinds []RobotKindTraffic, item logs.SiteTraffic) []RobotKindTraffic {
+	kind := item.Kind
+	if !oldTrafficKinds[kind] {
+		kind = logs.TrafficOther
+	}
+	for i := range kinds {
+		if kinds[i].Kind == kind {
+			kinds[i].Requests += item.Requests
+			kinds[i].Bytes += item.Bytes
+			return kinds
+		}
+	}
+	return append(kinds, RobotKindTraffic{Kind: kind, Requests: item.Requests, Bytes: item.Bytes})
 }
 
 // rulesDates вписывает сайтам, когда прочитан их robots.txt — тем же

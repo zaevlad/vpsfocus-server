@@ -34,7 +34,10 @@ type Bot struct {
 	InLogs bool `json:"inLogs"`
 }
 
-// List — одна копия списка.
+// List — прежние 14 роботов (Р19): проверка robots.txt в SEO-аудите (Р2),
+// «пока не приходил», отказы и «пропал». Весь список — вшитый
+// `data/robots.json` (catalog.go); прежние 14 в нём сверяются с этим
+// перечнем тестом `TestCatalogKeepsLegacyRobots`.
 //
 // Имена сверены 2026-09-29 с официальными страницами владельцев: OpenAI
 // (developers.openai.com/api/docs/bots), Anthropic (support.claude.com),
@@ -62,16 +65,6 @@ var List = []Bot{
 	{Name: "Perplexity-User", Kind: AIUser, InLogs: true},
 }
 
-// KindOf — роль робота из списка по имени.
-func KindOf(name string) (string, bool) {
-	for _, bot := range List {
-		if bot.Name == name {
-			return bot.Kind, true
-		}
-	}
-	return "", false
-}
-
 // ForRobots — роботы, о которых спрашивают robots.txt: все, кроме тех,
 // кого запускает человек своим вопросом.
 func ForRobots() []Bot {
@@ -94,44 +87,6 @@ const Other = "other"
 // слово встречается внутри названия телефона («Cubot Note 20», «CUBOT_X30»).
 // «+http» — ссылка на страницу о роботе, которую ставят почти все они.
 var robotWords = []string{"bot/", "bot;", "bot)", "bot-", "bot,", "crawler", "spider", "slurp", "fetcher", "+http"}
-
-// Classify — какой робот назвался этой строкой User-agent.
-//
-// Сама строка нигде не сохраняется: из функции выходит только имя из списка,
-// [Other] или пусто — «похоже на человека». Подлинность не проверяется:
-// назваться Googlebot может кто угодно, и экран так и пишет — «назвался».
-//
-// Поиск — по подстроке без учёта регистра: имя стоит внутри длинной строки
-// («Mozilla/5.0 (compatible; GPTBot/1.2; +https://openai.com/gptbot)»).
-// Более длинные имена проверяются раньше: «Claude-SearchBot» не должен
-// посчитаться за «ClaudeBot».
-func Classify(agent string) string {
-	if agent == "" || agent == "-" {
-		return ""
-	}
-	lower := strings.ToLower(agent)
-	best := ""
-	for _, bot := range List {
-		if !bot.InLogs {
-			continue
-		}
-		if strings.Contains(lower, strings.ToLower(bot.Name)) && len(bot.Name) > len(best) {
-			best = bot.Name
-		}
-	}
-	if best != "" {
-		return best
-	}
-	for _, word := range robotWords {
-		if strings.Contains(lower, word) {
-			return Other
-		}
-	}
-	if strings.HasSuffix(lower, "bot") {
-		return Other
-	}
-	return ""
-}
 
 // Адреса, которые перебирают сканеры уязвимостей. Обращение к ним — не
 // беда: их видит любой сайт в интернете, и экран показывает число, а не

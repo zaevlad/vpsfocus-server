@@ -388,6 +388,9 @@ func TestRobotsCountByDayHostAndName(t *testing.T) {
 		"shop.example|@scan":    2,
 		"shop.example|@exposed": 1,
 		"|@noagent":             1,
+		// GPTBot проверяется по адресу (трек AI), а адреса в событии нет.
+		"shop.example|@addr":     2,
+		"shop.example|@addrNone": 2,
 	}
 	for key, count := range want {
 		if got[key] != count {

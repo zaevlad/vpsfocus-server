@@ -30,7 +30,7 @@ var german = phrases{
 	mb:                "%d MB",
 	underOneMB:        "unter 1 MB",
 	robotsTitle:       "Bots von Suchmaschinen und KI",
-	robotsHint:        "Was das bedeutet und wo eine solche Regel meist steht, erklärt der Bildschirm „Bots und KI“ in der App. Der Name eines Bots lässt sich fälschen.",
+	robotsHint:        "Was das bedeutet und wo eine solche Regel meist steht, erklärt der Bildschirm „Bots und KI“ in der App. Wo der Betreiber die Adressen seines Bots veröffentlicht, zählen Anfragen unter dessen Namen von fremden Adressen nicht mit.",
 	robotsWholeServer: "ganzer Server",
 	robotRefused:      "%s wird abgewiesen (Code %d): %d von %d Anfragen diese Woche",
 	robotRobotsTxt:    ", auch bei robots.txt",

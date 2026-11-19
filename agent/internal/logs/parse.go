@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"net/netip"
 	"strconv"
 	"strings"
 	"time"
@@ -99,7 +100,28 @@ func ParseAccess(line string) (Event, bool) {
 	// стоит первым полем, до адреса посетителя.
 	event.Host = accessHost(line[:open])
 
+	// Адрес — только у робота, которого можно проверить (Р28), и только из
+	// того поля, что записал сам веб-сервер (Р26, Р56). X-Forwarded-For в
+	// конце строки не читается никогда: самозванец поставил бы туда адрес
+	// OpenAI и стал бы «настоящим».
+	if bots.Checkable(event.Robot) {
+		event.Addr = accessAddr(line[:open])
+	}
+
 	return event, true
+}
+
+// accessAddr — адрес посетителя из части строки до времени: там три поля
+// (адрес, identd, пользователь) или четыре (впереди виртуальный хост), так
+// что адрес — третье поле с конца. Нет адреса или вместо него имя хоста —
+// невалидный адрес, «не проверить».
+func accessAddr(prefix string) netip.Addr {
+	fields := strings.Fields(prefix)
+	if len(fields) < 3 {
+		return netip.Addr{}
+	}
+	addr, _ := bots.ParseAddr(fields[len(fields)-3])
+	return addr
 }
 
 // quotedFields — поля в двойных кавычках по порядку. Кавычку внутри поля

@@ -32,6 +32,8 @@ internal/links/     краулер сайта + запуск lychee (сприн�
 internal/store/     SQLite: замеры, результаты проверок, отчёты о ссылках, тревоги
 internal/notify/    SMTP, Telegram, Slack, Discord и вебхук
 internal/httpapi/   HTTP на петле, аутентификация по токену
+internal/bots/      роботы: список (data/, вшит) и правила совпадения
+cmd/bots-build/     сборщик списка роботов — руками перед выпуском, в образ не входит
 ```
 
 **Язык — Go**, решено вместе со стеком backend в спринте 3: один статический

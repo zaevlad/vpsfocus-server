@@ -1,0 +1,7221 @@
+{
+  "built": "2026-11-19",
+  "sources": [
+    {
+      "id": "ai-robots-txt",
+      "url": "https://github.com/ai-robots-txt/ai.robots.txt",
+      "commit": "be22abebcf663f7080766ad814829396dd19c659",
+      "license": "LICENSE-ai-robots-txt"
+    },
+    {
+      "id": "botscent",
+      "url": "https://github.com/nalinbhardwaj/botscent",
+      "commit": "7f9480037c60e2ebac7d655ede3f885bda27bde4",
+      "license": "LICENSE-botscent"
+    },
+    {
+      "id": "posthog",
+      "url": "https://github.com/PostHog/posthog",
+      "commit": "eda7f6b41eb6fd33b4793f9b98de4d6c7badb0b3",
+      "license": "LICENSE-posthog"
+    }
+  ],
+  "robots": [
+    {
+      "name": "1nsight Logo Fetcher",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "1nsight-logo-fetcher",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "360 Spider",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "360Spider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "a14y",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "a14y",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "ABEvalBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ABEvalBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Accessible Web Bot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AccessibleWebBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Acunetix",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Acunetix",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Adbeat",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "adbeat",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AddSearchBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AddSearchBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "AdIdxBot",
+      "role": "searchEngine",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "adidxbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "AdsBot-Google-Mobile",
+      "role": "searchEngine",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "AdsBot-Google-Mobile",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "adsnaver",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Ads-Naver",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Affsignal",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AffsignalCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Agent Native Search",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AgentNativeSearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AgentDataBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AgentDataBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "AgentTimes",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AgentTimes",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "AGI Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AGI Agent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Ahrefs",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AhrefsBot",
+          "rule": "token"
+        },
+        {
+          "text": "AhrefsBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Ahrefs Site Audit",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AhrefsSiteAudit",
+          "rule": "token"
+        },
+        {
+          "text": "AhrefsSiteAudit",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AI2Bot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AI2Bot",
+          "rule": "token"
+        },
+        {
+          "text": "AI2Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AI2Bot-DeepResearchEval",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AI2Bot-DeepResearchEval",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Ai2Bot-Dolma",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Ai2Bot-Dolma",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "aiHitBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "aiHitBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "AIWebIndex",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AIWebIndex",
+          "rule": "token"
+        },
+        {
+          "text": "AIWebIndex",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Algolia Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Algolia Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Algorand platform newspaper",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "algorand-platform-newspaper",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AlterionLabs",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AlterionLabs",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Bedrock AgentCore",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Amazon-Bedrock-AgentCore-Browser",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Bedrock Knowledge Bases",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "amazon-bedrock-knowledgebase-on-behalf-of-",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon CloudFront",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Amazon CloudFront",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Product Discovery",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AmazonProductDiscovery",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Quick",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "amazon-Quick-on-behalf-of-",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Route 53 Health Check",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Amazon-Route53-Health-Check-Service",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Selection Explorer",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AmazonSelectionExplorerBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazon Seller Initiated Listing",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AmazonSellerInitiatedListing",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "amazon-kendra",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "amazon-kendra",
+          "rule": "token"
+        },
+        {
+          "text": "amazon-kendra",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "amazon-QBusiness",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "amazon-QBusiness",
+          "rule": "token"
+        },
+        {
+          "text": "amazon-QBusiness",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amazonbot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Amazonbot",
+          "rule": "token"
+        },
+        {
+          "text": "Amazonbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AmazonBuyForMe",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AmazonBuyForMe",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Amzn-SearchBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Amzn-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "Amzn-SearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Amzn-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Amzn-User",
+          "rule": "token"
+        },
+        {
+          "text": "Amzn-User",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Andibot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Andibot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Anomura",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Anomura",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "anthropic-ai",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "anthropic-ai",
+          "rule": "token"
+        },
+        {
+          "text": "anthropic-ai",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Antigravity",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Jetski-Antigravity",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Apache HTTP",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Apache-HttpClient",
+          "rule": "token"
+        },
+        {
+          "text": "Apache-HttpClient",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ApifyBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ApifyBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ApifyWebsiteContentCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ApifyWebsiteContentCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "APIs-Google",
+      "role": "script",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "APIs-Google",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Apple Podcasts",
+      "role": "script",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "iTMS",
+          "rule": "exact"
+        }
+      ]
+    },
+    {
+      "name": "Applebot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Applebot",
+          "rule": "token"
+        },
+        {
+          "text": "Applebot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Applebot-Extended",
+      "role": "aiTraining",
+      "legacy": true,
+      "robotsOnly": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Applebot-Extended",
+          "rule": "token"
+        },
+        {
+          "text": "Applebot-Extended",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "appzbot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "appzbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Aranet-SearchBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Aranet-SearchBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ArchiveBox",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ArchiveBox",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ArchiveTeam ArchiveBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ArchiveTeam ArchiveBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "aria2",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "aria2",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "AtlasBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "matnx.com/bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AtlasSearch",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AtlasSearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "atlassian-bot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "atlassian-bot",
+          "rule": "token"
+        },
+        {
+          "text": "atlassian-bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Augment",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Augment-WebFetch",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Autozella",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AutozellaBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Awario",
+      "role": "seoTool",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Awario",
+          "rule": "token"
+        },
+        {
+          "text": "AwarioBot",
+          "rule": "token"
+        },
+        {
+          "text": "AwarioBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Axiom DocBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Axiom-DocBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Axios",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "axios",
+          "rule": "versioned"
+        },
+        {
+          "text": "axios",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "AzureAI-SearchBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "AzureAI-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "AzureAI-SearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Babel42",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Babel42Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Baidu",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Baiduspider",
+          "rule": "token"
+        },
+        {
+          "text": "Baiduspider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "barkReleasesBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "barkReleasesBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Barkrowler",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Barkrowler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "bedrockbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "bedrockbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "BelleaireCrawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BelleaireCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "BenchRank",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BenchRankBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Better Stack",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Better Uptime Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Biblioteca Nacional de España",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "bne.es_bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "BIC Probe",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BIC-Probe",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "bigsur.ai",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "bigsur.ai",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Bing Preview",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BingPreview",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Bingbot",
+      "role": "searchEngine",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Bingbot",
+          "rule": "token"
+        },
+        {
+          "text": "bingbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "BingVideoPreview",
+      "role": "searchEngine",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "BingVideoPreview",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "BitSight",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BitSightBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "BixelBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "BixelBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "blackboard-crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Blackboard",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Bluesky",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Bluesky",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Botscent check",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "botscent-check",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "BranchenbuchBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BranchenbuchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Bravebot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Bravebot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Brevva",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Brevva",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Brightbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Brightbot",
+          "rule": "token"
+        },
+        {
+          "text": "Brightbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Brightbot 1.0",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Brightbot 1.0",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "BrightEdge Bot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "BrightEdge Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "BuddyBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "BuddyBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Bun",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Bun",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Bytespider",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Bytespider",
+          "rule": "token"
+        },
+        {
+          "text": "Bytespider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CanICancelIt LinkCheck",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CanICancelIt-LinkCheck",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CartAI Agentic Commerce",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "CartAI Agentic Commerce",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "catchpoint",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Catchpoint",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CCBot",
+      "role": "aiTraining",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "CCBot",
+          "rule": "token"
+        },
+        {
+          "text": "CCBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CensysInspectBot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CensysInspect",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Channel3Bot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Channel3Bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Charlotte",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "charlotte",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ChatGLM-Spider",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ChatGLM-Spider",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ChatGPT Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ChatGPT Agent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ChatGPT Desktop",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ChatGPT/.*Electron",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "ChatGPT-User",
+      "role": "aiUser",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "ChatGPT-User",
+          "rule": "token"
+        },
+        {
+          "text": "ChatGPT-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Checkly",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Checkly",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Chrome Prefetch Proxy",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Chrome Privacy Preserving Prefetch Proxy",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CitePack",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CitePackBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Claude Desktop",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Claude/.*Electron",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Claude-Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Claude-Agent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Claude-Code",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Claude-Code",
+          "rule": "token"
+        },
+        {
+          "text": "claude-code",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Claude-SearchBot",
+      "role": "aiSearch",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Claude-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "Claude-SearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Claude-User",
+      "role": "aiUser",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Claude-User",
+          "rule": "token"
+        },
+        {
+          "text": "Claude-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Claude-Web",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Claude-Web",
+          "rule": "token"
+        },
+        {
+          "text": "Claude-Web",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ClaudeBot",
+      "role": "aiTraining",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "ClaudeBot",
+          "rule": "token"
+        },
+        {
+          "text": "ClaudeBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Clearscope",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Clearscopebot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CledaraBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "CledaraBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Cloudflare AI Search",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Cloudflare-AI-Search",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Cloudflare Observatory",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CloudflareObservatory",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Cloudflare-AutoRAG",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Cloudflare-AutoRAG",
+          "rule": "token"
+        },
+        {
+          "text": "Cloudflare-AutoRAG",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CloudflareBrowserRenderingCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "CloudflareBrowserRenderingCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "CloudVertexBot",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "CloudVertexBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ClueWeb",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ClueWeb-Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Coc Coc",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "coccoc",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Codex",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Codex",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Codex public research",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Codex-YCB2B",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "cohere-ai",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "cohere-ai",
+          "rule": "token"
+        },
+        {
+          "text": "cohere-ai",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "cohere-training-data-crawler",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "cohere-training-data-crawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Colly",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^colly",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "CompanyFeedServer",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CompanyFeedServer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Consul Health Check",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Consul Health Check",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Context7",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Context7-Crawler",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "ContextFetch",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ContextFetchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ContextRocket",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ContextRocketBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Convertify",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Convertify",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Cookiebot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Cookiebot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "cookiehub-scan",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CookieHubScan",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CookieScript",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CookieScript",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Cortex Xpanse",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Cortex-Xpanse",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Cotoyogi",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Cotoyogi",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Coveo",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Coveobot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "CragCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "CragCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "crawl-engine",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "crawl-engine",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Crawl4AI",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Crawl4AI",
+          "rule": "token"
+        },
+        {
+          "text": "crawl4ai",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "crawlcrawl",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "crawlcrawl-actors",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "crawler_eb_germany",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "crawler_eb_germany",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Crawlspace",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Crawlspace",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "CurbCut Scanner",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "CurbCutScanner",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "curl",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "curl",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Cursor",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^Cursor/[0-9.]+ \\(",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "dareboost-crawler",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DareBoost",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Datadog",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Datadog",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DataForSeo",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DataForSeoBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Datalenk Creator Research",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DatalenkCreatorResearch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Dataprovider.com",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Dataprovider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DeepSeek Harness",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "deepseek-harness",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "DeepSeekBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "DeepSeekBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Deno",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Deno",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "DesignMD Extract",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DesignMD-Extract-Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Detectify",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Detectify",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Devin",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Devin",
+          "rule": "token"
+        },
+        {
+          "text": "Devin",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "DevParekhResearch",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DevParekhResearch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Diffbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Diffbot",
+          "rule": "token"
+        },
+        {
+          "text": "Diffbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Diffbot-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Diffbot-User",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "DigitalOcean Uptime",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DigitalOcean Uptime Probe",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Discord",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Discordbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DittaBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DittaBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "docs-puller",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "docs-puller",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Doctom Monitor",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DMBrowser",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Dot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Dot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Dottpace Audit",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DottpaceAudit",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DoubaoBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "DoubaoBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Double ATS Customer Discoverer",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "double-ats-customer-discoverer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DuckAssistBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "DuckAssistBot",
+          "rule": "token"
+        },
+        {
+          "text": "DuckAssistBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "DuckDuckGo",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DuckDuckBot",
+          "rule": "token"
+        },
+        {
+          "text": "DuckDuckBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "dynatrace-monitor",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RuxitSynthetic",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Echobot Bot",
+      "role": "seoTool",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Echobot Bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "EchoboxBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "EchoboxBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Efficient Rust Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "EfficientRustCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ElevenlabsBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ElevenlabsBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ElevenlabsCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ElevenlabsCrawler",
+          "rule": "token"
+        },
+        {
+          "text": "ElevenlabsCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ERNIEBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ERNIEBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Every API",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "every-api",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "ExaBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ExaBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ExaSearchBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ExaSearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "ExaSearchBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "ExaUser",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ExaUser",
+          "rule": "token"
+        },
+        {
+          "text": "ExaUser",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Exit1",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Exit1-Website-Monitor",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "FacebookBot",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "FacebookBot",
+          "rule": "token"
+        },
+        {
+          "text": "FacebookBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "facebookexternalhit",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "facebookexternalhit",
+          "rule": "token"
+        },
+        {
+          "text": "facebookexternalhit",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Facebot",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Facebot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Factset_spyderbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Factset_spyderbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "FastCrawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "FastCrawler",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "FirecrawlAgent",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "FirecrawlAgent",
+          "rule": "token"
+        },
+        {
+          "text": "FirecrawlAgent",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "FlamingoBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "FlamingoBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "FlashBrain",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "FlashBrain",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Foregenix ThreatView/WebScan",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Foregenix",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ForgeYourPath Job Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ForgeYourPathAiJobCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "FriendlyCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "FriendlyCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Gatus",
+      "role": "monitoring",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Gatus",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "GeistHaus-PageFetcher",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GeistHaus-PageFetcher",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Gemini-Deep-Research",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Gemini-Deep-Research",
+          "rule": "token"
+        },
+        {
+          "text": "Gemini-Deep-Research",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Ghost Inspector",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Ghost Inspector",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GitHub Copilot",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GitHubCopilot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Go HTTP",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Go-http-client",
+          "rule": "versioned"
+        },
+        {
+          "text": "Go-http-client",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Actions",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Actions",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Ads",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AdsBot-Google",
+          "rule": "token"
+        },
+        {
+          "text": "AdsBot-Google",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Ads Conversions",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Ads-Conversions",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Adwords",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Adwords",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Appointments",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Appointments",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Apps Script",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Apps-Script",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Business Link",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-BusinessLinkVerification",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Cloud Scheduler",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Cloud-Scheduler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Cloud Tasks",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Cloud-Tasks",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Cloud Uptime Checks",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GoogleStackdriverMonitoring-UptimeChecks",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Display Ads",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Display-Ads-Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Docs",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GoogleDocs",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Feedfetcher",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "FeedFetcher-Google",
+          "rule": "token"
+        },
+        {
+          "text": "FeedFetcher-Google",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Food",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Food",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Image Proxy",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GoogleImageProxy",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Inspection",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-InspectionTool",
+          "rule": "token"
+        },
+        {
+          "text": "Google-InspectionTool",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Messages",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GoogleMessages",
+          "rule": "exact"
+        },
+        {
+          "text": "googlemessages",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Google PageRenderer",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-PageRenderer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Play Store",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PlayStore-Google",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Read Aloud",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Read-Aloud",
+          "rule": "token"
+        },
+        {
+          "text": "Google-Read-Aloud",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Schema Markup Testing Tool",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Structured-Data-Testing",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Search Console",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google Search Console",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google Site Verification",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Site-Verification",
+          "rule": "token"
+        },
+        {
+          "text": "Google-Site-Verification",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Google Storebot",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Storebot-Google",
+          "rule": "token"
+        },
+        {
+          "text": "Storebot-Google",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "google-adsense-googlebot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Mediapartners",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-AdWords-Express",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-AdWords-Express",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Google-Agent",
+          "rule": "token"
+        },
+        {
+          "text": "Google-Agent",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "google-appengine",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "AppEngine-Google",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-CloudVertexBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-CloudVertexBot",
+          "rule": "token"
+        },
+        {
+          "text": "Google-CloudVertexBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-CWS",
+      "role": "script",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Google-CWS",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Google-Extended",
+      "role": "aiTraining",
+      "legacy": true,
+      "robotsOnly": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Google-Extended",
+          "rule": "token"
+        },
+        {
+          "text": "Google-Extended",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-Firebase",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Google-Firebase",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Google-Gemini-CLI",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Google-Gemini-CLI",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Google-GeminiNotebook",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Google-GeminiNotebook",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Google-NotebookLM",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Google-NotebookLM",
+          "rule": "token"
+        },
+        {
+          "text": "Google-NotebookLM",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-Pinpoint",
+      "role": "script",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Google-Pinpoint",
+          "rule": "exact"
+        }
+      ]
+    },
+    {
+      "name": "google-preview",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google Web Preview",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Google-Safety",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Google-Safety",
+          "rule": "exact"
+        },
+        {
+          "text": "Google-Safety",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "google-structured-data-testing-tool",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "google-structured-data-testing-tool",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GoogleAgent-Mariner",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GoogleAgent-Mariner",
+          "rule": "token"
+        },
+        {
+          "text": "GoogleAgent-Mariner",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GoogleAgent-URLContext",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GoogleAgent-URLContext",
+          "rule": "token"
+        },
+        {
+          "text": "GoogleAgent-URLContext",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Googlebot",
+      "role": "searchEngine",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Googlebot",
+          "rule": "token"
+        },
+        {
+          "text": "Googlebot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Googlebot-Image",
+      "role": "searchEngine",
+      "family": "Googlebot",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Googlebot-Image",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Googlebot-News",
+      "role": "searchEngine",
+      "family": "Googlebot",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Googlebot-News",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Googlebot-Video",
+      "role": "searchEngine",
+      "family": "Googlebot",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Googlebot-Video",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GoogleOther",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GoogleOther",
+          "rule": "token"
+        },
+        {
+          "text": "GoogleOther",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GoogleOther-Image",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GoogleOther-Image",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GoogleOther-Video",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GoogleOther-Video",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GoogleProducer",
+      "role": "searchEngine",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "GoogleProducer",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "got",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^got \\(",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "GPTBot",
+      "role": "aiTraining",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "GPTBot",
+          "rule": "token"
+        },
+        {
+          "text": "GPTBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Grafana Synthetic",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GrafanaSyntheticMonitoring",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Grok",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "grok-agent",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Grok Bot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Grok Bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GrokAppAndroid",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GrokAppAndroid",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GrokBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "GrokBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "GrowthX",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GrowthXBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GTmetrix",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GTmetrix",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "GTMStack Research",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GTMStackResearch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Guzzle",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "GuzzleHttp",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Haiku-SearchBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Haiku-SearchBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Hardal Analytics Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "usehardal-analytics-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HarkBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "HarkBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "HatchFeed",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "HatchFeed",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Headless Chrome",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HeadlessChrome",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Headline",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ev-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "heap.page",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "heap.page source monitor",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Heexybot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Heexybot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HenkBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "HenkBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Heritrix",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "heritrix",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HetrixTools",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HetrixTools",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HiringRadar",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HiringRadarBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HonestClaw Scanner",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HonestClaw-Scanner",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HTTPie",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "HTTPie",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "httpx",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "python-httpx",
+          "rule": "versioned"
+        },
+        {
+          "text": "httpx",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HTTrack",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HTTrack",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "HubSpot Crawler",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "HubSpot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Hunyuan",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Hunyuan",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Hypeline",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Hypeline",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "iAskBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "iAskBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "iaskspider",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "iaskspider",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Ibou Search",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ibou-search",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "IbouBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "IbouBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ICC-Crawler",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ICC-Crawler",
+          "rule": "token"
+        },
+        {
+          "text": "ICC-Crawler",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Iframely",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Iframely",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ImagesiftBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ImagesiftBot",
+          "rule": "token"
+        },
+        {
+          "text": "ImagesiftBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "imageSpider",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "imageSpider",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "img2dataset",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "img2dataset",
+          "rule": "token"
+        },
+        {
+          "text": "img2dataset",
+          "rule": "word"
+        },
+        {
+          "text": "img2downloader",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ImpactVibe Design Research",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ImpactVibeDesignResearch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Inkeep",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Inkeep-Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Inlora",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "InloraBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Instinct",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Instinct",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Intelvane",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "IntelvaneBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Interactsh",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "oast",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Internet Archive",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "archive.org_bot",
+          "rule": "word"
+        },
+        {
+          "text": "ia_archiver",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Internet Archive - Archive-It",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Archive-It",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "InternetMeasurementBot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "InternetMeasurement",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "InterruptIndex",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "InterruptIndexBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ISSCyberRiskCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ISSCyberRiskCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Java HTTP",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^Java/",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Java HttpClient",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "Java-http-client",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Java HttpURLConnection",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "Java",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "jobcrawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "jobcrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "JobSearchBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "JobSearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "jscrawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "jscrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "kagi-fetcher",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "kagi-fetcher",
+          "rule": "token"
+        },
+        {
+          "text": "kagi-fetcher",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "KakaoBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "KakaoBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "KalleWorks",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "KalleWorks-Monitor",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Kangaroo Bot",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Kangaroo Bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "KeenableBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "KeenableBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "KERN OSINT Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "KERN-OSINT-Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Khojify",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "KhojifyBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Kimi-Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Kimi-Agent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Kimi-SearchBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Kimi-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "Kimi-SearchBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Kimi-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Kimi-User",
+          "rule": "token"
+        },
+        {
+          "text": "Kimi-User",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "KimiBot",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "KimiBot",
+          "rule": "token"
+        },
+        {
+          "text": "KimiBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Kinsta",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "kinsta-bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Kiro",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "KiroServer",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "KlaviyoAIBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "KlaviyoAIBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "KunatoCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "KunatoCrawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "laion-huggingface-processor",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "laion-huggingface-processor",
+          "rule": "token"
+        },
+        {
+          "text": "laion-huggingface-processor",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LAIONDownloader",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "LAIONDownloader",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Latency",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "latency.app/bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LaunchReadyCodeBot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LaunchReadyCodeBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LCC",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "LCC",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "LeakIX",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "l9scan",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Leapwave",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LeapwaveVIP",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Lighthouse",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Lighthouse",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Lightpanda",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Lightpanda",
+          "rule": "token"
+        },
+        {
+          "text": "Lightpanda",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Liner-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Liner-User",
+          "rule": "token"
+        },
+        {
+          "text": "Liner-User",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "LinerBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "LinerBot",
+          "rule": "token"
+        },
+        {
+          "text": "LinerBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Linguee Bot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Linguee Bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "LinkChecker Bot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "linkchecker.pro",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LinkedIn",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LinkedInBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LinkupBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "LinkupBot",
+          "rule": "token"
+        },
+        {
+          "text": "LinkupBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LLM code docs scraper",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "llm-code-docs-scraper",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "llms-txt-check",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "llms-txt-check",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "llms-txt-sync",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "llms-txt-sync",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LlmsTxtBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LlmsTxtBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LosClouds",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LosClouds-Monitor",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "lua-resty-http",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "lua-resty-http",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Luranta",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LurantaBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "LWP",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "libwww-perl",
+          "rule": "versioned"
+        },
+        {
+          "text": "libwww-perl",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "lychee",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "lychee",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "LyonlBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "LyonlBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "MachBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MachBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Majestic",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MJ12bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Manus-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Manus-User",
+          "rule": "token"
+        },
+        {
+          "text": "Manus-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "marketgoo",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MarketGoo",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Mediapartners-Google",
+      "role": "searchEngine",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Mediapartners-Google",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Meltwater",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MeltwaterNews",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "meta-externalads",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "meta-externalads",
+          "rule": "token"
+        },
+        {
+          "text": "meta-externalads",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Meta-ExternalAgent",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Meta-ExternalAgent",
+          "rule": "token"
+        },
+        {
+          "text": "meta-externalagent",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Meta-ExternalFetcher",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Meta-ExternalFetcher",
+          "rule": "token"
+        },
+        {
+          "text": "meta-externalfetcher",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "meta-webindexer",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "meta-webindexer",
+          "rule": "token"
+        },
+        {
+          "text": "meta-webindexer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Preview",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MicrosoftPreview",
+          "rule": "token"
+        },
+        {
+          "text": "MicrosoftPreview",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "MiniMax Agent",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^MiniMaxAgent",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "MiniMaxAgent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "MiniMaxAgent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "MistralAI-Index",
+      "role": "aiSearch",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MistralAI-Index",
+          "rule": "token"
+        },
+        {
+          "text": "MistralAI-Index",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "MistralAI-Training",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "MistralAI-Training",
+          "rule": "token"
+        },
+        {
+          "text": "MistralAI-Training",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "MistralAI-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "MistralAI-User",
+          "rule": "token"
+        },
+        {
+          "text": "MistralAI-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Model Context Protocol",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ModelContextProtocol",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Mojeek",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MojeekBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Monitor Backlinks",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MBCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Monsido",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Monsidobot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "MoonshotBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "MoonshotBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Moz",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "DotBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Mozilla-Tabstack",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Mozilla-Tabstack",
+          "rule": "token"
+        },
+        {
+          "text": "Mozilla-Tabstack",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Mozlila Typo Bot",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Mozlila",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "MrAnandPortfolio",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MrAnandPortfolio",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Muse",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Muse",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Mwmbl",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "mwmbl",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "MyCentralAIScraperBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "MyCentralAIScraperBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "n8n",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^n8n$",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "NagetBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NagetBot",
+          "rule": "token"
+        },
+        {
+          "text": "NagetBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Naver",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Yeti",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "nbot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "nbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "NCKU CSIE WebMining Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NCKU-CSIE-WebMining",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Netcraft",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NetcraftSurveyAgent",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "netEstate Imprint Crawler",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "netEstate Imprint Crawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "newsai",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "newsai",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "NicheStuff",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NicheStuffBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Nimbus Blocklist Sync",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NimbusBlocklistSync",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "nmap",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "nmap",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Node Fetch",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "node-fetch",
+          "rule": "token"
+        },
+        {
+          "text": "node-fetch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Node.js",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "^node$",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Node.js fetch",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "node",
+          "rule": "exact"
+        }
+      ]
+    },
+    {
+      "name": "NoFluff Grader",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "NoFluffGraderBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "NotebookLM",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "NotebookLM",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Nova Act",
+      "role": "aiUser",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "Agent-NovaAct",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "NovaAct",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "NovaAct",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Nuclei",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "projectdiscovery/nuclei",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OAI-AdsBot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OAI-AdsBot",
+          "rule": "token"
+        },
+        {
+          "text": "OAI-AdsBot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "OAI-SearchBot",
+      "role": "aiSearch",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "OAI-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "OAI-SearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OhDearBot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OhDear",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OkaraBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OkaraBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OkHttp",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "okhttp",
+          "rule": "versioned"
+        },
+        {
+          "text": "okhttp",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OKX-dolphin-crawler",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OKX-dolphin-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OldSchoolBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OldSchoolBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "omgili",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "omgili",
+          "rule": "token"
+        },
+        {
+          "text": "omgili",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "omgilibot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "omgilibot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Omnichannel Website Ingestion",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OmnichannelWebsiteIngestionBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "oncrawl",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "oncrawl",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OneTrust",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OneTrust",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OpenAI",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "OpenAI",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "opencode",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "^opencode[/-]",
+          "rule": "regex"
+        },
+        {
+          "text": "opencode",
+          "rule": "token"
+        },
+        {
+          "text": "OpenCode-User",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Operator",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Operator",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Optimize Pilot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Optimize Pilot Research Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ORBIQ Research Lab",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ORBIQ Research Lab",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "OzDocs",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "OzDocsCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Pageburst",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "pageburst",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PagePeeker",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PagePeeker",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PagePilot Site Audit",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PagePilot-SiteAudit",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PanguBot",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "PanguBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Panscient",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Panscient",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "panscient.com",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "panscient.com",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Payhawk Invoice Fetching Agent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Payhawk Invoice Fetching Agent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Perplexity User",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PerplexityUser",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Perplexity-User",
+      "role": "aiUser",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Perplexity-User",
+          "rule": "token"
+        },
+        {
+          "text": "Perplexity-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PerplexityBot",
+      "role": "aiSearch",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "PerplexityBot",
+          "rule": "token"
+        },
+        {
+          "text": "PerplexityBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Persimmon Design Research",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PersimmonDesignResearch",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PetalBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PetalBot",
+          "rule": "token"
+        },
+        {
+          "text": "PetalBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PhantomJS",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PhantomJS",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PhindBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "PhindBot",
+          "rule": "token"
+        },
+        {
+          "text": "PhindBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Pingdom",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Pingdom",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Pinterest",
+      "role": "linkPreview",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "Pinterest/0.d",
+          "rule": "regex"
+        },
+        {
+          "text": "Pinterestbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "PkgSeer Documentation Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PkgSeer Documentation Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Playwright",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Playwright",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Poggio-Citations",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Poggio-Citations",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "PoliasBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PoliasBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Polon",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Polon",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Polycore Supabase Detector",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PolycoreSupabaseDetector",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "polygazer",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "polygazer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Poseidon Research Crawler",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Poseidon Research Crawler",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "PostHog BusinessKnowledge",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PostHog-BusinessKnowledge",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Crawler",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PostHogCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Desktop",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "desktop.hog.dev",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Desktop Agent",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "agent.hog.dev",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Desktop Cloud",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "cloud.hog.dev",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Image Fetcher",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PostHogImageFetcherBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PostHog Mobile",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "mobile.hog.dev",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Postman",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PostmanRuntime",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "PowerShell",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PowerShell",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Preflight",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PreflightBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PricingArchiveBot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PricingArchiveBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PricingBrief",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "pricingbrief-bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PricingWatchBot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PricingWatchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "PromptingBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PromptingBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Prospector",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "prospector",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "PulseWatch",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PulseWatch-Prober",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Puppeteer",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Puppeteer",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Python Requests",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "python-requests",
+          "rule": "versioned"
+        },
+        {
+          "text": "python-requests",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Python urllib",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Python-urllib",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "python-aiohttp",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "aiohttp",
+          "rule": "versioned"
+        },
+        {
+          "text": "aiohttp",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Qlyze",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "QlyzeBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "qodercli",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "qodercli",
+          "rule": "token"
+        },
+        {
+          "text": "qodercli",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "QualifiedBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "QualifiedBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Querit-SearchBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Querit-SearchBot",
+          "rule": "token"
+        },
+        {
+          "text": "Querit-SearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "QueritBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "QueritBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "QuillBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "QuillBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "quillbot.com",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "quillbot.com",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Qwant",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Qwantbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Qwen Code",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "QwenCode",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "QwenBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "QwenBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "rag-customer-support-ingest",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "rag-customer-support-ingest",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "RankyDocky",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RankyDockyBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ReachBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ReachBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "RealPressBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RealPressBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "redCactiBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "redCactiBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Ref",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ref-tools-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Reflectionbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Reflectionbot",
+          "rule": "token"
+        },
+        {
+          "text": "Reflectionbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Regie.ai",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RegieBrainBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "reqwest",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "reqwest",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "ResearchBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ResearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "RevnoxBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RevnoxBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "rewebbot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "rewebbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Right AI Choice",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RightAIChoiceBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Rimetry Status",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "RimetryStatusBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Ruby Net::HTTP",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Ruby",
+          "rule": "exact"
+        },
+        {
+          "text": "^Ruby$",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "SBIntuitionsBot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SBIntuitionsBot",
+          "rule": "token"
+        },
+        {
+          "text": "SBIntuitionsBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "scopy docs crawler",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "scopy-docs-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "scrape-site",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "scrape-site",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Scrapy",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Scrapy",
+          "rule": "token"
+        },
+        {
+          "text": "Scrapy",
+          "rule": "versioned"
+        },
+        {
+          "text": "Scrapy",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Screaming Frog",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Screaming Frog SEO Spider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ScryBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ScryBot",
+          "rule": "token"
+        },
+        {
+          "text": "ScryBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Scryer",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Scryer",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "SE Ranking",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SERankingBacklinksBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SE Ranking Bot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SEBot-WA",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SearchAtlas",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SearchAtlas Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SecurityHeaders",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SecurityHeaders",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "seekport-crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Seekport",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Selenium",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Selenium",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Semrush",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SemrushBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Semrush Site Audit",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SiteAuditBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SemrushBot-OCOB",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "SemrushBot-OCOB",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "SemrushBot-SWA",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "SemrushBot-SWA",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Sentry Uptime",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SentryUptimeBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "seo4ajax",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "seo4ajax.com",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SEOMasterBot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SEOMasterBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Serpstat",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "serpstatbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SeznamBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SeznamBot",
+          "rule": "token"
+        },
+        {
+          "text": "SeznamBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Shap-User",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Shap-User",
+          "rule": "token"
+        },
+        {
+          "text": "Shap-User",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ShapBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ShapBot",
+          "rule": "token"
+        },
+        {
+          "text": "ShapBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Sidetrade indexer bot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Sidetrade indexer bot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Site24x7",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Site24x7",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Siteavail",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SiteavailObservatory",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Siteimprove",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Siteimprove",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Skype Preview",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SkypeUriPreview",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Slack",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Slackbot",
+          "rule": "token"
+        },
+        {
+          "text": "Slackbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Slack Image Proxy",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Slack-ImgProxy",
+          "rule": "token"
+        },
+        {
+          "text": "Slack-ImgProxy",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Slack link preview",
+      "role": "linkPreview",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "Slackbot-LinkExpanding",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "SlimerJS",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SlimerJS",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "slopsearch",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "slopsearch-linux-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SnapchatAdsBot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SnapchatAds",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SnapURLPreviewBot",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Snap URL Preview Service",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SofyaBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SofyaBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Sogou",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Sogou web spider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Sokjan Crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Sokjan Crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SolvedEarth Price Bot",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SolvedEarthPriceBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Spider",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Spider",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Splunk Synthetics",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Splunk Synthetics",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "StackClarity Watcher",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "StackClarityWatcher",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "StackPick",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "StackPick",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "StatusCake",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "StatusCake",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Sterkinmatches Leadgen",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SterkinmatchesLeadgen",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Straddle Library",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "StraddleLibraryBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Stripe Merchant Security Scanner",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "MerchantSecurityScanner",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Stripebot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Stripebot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "SubBegoneBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "SubBegoneBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "swissAItalentBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "swissAItalentBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Synapse",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Synapse \\(bot",
+          "rule": "regex"
+        }
+      ]
+    },
+    {
+      "name": "T2Bot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "T2Bot",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Taboola",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Taboolabot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Tag Inspector",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TagInspector",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Talarion Search",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TalarionSearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "TavilyBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "TavilyBot",
+          "rule": "token"
+        },
+        {
+          "text": "TavilyBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Telegram",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TelegramBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Tenable.asm",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "bitdiscovery",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Terra Cotta",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Terra Cotta",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "TerraCotta",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "TerraCotta",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Thinkbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Thinkbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "TikTokSpider",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TikTokSpider",
+          "rule": "token"
+        },
+        {
+          "text": "TikTokSpider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Timpibot",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Timpibot",
+          "rule": "token"
+        },
+        {
+          "text": "Timpibot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "TongyiBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "TongyiBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Toolchest",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ToolchestBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Turnitin",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Turnitin",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "TutusooBot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TutusooBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Twilio Knowledge",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "TwilioKnowledge",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "TwinAgent",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "TwinAgent",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Twitter",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Twitterbot",
+          "rule": "token"
+        },
+        {
+          "text": "Twitterbot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "UnboundCompute Public Snapshot",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UnboundCompute-PublicSnapshot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "undici",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "undici",
+          "rule": "exact"
+        },
+        {
+          "text": "undici",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Unfurlist",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Unfurlist",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "unstale",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "unstale-collector",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Unstenciled",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UnstenciledBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "UnusualAgentAudit",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UnusualAgentAudit",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "UptimeLens",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UptimeLensBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "UptimeRobot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UptimeRobot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "UptimeWizard",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UptimeWizardBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "url-crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "url-crawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "urllib3",
+      "role": "script",
+      "roleFrom": "botscent",
+      "match": [
+        {
+          "text": "python-urllib3",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "UseAI",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "UseAI",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "UXXRAY",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "UXXRAYBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "VantageBot",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "VantageBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "VelenPublicWebCrawler",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "VelenPublicWebCrawler",
+          "rule": "token"
+        },
+        {
+          "text": "VelenPublicWebCrawler",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Vendidit",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "VendiditBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Vercel Edge Functions",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Vercel Edge Functions",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Vercel Screenshot Bot",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "vercel-screenshot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "VersionWatch",
+      "role": "monitoring",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "VersionWatchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Vioscale AI",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "VioscaleAIBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "vpsFocus",
+      "role": "self",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "vpsfocus-",
+          "rule": "prefix"
+        }
+      ]
+    },
+    {
+      "name": "Walsingham",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Walsingham",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "WebPageTest",
+      "role": "seoTool",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "PTST",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Webzio-Extended",
+      "role": "aiTraining",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "Webzio-Extended",
+          "rule": "token"
+        },
+        {
+          "text": "Webzio-Extended",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "wellknown-crawler",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "WellKnownBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Wget",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Wget",
+          "rule": "versioned"
+        },
+        {
+          "text": "Wget",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp",
+      "role": "linkPreview",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "WhatsApp",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "WhichAPI",
+      "role": "aiCrawler",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "whichapi-bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "wkhtmltopdf",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "wkhtmltopdf",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "WooRank",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "woorankreview",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Worklyn Search",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "WorklynSearchBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "wpbot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "wpbot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "WPMU DEV",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "WPMU DEV",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "WRTNBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "WRTNBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Wrzutka",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Wrzutka-Bot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "xAI-Grok",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "xAI-Grok",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Yahoo",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Slurp",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "YaK",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "YaK",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Yandex Accessibility",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "YandexAccessibilityBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Yandex Render Resources",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "YandexRenderResourcesBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "YandexAdditional",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "YandexAdditional",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "YandexAdditionalBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "YandexAdditionalBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "YandexBot",
+      "role": "searchEngine",
+      "legacy": true,
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "YandexBot",
+          "rule": "token"
+        },
+        {
+          "text": "YandexBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "YandexUserproxy",
+      "role": "script",
+      "roleFrom": "own",
+      "match": [
+        {
+          "text": "YandexUserproxy",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "YiBot",
+      "role": "aiCrawler",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "YiBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Yisou",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "YisouSpider",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "YiyanBot",
+      "role": "aiUser",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "YiyanBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "Yoinka Events",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Yoinka-Events",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "YouBot",
+      "role": "aiSearch",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "YouBot",
+          "rule": "token"
+        },
+        {
+          "text": "YouBot",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "ZanistaBot",
+      "role": "aiSearch",
+      "roleFrom": "ai-robots-txt",
+      "match": [
+        {
+          "text": "ZanistaBot",
+          "rule": "token"
+        }
+      ]
+    },
+    {
+      "name": "ZCode",
+      "role": "aiUser",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "ZCode-WebFetch",
+          "rule": "versioned"
+        }
+      ]
+    },
+    {
+      "name": "Zee Company Intelligence",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Zee Company Intelligence",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "Zetlyn",
+      "role": "searchEngine",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "Zetlyn",
+          "rule": "word"
+        }
+      ]
+    },
+    {
+      "name": "zgrab",
+      "role": "script",
+      "roleFrom": "posthog",
+      "match": [
+        {
+          "text": "zgrab",
+          "rule": "word"
+        }
+      ]
+    }
+  ]
+}

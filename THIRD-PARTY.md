@@ -27,6 +27,21 @@ link checker (Apache-2.0 or MIT), downloaded from its GitHub release with a
 pinned SHA-256 (`agent/Dockerfile`); its license texts are in
 `agent/third-party/lychee/`. We did not build it ourselves.
 
+The robot list built into the agent (`agent/internal/bots/data/`) is
+assembled by `agent/cmd/bots-build` from these open lists, each at a pinned
+commit; their license texts sit next to the data as they are:
+
+| Source | What is taken | License | License file |
+|---|---|---|---|
+| [ai-robots-txt/ai.robots.txt](https://github.com/ai-robots-txt/ai.robots.txt) | `robots.json` | MIT | `LICENSE-ai-robots-txt` |
+| [nalinbhardwaj/botscent](https://github.com/nalinbhardwaj/botscent) | `registry/tokens.json`, `registry/names.json` | MIT | `LICENSE-botscent` |
+| [PostHog/posthog](https://github.com/PostHog/posthog) | `products/web_analytics/backend/hogql_queries/bot_definitions.py` (outside `ee/`) | MIT (Expat) | `LICENSE-posthog` |
+
+The address ranges in `ranges.json` are the lists bot owners publish
+themselves (Google, OpenAI, Perplexity, Microsoft, Apple, DuckDuckGo, Common
+Crawl, Ahrefs, Anthropic, Cloudflare); the source address of each is in the
+file.
+
 Base images: `golang` (build stage only) and `alpine`.
 
 ## Our Caddy image (`images/caddy/`)
